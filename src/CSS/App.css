@@ -1,0 +1,15 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Roboto;
+}
+
+:root{
+  --color1 : #ebebeb;
+  --color2 : #0466c8;
+  --color3 : #1b98e0;
+  --color4 : #a8e8f9;
+  --color5 : #52b69a;
+  --color6 : #70e000;
+} 
