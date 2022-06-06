@@ -5,7 +5,8 @@ import Client from './Component/Client'
 import Home from './Component/Home/Home';
 
 import Statistical from './Component/Statistical/Statistical';
-
+import PhieuThuMain from './Component/PhieuThu/PhieuThuMain';
+import KyThuMain from './Component/KyThu/KyThuMain';
 
 function App() {
 
@@ -16,8 +17,10 @@ function App() {
           <Route path='/' element={<Client />} />
           <Route path='/home' element={<Home />}>    
             <Route path='statistical' element={<Statistical />} />
-          
+            <Route path='phieuthu' element={<PhieuThuMain />} />
+            <Route path='kythu' element={<KyThuMain />} />
           </Route>
+          
         </Routes>
       </React.Fragment>
     </div>

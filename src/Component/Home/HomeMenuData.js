@@ -13,7 +13,7 @@ const QuyenChung = [
             },
             {
                 title : 'Xem phiếu thu',
-                path :''
+                path :'phieuthu'
             },     
         ]
     },
@@ -32,6 +32,10 @@ const QuyenChung = [
                 title : 'Danh sách khách hàng',
                 path :''
             },
+            {
+                title : 'Quản lý Kỳ thu',
+                path :'KyThu'
+            },
         ]
     },
     {
@@ -43,7 +47,7 @@ const QuyenChung = [
         child : [
             {
                 title : 'Xem phiếu thu',
-                path :''
+                path :'phieuthu'
             },
             
         ]
