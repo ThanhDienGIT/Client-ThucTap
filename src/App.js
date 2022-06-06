@@ -8,6 +8,7 @@ import Statistical from './Component/Statistical/Statistical';
 
 
 function App() {
+
   return (
     <div className="App">
       <React.Fragment>
@@ -16,6 +17,8 @@ function App() {
           <Route path='/home' element={<Home />}>
             <Route path='admin' element={<Admin />} />
             <Route path='statistical' element={<Statistical />} />
+            <Route path='staff' element={<Statistical />} />
+          
           </Route>
         </Routes>
       </React.Fragment>

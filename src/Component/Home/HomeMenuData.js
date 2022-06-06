@@ -26,7 +26,7 @@ const QuyenChung = [
         child : [
             {
                 title : 'Danh sách nhân viên',
-                path :''
+                path :'/home/staff'
             },
             {
                 title : 'Danh sách khách hàng',
