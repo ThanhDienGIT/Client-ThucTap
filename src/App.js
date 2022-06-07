@@ -5,6 +5,7 @@ import Client from './Component/Client'
 import Home from './Component/Home/Home';
 
 import Statistical from './Component/Statistical/Statistical';
+import Employee from './Component/Employee/Employee';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
           <Route path='/' element={<Client />} />
           <Route path='/home' element={<Home />}>    
             <Route path='statistical' element={<Statistical />} />
-          
+            <Route path='employee' element={<Employee />} />
           </Route>
         </Routes>
       </React.Fragment>
