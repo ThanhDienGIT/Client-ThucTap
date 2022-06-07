@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
@@ -7,7 +8,7 @@ import Modal from '@mui/material/Modal';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+
 
 const style = {
     position: 'absolute',
@@ -28,14 +29,11 @@ for (let i = curYear - 30; i <= curYear + 10; i++) {
     yearArray.push(i);
 }
 
-
-export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain }) {
+export default function KyThuAddModal({ reRenderKyThuMain }) {
     const [open, setOpen] = React.useState(false);
-    const [Thang, setThang] = React.useState(thang);
-    const [Nam, setNam] = React.useState(nam);
+    const [Thang, setThang] = React.useState(new Date().getMonth());
+    const [Nam, setNam] = React.useState(new Date().getFullYear());
     const handleOpen = () => {
-        setThang(thang);
-        setNam(nam);
         setOpen(true);
     }
     const handleClose = () => setOpen(false);
@@ -49,13 +47,12 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
 
     const handleSubmit = () => {
         fetch("http://localhost:5199/api/kythu", {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                IDKyThu: idKyThu,
                 Thang: Thang,
                 Nam: Nam
             })
@@ -68,13 +65,15 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                 (error) => {
                     alert('Failed');
                 });
-        
+
         reRenderKyThuMain();
     }
 
     return (
         <div>
-            <Button onClick={handleOpen}>Sửa</Button>
+            <Stack direction="column" spacing={2} alignItems="flex-end">
+                <Button variant="contained" color="success" onClick={handleOpen}>Thêm kỳ thu</Button>
+            </Stack>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -83,7 +82,7 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
             >
                 <Box sx={style}>
                     <Typography variant="h5" style={{ paddingBottom: 40 }}>
-                        Sửa thông tin kỳ thu
+                        Thêm kỳ thu
                     </Typography>
                     <FormControl style={{ width: 200, paddingRight: 50 }}>
                         <InputLabel id="demo-simple-select-label">Tháng</InputLabel>
@@ -126,11 +125,11 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                     </FormControl>
 
                     <Stack direction="row" spacing={2} style={{ paddingTop: 40 }}>
-                        <Button variant="contained" onClick={handleSubmit}>Chỉnh sửa</Button>
+                        <Button variant="contained" onClick={handleSubmit}>Thêm</Button>
                         <Button variant="contained" onClick={handleClose}>Huỷ bỏ</Button>
                     </Stack>
                 </Box>
             </Modal>
         </div>
-    );
+    )
 }
