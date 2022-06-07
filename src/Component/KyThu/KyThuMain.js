@@ -6,17 +6,21 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import KyThuEditModal from './KyThuEditModal';
 
 export default function KyThuMain() {
     const [rows, setRows] = React.useState([]);
-    React.useEffect( () => {
+    const [updateState, setUpdateState] = React.useState(true);
+
+    const reRender = () => setUpdateState(!updateState);
+
+    React.useEffect(() => {
         fetch("http://localhost:5199/api/kythu")
-        .then(response => response.json())
-        .then(function(kyThu){
-            setRows(kyThu);
-            console.log(kyThu);
-        })
-    },[])
+            .then(response => response.json())
+            .then(function (kyThu) {
+                setRows(kyThu);
+            })
+    }, [updateState])
 
     return (
         <TableContainer component={Paper}>
@@ -42,8 +46,9 @@ export default function KyThuMain() {
                             </TableCell>
                             <TableCell align="center">{row.Thang}</TableCell>
                             <TableCell align="center">{row.Nam}</TableCell>
-                            <TableCell align="center">Thêm</TableCell>
-                            <TableCell align="center">Sửa</TableCell>
+                            <TableCell align="center">
+                                <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} updateState={updateState}/>
+                            </TableCell>
                             <TableCell align="center">Xoá</TableCell>
                         </TableRow>
                     ))}

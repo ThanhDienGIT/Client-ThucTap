@@ -34,7 +34,7 @@ const QuyenChung = [
             },
             {
                 title : 'Quản lý Kỳ thu',
-                path :'KyThu'
+                path :'kythu'
             },
         ]
     },
