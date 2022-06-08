@@ -8,6 +8,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import Tooltip from '@mui/material/Tooltip';
 
 const style = {
     position: 'absolute',
@@ -68,13 +71,17 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                 (error) => {
                     alert('Failed');
                 });
-        
+
         reRenderKyThuMain();
     }
 
     return (
         <div>
-            <Button onClick={handleOpen}>Sửa</Button>
+            <IconButton variant="text" color="primary" onClick={handleOpen}>
+                <Tooltip title="Chỉnh Sửa">
+                    <EditIcon />
+                </Tooltip>
+            </IconButton>
             <Modal
                 open={open}
                 onClose={handleClose}

@@ -8,7 +8,9 @@ import Modal from '@mui/material/Modal';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
-
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const style = {
     position: 'absolute',
@@ -31,13 +33,17 @@ for (let i = curYear - 30; i <= curYear + 10; i++) {
 
 export default function KyThuAddModal({ reRenderKyThuMain }) {
     const [open, setOpen] = React.useState(false);
-    const [Thang, setThang] = React.useState(new Date().getMonth());
+    const [statusAddPhieuThu, setStatus] = React.useState(true);
+    const [Thang, setThang] = React.useState(new Date().getMonth()+1);
     const [Nam, setNam] = React.useState(new Date().getFullYear());
     const handleOpen = () => {
         setOpen(true);
     }
     const handleClose = () => setOpen(false);
 
+    const handleSelection = () => {
+        setStatus(!statusAddPhieuThu);
+    }
     const handleThangChange = (event) => {
         setThang(event.target.value);
     };
@@ -46,7 +52,7 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
     };
 
     const handleSubmit = () => {
-        fetch("http://localhost:5199/api/kythu", {
+        fetch("http://localhost:5199/api/kythu/"+statusAddPhieuThu, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -65,14 +71,13 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
                 (error) => {
                     alert('Failed');
                 });
-
         reRenderKyThuMain();
     }
 
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end">
-                <Button variant="contained" color="success" onClick={handleOpen}>Thêm kỳ thu</Button>
+                <Button variant="contained" color="success" onClick={handleOpen}> Thêm kỳ thu</Button>
             </Stack>
             <Modal
                 open={open}
@@ -123,8 +128,14 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
                             }
                         </Select>
                     </FormControl>
+                    <FormGroup style={{ paddingTop: 20 }}>
+                        <FormControlLabel
+                            control={<Checkbox defaultChecked onClick={handleSelection} />}
+                            label="Tạo phiếu thu tương ứng kỳ thu"
+                        />
+                    </FormGroup>
 
-                    <Stack direction="row" spacing={2} style={{ paddingTop: 40 }}>
+                    <Stack direction="row" spacing={2} style={{ paddingTop: 20 }}>
                         <Button variant="contained" onClick={handleSubmit}>Thêm</Button>
                         <Button variant="contained" onClick={handleClose}>Huỷ bỏ</Button>
                     </Stack>

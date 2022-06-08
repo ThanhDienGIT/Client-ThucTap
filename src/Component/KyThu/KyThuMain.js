@@ -8,12 +8,32 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import KyThuEditModal from './KyThuEditModal';
 import KyThuAddModal from './KyThuAddModal';
+import Tooltip from '@mui/material/Tooltip';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 export default function KyThuMain() {
     const [rows, setRows] = React.useState([]);
     const [updateState, setUpdateState] = React.useState(true);
 
     const reRender = () => setUpdateState(!updateState);
+
+    const handleDelete = (id) => {
+        if (window.confirm('Xoá kỳ thu sẽ xoá theo các phiếu thu của kỳ thu tương ứng. Bạn có chắc chắn muốn xoá ?')) {
+            fetch("http://localhost:5199/api/kythu/" + id, {
+                method: 'DELETE',
+                header: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then((result) => {
+                    alert(result);
+                })
+            reRender();
+        }
+    }
 
     React.useEffect(() => {
         fetch("http://localhost:5199/api/kythu")
@@ -52,7 +72,13 @@ export default function KyThuMain() {
                                 <TableCell align="center">
                                     <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
                                 </TableCell>
-                                <TableCell align="center">Xoá</TableCell>
+                                <TableCell align="center">
+                                    <IconButton onClick={() => handleDelete(row.IDKyThu)}>
+                                        <Tooltip title="Xoá">
+                                            <DeleteIcon />
+                                        </Tooltip>
+                                    </IconButton>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
