@@ -7,7 +7,7 @@ import Home from './Component/Home/Home';
 import Statistical from './Component/Statistical/Statistical';
 // import PhieuThuMain from './Component/PhieuThu/PhieuThuMain';
 import KyThuMain from './Component/KyThu/KyThuMain';
-import Test from './Component/KyThu/Test';
+
 
 function App() {
 
@@ -20,7 +20,7 @@ function App() {
             <Route path='statistical' element={<Statistical />} />
             {/* <Route path='phieuthu' element={<PhieuThuMain />} /> */}
             <Route path='kythu' element={<KyThuMain />} />
-            <Route path='test' element={<Test />} />
+            
           </Route>
           
         </Routes>

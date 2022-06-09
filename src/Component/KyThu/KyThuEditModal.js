@@ -93,10 +93,9 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                         Sửa thông tin kỳ thu
                     </Typography>
                     <FormControl style={{ width: 200, paddingRight: 50 }}>
-                        <InputLabel id="demo-simple-select-label">Tháng</InputLabel>
+                        <InputLabel>Tháng</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
-                            id="demo-simple-select"
                             value={Thang}
                             label="Tháng"
                             onChange={handleThangChange}
@@ -116,10 +115,9 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                         </Select>
                     </FormControl>
                     <FormControl style={{ width: 200 }}>
-                        <InputLabel id="demo-simple-select-label">Năm</InputLabel>
+                        <InputLabel>Năm</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
-                            id="demo-simple-select"
                             value={Nam}
                             label="Năm"
                             onChange={handleNamChange}
