@@ -75,38 +75,38 @@ export default function CustomerFormView({ customer }) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography variant="h5" style={{ paddingBottom: 40 }}>
+                    <Stack direction="column" spacing={2} alignItems="flex-end">
+                        <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
+                    </Stack>
+                    <Typography variant="h4" style={{ paddingBottom: 20 }}>
                         Chi Tiết Thông Tin:
                     </Typography>
                     <Box sx={Info__style}>
-                        <Typography variant="h7" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Họ Tên: <Typography variant="h6">{customer.HoTenKH}</Typography>
+                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
+                            Họ Tên: <Typography variant="h5">{customer.HoTenKH}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Mã Số Khách Hàng: <Typography variant="h6">{customer.MaKhachHang}</Typography>
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Mã Số Khách Hàng: <Typography variant="h5">{customer.MaKhachHang}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Ngày Tạo: <Typography variant="h6">{getFormattedDate(NgayTao)}</Typography>
+                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
+                            Ngày Tạo: <Typography variant="h5">{getFormattedDate(NgayTao)}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Chỉnh Sửa Lần Cuối: <Typography variant="h6">{getFormattedDate(NgayChinhSua)}</Typography>
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Chỉnh Sửa Lần Cuối: <Typography variant="h5">{getFormattedDate(NgayChinhSua)}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Số CCCD: <Typography variant="h6">{customer.CCCD}</Typography>
+                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
+                            Số CCCD: <Typography variant="h5">{customer.CCCD}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Ngày Cấp CCCD: <Typography variant="h6">{getFormattedDate(NgayCap)}</Typography>
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Ngày Cấp CCCD: <Typography variant="h5">{getFormattedDate(NgayCap)}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Địa Chỉ: <Typography variant="h6">{customer.DiaChi}, {customer.TenQuanHuyen}, {customer.TenXaPhuong}</Typography>
+                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
+                            Địa Chỉ: <Typography variant="h5">{customer.DiaChi}, {customer.TenQuanHuyen}, {customer.TenXaPhuong}</Typography>
                         </Typography>
-                        <Typography variant="h7" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Loại Khách Hàng: <Typography variant="h6">{customer.TenLoai}</Typography>
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Loại Khách Hàng: <Typography variant="h5">{customer.TenLoai}</Typography>
                         </Typography>
                     </Box>
-                    <Stack direction="row" spacing={2} style={{ paddingTop: 40, marginLeft: 1050 }}>
-                        <Button variant="contained" onClick={handleClose}>Đóng</Button>
-                    </Stack>
                 </Box>
             </Modal>
         </div >

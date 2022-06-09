@@ -10,10 +10,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
-import { FlareSharp } from '@mui/icons-material';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-
+import Tooltip from '@mui/material/Tooltip';
+import EditIcon from '@mui/icons-material/Edit';
+import { SettingsApplicationsRounded } from '@mui/icons-material';
 
 const style = {
     position: 'absolute',
@@ -39,7 +38,7 @@ const Info__style = {
 const AddForm__style = {
     display: 'flex',
 };
-export default function CustomerFormAdd(customer) {
+export default function CustomerFormEdit({ customer }) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
@@ -68,18 +67,18 @@ export default function CustomerFormAdd(customer) {
     const [customerTypes, setCustomerTypes] = React.useState([]);
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/QuanHuyen`)
-            .then(res => {
-                const districts = res.data;
-                setDistricts(districts);
-            })
-    }, [])
-
-    React.useEffect(() => {
         axios.get(`http://localhost:5199/api/XaPhuong/`)
             .then(res => {
                 const wards = res.data;
                 setWards(wards);
+            })
+    }, [])
+
+    React.useEffect(() => {
+        axios.get(`http://localhost:5199/api/QuanHuyen`)
+            .then(res => {
+                const districts = res.data;
+                setDistricts(districts);
             })
     }, [])
 
@@ -89,6 +88,16 @@ export default function CustomerFormAdd(customer) {
                 const customerTypes = res.data;
                 setCustomerTypes(customerTypes);
             })
+    }, [])
+
+    React.useEffect(() => {
+        setName(customer.HoTenKH);
+        setCCCD(customer.CCCD);
+        setDayGrant(customer.NgayCap);
+        setAddress(customer.DiaChi);
+        setChosenDistrict(customer.IDQuanHuyen);
+        setChosenWard(customer.IDXaPhuong);
+        setChosenCustomerType(customer.IDLoaiKhachHang);
     }, [])
 
     const [open, setOpen] = React.useState(false);
@@ -132,7 +141,6 @@ export default function CustomerFormAdd(customer) {
             )
         }
     }
-
     function getFormattedDate(date) {
         var year = date.getFullYear();
 
@@ -143,25 +151,9 @@ export default function CustomerFormAdd(customer) {
         day = day.length > 1 ? day : '0' + day;
         return year + '-' + month + '-' + day;
     }
-
-    const Alert = React.forwardRef(function Alert(props, ref) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-    });
-
-    const [openAlert, setOpenAlert] = React.useState(false);
-
-    const handleClickAlert = () => {
-        setOpenAlert(true);
-    };
-
-    const handleCloseAlert = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpenAlert(false);
-    };
+    const DayGrantCustomer = new Date(customer.NgayCap)
     const handleSubmit = () => {
+
         const current = new Date();
         const date = getFormattedDate(current);
 
@@ -186,7 +178,7 @@ export default function CustomerFormAdd(customer) {
 
         if (DayGrant === "") {
             thongbao = thongbao + "\nNgày Cấp"
-        } else validDayGrant = true
+        } else validDayGrant = true      
 
         if (Address === "") {
             thongbao = thongbao + "\nĐịa Chỉ"
@@ -207,14 +199,25 @@ export default function CustomerFormAdd(customer) {
         if (CCCD.length !== 12) {
             thongbao = thongbao + "\nCCCD phải đúng 12 ký tự"
         } else validNumberCCCD = true
-
-        if (DayGrant > date) {
+        
+        if (DayGrant > date ) {
             thongbao = thongbao + "\nNgày Cấp Phải Trước Ngày Hiện tại"
         } else validNumberDayGrant = true
 
-        console.log("DayGrant" + DayGrant)
-        console.log("date" + date)
         if (validName && validCCCD && validNumberCCCD && validDayGrant && validAddress && validChosenDistrict && validChosenWard && validChosenCustomerType && validNumberDayGrant) {
+
+            const article = {
+                "hoTenKH": Name,
+                "DiaChi": Address,
+                "cccd": CCCD,
+                "ngayCap": DayGrant,
+                "idXaPhuong": chosenWard,
+                "idLoaiKhachHang": chosenCustomerType,
+                "maKhachHang": customer.MaKhachHang,
+                "ngayChinhSua": date,
+                "idKhachHang": customer.IDKhachHang
+            };
+            console.log(article)
             addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
         } else {
             alert(thongbao);
@@ -225,8 +228,8 @@ export default function CustomerFormAdd(customer) {
         //     if (CCCD === "") {
         //         alert('Hãy Điền Căn Cước Công Dân')
         //     } else {
-        //         if (CCCD.length != 12) {
-        //             alert('Hãy Điền Căn Cước Công Dân Đủ 12 ký tự')
+        //         if (CCCD.length != 12 ) {
+        //             alert('Hãy Điền Căn Cước Công Dân Đủ 12 ký tự');
         //         } else {
         //             if (DayGrant === "") {
         //                 alert('Hãy Điền Ngày Cấp CCCD')
@@ -245,6 +248,18 @@ export default function CustomerFormAdd(customer) {
         //                             } else {
         //                                 const current = new Date();
         //                                 const date = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
+        //                                 const article = {
+        //                                     "hoTenKH": Name,
+        //                                     "DiaChi": Address,
+        //                                     "cccd": CCCD,
+        //                                     "ngayCap": DayGrant,
+        //                                     "idXaPhuong": chosenWard,
+        //                                     "idLoaiKhachHang": chosenCustomerType,
+        //                                     "maKhachHang": customer.MaKhachHang,
+        //                                     "ngayChinhSua": date,
+        //                                     "idKhachHang": customer.IDKhachHang
+        //                                 };
+        //                                 console.log(article)
         //                                 addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
         //                             }
         //                         }
@@ -257,14 +272,16 @@ export default function CustomerFormAdd(customer) {
     };
     const addPosts = (Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date) => {
         client
-            .post('', {
+            .put('', {
                 "hoTenKH": Name,
                 "DiaChi": Address,
                 "cccd": CCCD,
                 "ngayCap": DayGrant,
                 "idXaPhuong": chosenWard,
                 "idLoaiKhachHang": chosenCustomerType,
-                "ngayTao": date,
+                "maKhachHang": customer.MaKhachHang,
+                "ngayChinhSua": date,
+                "idKhachHang": customer.IDKhachHang
             })
             .then((response) => {
                 setPosts([response.data, ...posts]);
@@ -273,9 +290,9 @@ export default function CustomerFormAdd(customer) {
             .catch((err) => {
                 if (err.response) {
                     // The client was given an error response (5xx, 4xx)
-                    console.log('err.response.data' + err.response.data);
-                    console.log('err.response.status' + err.response.status);
-                    console.log('err.response.headers' + err.response.headers);
+                    console.log(err.response.data);
+                    console.log(err.response.status);
+                    console.log(err.response.headers);
                 } else if (err.request) {
                     // The client never received a response, and the request was never left
                 } else {
@@ -289,11 +306,15 @@ export default function CustomerFormAdd(customer) {
         setChosenWard(0);
         setChosenCustomerType(0);
         setChosenDistrict(0);
+        handleClose();
     };
     return (
         <div>
-            <Stack direction="column" spacing={2} alignItems="flex-end" marginBottom={1}>
-                <Button variant="contained" onClick={handleOpen}>Thêm Khách Hàng</Button>
+            <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
+                <IconButton variant="text" color="primary">
+                    <Tooltip title="Chỉnh Sửa"><EditIcon />
+                    </Tooltip>
+                </IconButton>
             </Stack>
             <Modal
                 open={open}
@@ -307,7 +328,7 @@ export default function CustomerFormAdd(customer) {
                         <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
                     </Stack>
                     <Typography id="post-request-error-handling" variant="h5" style={{ paddingBottom: 40 }}>
-                        Thêm Khách Hàng Mới
+                        Chỉnh Sửa Thông Tin Khách Hàng
                     </Typography>
                     <Box sx={AddForm__style}>
                         <Box sx={Info__style}>
@@ -315,6 +336,7 @@ export default function CustomerFormAdd(customer) {
                                 required
                                 label="Họ và Tên"
                                 variant="outlined"
+                                defaultValue={customer.HoTenKH}
                                 onChange={handleInputName}
                             >
                             </TextField>
@@ -322,6 +344,8 @@ export default function CustomerFormAdd(customer) {
                                 required
                                 type="number"
                                 label="Số CCCD"
+                                defaultValue={customer.CCCD}
+                                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                                 variant="outlined"
                                 style={{ marginTop: '20px' }}
                                 onChange={handleInputCCCD}
@@ -331,7 +355,7 @@ export default function CustomerFormAdd(customer) {
                                 required
                                 type="date"
                                 label="Ngày Cấp CCCD" variant="outlined"
-                                defaultValue="2020-01-01"
+                                defaultValue={getFormattedDate(DayGrantCustomer)}
                                 style={{ marginTop: '20px' }}
                                 onChange={handleInputDayGrant}
                             >
@@ -339,6 +363,7 @@ export default function CustomerFormAdd(customer) {
                             <TextField
                                 required
                                 label="Địa Chỉ"
+                                defaultValue={customer.DiaChi}
                                 variant="outlined"
                                 style={{ marginTop: '20px' }}
                                 onChange={handleInputAddress}
@@ -397,7 +422,7 @@ export default function CustomerFormAdd(customer) {
                         </Box>
                     </Box>
                     <Stack direction="column" spacing={2} alignItems="flex-end">
-                        <Button variant="contained" onClick={handleSubmit}>Thêm Khách Hàng</Button>
+                        <Button variant="contained" onClick={handleSubmit}>Xác Nhận</Button>
                     </Stack>
                 </Box>
             </Modal>
