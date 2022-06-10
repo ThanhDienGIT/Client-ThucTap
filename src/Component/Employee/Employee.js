@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -12,7 +12,37 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SearchIcon from '@mui/icons-material/Search';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { styled } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
 
+// Table Style
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: 'var(--color3)',
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0,
+    },
+    }));
+
+// Modal Form Style (Form Thêm Nhân Viên, ...)
 const style = {
     position: 'absolute',
     top: '50%',
@@ -64,7 +94,7 @@ export default function Employee() {
         fetch('http://localhost:5199/api/nhanvien')
             .then(res => res.json())
             .then(data => setEmployees(data))
-    }, [])
+    }, []);
 
     return (
         /*
@@ -75,13 +105,46 @@ export default function Employee() {
         </div>
         */
         <div>
-            <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={handleOpen}
+            <Typography 
+                variant="h4" 
+                component="h1" 
+                color="initial" 
             >
-                Thêm Nhân Viên
-            </Button>
+                Quản Lý Nhân Viên
+            </Typography>
+            <Divider sx={{ marginBottom : 3 }}></Divider>
+            <Grid container spacing={12}>
+              <Grid item xs={8}>
+                <TextField 
+                    id="outlined-search" 
+                    label="Tìm kiếm" 
+                    type="search" 
+                    sx={{ width: '70%' }}
+                />
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    size="large" 
+                    onClick={handleOpen} 
+                    startIcon={<SearchIcon />}
+                    sx={{ margin: 0.5, marginLeft: 2 }}
+                >
+                    Tìm Kiếm
+                </Button>
+              </Grid>
+              <Grid item xs={4}>
+                <Button 
+                        variant="contained" 
+                        color="primary" 
+                        size="large" 
+                        startIcon={< AddCircleOutlineIcon />}
+                        onClick={handleOpen}
+                    >
+                    Thêm Nhân Viên
+                </Button>
+              </Grid>
+            </Grid>
+            
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -138,7 +201,7 @@ export default function Employee() {
             </Box>
             </Modal>
             <Typography 
-                variant="h4" 
+                variant="h5" 
                 component="h2" 
                 color="initial" 
                 sx={{ margin : 2 }}
@@ -146,45 +209,42 @@ export default function Employee() {
                 Danh Sách Nhân Viên
             </Typography>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table aria-label="customized table">
                     <TableHead>
-                        <TableRow>
-                            <TableCell>Mã Nhân Viên</TableCell>
-                            <TableCell align="center">Tên Nhân Viên</TableCell>
-                            <TableCell align="center">Email</TableCell>
-                            <TableCell align="center">Giới Tính</TableCell>
-                            <TableCell align="center">Số Điện Thoại</TableCell>
-                            <TableCell align="center">Ngày Sinh</TableCell>
-                            <TableCell align="center">Địa Chỉ</TableCell>
-                            <TableCell align="center">CCCD</TableCell>
-                            <TableCell align="center">Tài Khoản</TableCell>
-                            <TableCell align="center"></TableCell>
+                        <TableRow >
+                            <StyledTableCell>Mã Nhân Viên</StyledTableCell>
+                            <StyledTableCell align="center">Tên Nhân Viên</StyledTableCell>
+                            <StyledTableCell align="center">Chức vụ</StyledTableCell>
+                            <StyledTableCell align="center">Số Điện Thoại</StyledTableCell>
+                            <StyledTableCell align="center">Email</StyledTableCell>
+                            <StyledTableCell align="center">Giới Tính</StyledTableCell>
+                            <StyledTableCell align="center">Ngày Sinh</StyledTableCell>
+                            <StyledTableCell align="center"></StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {employees.map((employee) => (
-                            <TableRow
+                            <StyledTableRow
                                 key={employee.IDNhanVien}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row">
+                                <StyledTableCell component="th" scope="row">
                                     {employee.MaNhanVien}
-                                </TableCell>
-                                <TableCell align="left">{employee.HoTen}</TableCell>
-                                <TableCell align="left">{employee.Email}</TableCell>
-                                <TableCell align="left">{employee.GioiTinh}</TableCell>
-                                <TableCell align="right">{employee.SoDienThoai}</TableCell>
-                                <TableCell align="left">{new Date(employee.NgaySinh).toLocaleDateString()}</TableCell>
-                                <TableCell align="left">{employee.DiaChi}</TableCell>
-                                <TableCell align="right">{employee.CCCD}</TableCell>
-                                <TableCell align="left">{employee.TaiKhoan}</TableCell>
-                                <TableCell align="center">
+                                </StyledTableCell>
+                                <StyledTableCell align="left">{employee.HoTen}</StyledTableCell>
+                                <StyledTableCell align="left"></StyledTableCell>
+                                <StyledTableCell align="right">{employee.SoDienThoai}</StyledTableCell>
+                                <StyledTableCell align="left">{employee.Email}</StyledTableCell>
+                                <StyledTableCell align="left">{employee.GioiTinh}</StyledTableCell>
+                                <StyledTableCell align="left">{new Date(employee.NgaySinh).toLocaleDateString()}</StyledTableCell>
+                                <StyledTableCell align="center">
                                     <ButtonGroup variant="text" color="primary" aria-label="">
-                                        <Button variant="text" color="primary">Sửa</Button>
-                                        <Button variant="text" color="primary">Xóa</Button>
+                                        <Button variant="text" color="primary" startIcon={< VisibilityIcon />} sx={{ paddingLeft: 2.5}}></Button>
+                                        <Button variant="text" color="primary" startIcon={< EditIcon />} sx={{ paddingLeft: 2.5}}></Button>
+                                        <Button variant="text" color="primary" startIcon={< DeleteOutlineIcon />} sx={{ paddingLeft: 2.5}}></Button>
                                     </ButtonGroup>
-                                </TableCell>
-                            </TableRow>
+                                </StyledTableCell>
+                            </StyledTableRow>
                         ))}
                     </TableBody>
                 </Table>
