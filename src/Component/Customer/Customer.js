@@ -58,7 +58,7 @@ function Customer() {
         setPage(newPage);
     };
 
-    const [reset, setReset] = React.useState(false)
+    const [resetPage, setResetPage] = React.useState(true)
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
@@ -92,6 +92,10 @@ function Customer() {
             </TableRow>
         );
     }
+    const handleResetPage = function () {
+        setResetPage(!resetPage)
+        console.log(resetPage)
+    }
     const showCustomerByField = function (customer) {
         switch(searchField){
             case 1:{
@@ -100,6 +104,7 @@ function Customer() {
                         showCustomer(customer)
                     );
                 }
+                break;
             }
             case 2:{
                 if (customer.MaKhachHang.includes(searchInput)) {
@@ -107,6 +112,7 @@ function Customer() {
                         showCustomer(customer)
                     );
                 }
+                break;
             }
             case 3:{
                 if (customer.DiaChi.includes(searchInput)) {
@@ -114,6 +120,7 @@ function Customer() {
                         showCustomer(customer)
                     );
                 }
+                break;
             }
             case 4:{
                 if (customer.TenXaPhuong.includes(searchInput)) {
@@ -121,6 +128,7 @@ function Customer() {
                         showCustomer(customer)
                     );
                 }
+                break;
             }
             case 5:{
                 if (customer.TenQuanHuyen.includes(searchInput)) {
@@ -128,8 +136,8 @@ function Customer() {
                         showCustomer(customer)
                     );
                 }
+                break;
             }
-
         }   
     }
 
@@ -139,7 +147,7 @@ function Customer() {
                 const Customers = res.data;
                 setCustomer(Customers);
             })
-    }, [])
+    }, [resetPage, statusCustomer])
 
     const handleChangeSearchInput = (event) => {
         setSearchInput(event.target.value)
@@ -245,7 +253,7 @@ function Customer() {
                                             <CustomerFormView customer={customer}></CustomerFormView>
                                         </TableCell>
                                         <TableCell align='left' width={1} >
-                                            <CustomerFormEdit customer={customer}></CustomerFormEdit>
+                                            <CustomerFormEdit customer={customer} handleResetPage={handleResetPage}></CustomerFormEdit>
                                         </TableCell>
                                         <TableCell align='left' width={1}>
                                             <CustomerFormDelete customer={customer}></CustomerFormDelete>

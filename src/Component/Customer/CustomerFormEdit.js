@@ -38,7 +38,7 @@ const Info__style = {
 const AddForm__style = {
     display: 'flex',
 };
-export default function CustomerFormEdit({ customer }) {
+export default function CustomerFormEdit({ customer, handleResetPage}) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
@@ -98,7 +98,7 @@ export default function CustomerFormEdit({ customer }) {
         setChosenDistrict(customer.IDQuanHuyen);
         setChosenWard(customer.IDXaPhuong);
         setChosenCustomerType(customer.IDLoaiKhachHang);
-    }, [])
+    }, [customer.HoTenKH, customer.CCCD, customer.NgayCap, customer.DiaChi, customer.IDQuanHuyen, customer.IDXaPhuong, customer.IDLoaiKhachHang])
 
     const [open, setOpen] = React.useState(false);
 
@@ -305,8 +305,10 @@ export default function CustomerFormEdit({ customer }) {
         setDayGrant('');
         setChosenWard(0);
         setChosenCustomerType(0);
-        setChosenDistrict(0);
+        setChosenDistrict(0);  
+        handleResetPage();     
         handleClose();
+        
     };
     return (
         <div>
