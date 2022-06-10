@@ -5,6 +5,8 @@ import Client from './Component/Client'
 import Home from './Component/Home/Home';
 import Admin from './Component/Admin/Admin';
 import Statistical from './Component/Statistical/Statistical';
+import Receipt from './Component/Receipt/Receipt';
+import Search from './Component/Search/Search';
 
 
 function App() {
@@ -18,7 +20,8 @@ function App() {
             <Route path='admin' element={<Admin />} />
             <Route path='statistical' element={<Statistical />} />
             <Route path='staff' element={<Statistical />} />
-          
+            <Route path='/home/receipt' element={<Receipt />} />
+            <Route path='/home/search' element={<Search />} />
           </Route>
         </Routes>
       </React.Fragment>
