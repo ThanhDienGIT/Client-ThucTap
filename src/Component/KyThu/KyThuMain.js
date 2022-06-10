@@ -92,6 +92,7 @@ export default function KyThuMain() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [updateState, setUpdateState] = React.useState(true);
+    const [yearsList, setYearsList] = React.useState([]);
     const [searchMonth, setSearchMonth] = React.useState(-1);
     const [searchYear, setSearchYear] = React.useState(-1);
 
@@ -142,8 +143,17 @@ export default function KyThuMain() {
             },
                 (error) => {
                     alert('Failed');
-                })
+                });
     }, [updateState, searchMonth, searchYear])
+
+    React.useEffect(() => {
+        fetch("http://localhost:5199/api/kythu/years")
+            .then(response => response.json())
+            .then(function (years) {
+                setYearsList(years);
+                setSearchYear(-1);
+            })
+    }, [updateState])
 
     return (
         <>
@@ -169,6 +179,7 @@ export default function KyThuMain() {
                 <KyThuFilter
                     month={searchMonth}
                     year={searchYear}
+                    years={yearsList}
                     changeMonth={handleChangeMonth}
                     changeYear={handleChangeYear}
                 />

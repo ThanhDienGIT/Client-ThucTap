@@ -1,24 +1,12 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 
-export default function KyThuFilter({ month, year, changeMonth, changeYear }) {
-    const [years, setYears] = React.useState([]);
-
-    React.useEffect(() => {
-        fetch("http://localhost:5199/api/kythu/years")
-            .then(response => response.json())
-            .then(function (years) {
-                setYears(years);
-            })
-    },[])
-
-    console.log(years);
+export default function KyThuFilter({ month, year, years, changeMonth, changeYear }) {
 
     return (
         <Box sx={{ minWidth: 120 }}>
@@ -62,7 +50,6 @@ export default function KyThuFilter({ month, year, changeMonth, changeYear }) {
                         <MenuItem key="allYears" value={-1}>All</MenuItem>
                     </Select>
                 </FormControl>
-                {/* <Button variant="contained" style={{ height: 56 }} onClick={onClick} >Tìm kiếm</Button> */}
             </Stack>
         </Box>
     );
