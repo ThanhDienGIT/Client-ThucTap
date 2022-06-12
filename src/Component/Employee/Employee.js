@@ -13,13 +13,20 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import { FormControl, FormControlLabel, FormLabel } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useNavigate } from "react-router-dom";
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -55,40 +62,142 @@ const style = {
     p: 4,
   };
 
+function validateEmail(email){
+    var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return EMAIL_REGEX.test(email);
+}
+
+
 export default function Employee() {
     const [employees, setEmployees] = React.useState([]);
-
+    //Navigate
+    let navigate = useNavigate();
     //Modal const
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     //Add Employee Form
-    const [manhanvien, setMaNhanVien] = React.useState('');
+    const [email, setEmail] = React.useState('');
     const [tennhanvien, setTenNhanVien] = React.useState('');
+    const [sdt, setSdt] = React.useState('');
+    const [diachi, setDiaChi] = React.useState('');
+    const [cccd, setCCCD] = React.useState('');
+    var [ngaysinh, setNgaySinh] = React.useState(null);
+    const [gioiTinh, setGioiTinh] = React.useState('Nam');
 
-    const [manhanvienError, setMaNhanVienError] = React.useState(false);
+    const [emailError, setEmailError] = React.useState(false);
     const [tennhanvienError, setTenNhanVienError] = React.useState(false);
+    const [sdtError, setSdtError] = React.useState(false);
+    const [diachiError, setDiaChiError] = React.useState(false);
+    const [cccdError, setCCCDError] = React.useState(false);
+
+    const handleSearch = (e) => {
+
+    }
+
+
+    function deleteEmp(id) {
+        //console.log('http://localhost:5199/api/nhanvien/' + id);
+        fetch('http://localhost:5199/api/nhanvien/' + id, {
+            method: 'DELETE'
+        }).then(() =>{
+            navigate(0);
+        })
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setMaNhanVienError(false);
+        setEmailError(false);
         setTenNhanVienError(false);
+        setSdtError(false);
+        setDiaChiError(false);
+        setCCCDError(false);
 
-        if(manhanvien === '') {
-            setMaNhanVienError(true);
+        if(email === '' || !validateEmail(email)) {
+            setEmailError(true);
         }
 
         if(tennhanvien === '') {
             setTenNhanVienError(true);
         }
 
-        if(manhanvien && tennhanvien) {
-            setOpen(false);
-            console.log(manhanvien, tennhanvien);
+        if(sdt === '') {
+            setSdtError(true);
         }
-    }
+
+        if(diachi === '') {
+            setDiaChiError(true);
+        }
+
+        if(cccd === '') {
+            setCCCDError(true);
+        }
+
+        if(ngaysinh == null) {
+            setNgaySinh('');
+        }
+
+        const today = new Date().getFullYear();
+        if(ngaysinh){
+            console.log(today - ngaysinh.getFullYear());
+            if(ngaysinh!=null && (today - ngaysinh.getFullYear() < 18)){
+                setNgaySinh('');
+            }
+        }
+        
+        if(email && tennhanvien && sdt && diachi && cccd && ngaysinh!=null && !(today - ngaysinh.getFullYear() < 18) && validateEmail(email)) {
+            setOpen(false);
+            ngaysinh = ngaysinh.toLocaleDateString();
+            //create new MaNhanVien
+            var lastMaNhanVien = employees[employees.length-1].MaNhanVien;
+            var newMaNhanVien = parseInt(lastMaNhanVien.substring(2));
+            newMaNhanVien = newMaNhanVien+1;
+            newMaNhanVien = newMaNhanVien.toString().padStart(4, '0');
+            newMaNhanVien = 'NV' + newMaNhanVien;
+            //create taikhoan
+            var taikhoan = email.substring(0, email.lastIndexOf('@'));
+            //hash default Matkhau
+            var md5 = require('md5');
+            var matkhau = md5('shizen123');
+            //default profile picture
+            var profilePicture = 'anonymous.png';
+            console.log(JSON.stringify({
+                MaNhanVien: newMaNhanVien,
+                HoTen: tennhanvien,
+                Email: email,
+                GioiTinh: gioiTinh,
+                SoDienThoai: sdt,
+                NgaySinh: ngaysinh,
+                DiaChi: diachi,
+                CCCD: cccd,
+                ProfilePicture: profilePicture,
+                TaiKhoan: taikhoan,
+                MatKhau: matkhau
+                }) );
+            
+            fetch('http://localhost:5199/api/nhanvien',{
+                method: 'POST',
+                headers: {"Content-type": "application/json"},
+                body: JSON.stringify({
+                   MaNhanVien: newMaNhanVien,
+                    HoTen: tennhanvien,
+                    Email: email,
+                    GioiTinh: gioiTinh,
+                    SoDienThoai: sdt,
+                    NgaySinh: ngaysinh,
+                    DiaChi: diachi,
+                    CCCD: cccd,
+                    ProfilePicture: profilePicture,
+                    TaiKhoan: taikhoan,
+                    MatKhau: matkhau
+                })
+            });
+            setNgaySinh(null);
+            window.location.reload(); 
+        }
+    };
 
     React.useEffect( () => {
         fetch('http://localhost:5199/api/nhanvien')
@@ -125,7 +234,7 @@ export default function Employee() {
                     variant="contained" 
                     color="primary" 
                     size="large" 
-                    onClick={handleOpen} 
+                    onClick={handleSearch} 
                     startIcon={<SearchIcon />}
                     sx={{ margin: 0.5, marginLeft: 2 }}
                 >
@@ -166,15 +275,6 @@ export default function Employee() {
                         onSubmit={handleSubmit}
                     >
                         <TextField
-                            onChange={(e) => setMaNhanVien(e.target.value)}
-                            label="Mã Nhân Viên" 
-                            variant="outlined" 
-                            display="block"
-                            fullWidth 
-                            required 
-                            error={manhanvienError}
-                        />
-                        <TextField
                             onChange={(e) => setTenNhanVien(e.target.value)}
                             label="Tên Nhân Viên"
                             variant="outlined"
@@ -182,6 +282,74 @@ export default function Employee() {
                             required 
                             error={tennhanvienError}
                         />
+                        <TextField
+                            onChange={(e) => setEmail(e.target.value)}
+                            label="Email" 
+                            variant="outlined" 
+                            display="block"
+                            fullWidth 
+                            required 
+                            error={emailError}
+                        />
+                        <TextField
+                            onChange={(e) => setSdt(e.target.value)}
+                            label="Số Điện Thoại" 
+                            variant="outlined" 
+                            display="block"
+                            fullWidth 
+                            required 
+                            error={sdtError}
+                        />
+                        <TextField
+                            onChange={(e) => setDiaChi(e.target.value)}
+                            label="Địa Chỉ" 
+                            variant="outlined" 
+                            display="block"
+                            fullWidth 
+                            required 
+                            error={diachiError}
+                        />
+                        <TextField
+                            onChange={(e) => setCCCD(e.target.value)}
+                            label="Căn Cước Công Dân" 
+                            variant="outlined" 
+                            display="block"
+                            fullWidth 
+                            required 
+                            error={cccdError}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Ngày Sinh"
+                                value={ngaysinh} 
+
+                                onChange={(newNgaySinh) => {
+                                    setNgaySinh(newNgaySinh);
+                                }}
+                                renderInput={(params) => 
+                                    <TextField 
+                                        fullWidth 
+                                        required 
+                                        {...params} 
+                                    />}
+                            />
+                        </LocalizationProvider>
+                        <FormControl sx={{display: 'block'}}>
+                            <FormLabel>Giới Tính</FormLabel>
+                            <RadioGroup value={gioiTinh} onChange={(e) => setGioiTinh(e.target.value)}>
+                                <Grid container spacing={2}>
+                                <Grid item>
+                                    <FormControlLabel value="Nam" control={<Radio></Radio>} label="Nam"/>
+                                </Grid>
+                                <Grid item>
+                                <FormControlLabel value="Nữ" control={<Radio></Radio>} label="Nữ"/>
+                                </Grid>
+                                </Grid>
+                            </RadioGroup>
+                        </FormControl>
+                        
+                        
+
                         <Button 
                             type="submit" 
                             variant="contained" 
@@ -241,7 +409,7 @@ export default function Employee() {
                                     <ButtonGroup variant="text" color="primary" aria-label="">
                                         <Button variant="text" color="primary" startIcon={< VisibilityIcon />} sx={{ paddingLeft: 2.5}}></Button>
                                         <Button variant="text" color="primary" startIcon={< EditIcon />} sx={{ paddingLeft: 2.5}}></Button>
-                                        <Button variant="text" color="primary" startIcon={< DeleteOutlineIcon />} sx={{ paddingLeft: 2.5}}></Button>
+                                        <Button onClick={(e) => deleteEmp(employee.IDNhanVien)} variant="text" color="primary" startIcon={< DeleteForeverIcon />} sx={{ paddingLeft: 2.5}}></Button>
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>
