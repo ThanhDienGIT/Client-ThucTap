@@ -61,6 +61,32 @@ const QuyenChung = [
             }
         ]
     },
+    {
+        // Báo cáo thống kê
+        id:5,
+        icon : 'fi fi-rr-chart-pie',
+        title : "QUẢN LÝ PHIẾU THU",
+        // Chức năng
+        child : [
+            {
+                title : 'Danh sách phiếu thu',
+                path :'/home/receipt'
+            }
+        ]
+    },
+    {
+        // Báo cáo thống kê
+        id:6,
+        icon : 'fi fi-rr-chart-pie',
+        title : "SEARCH",
+        // Chức năng
+        child : [
+            {
+                title : 'Search',
+                path :'/home/search'
+            }
+        ]
+    },
 
 ]
 
