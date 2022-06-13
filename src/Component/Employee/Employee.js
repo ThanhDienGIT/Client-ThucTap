@@ -27,6 +27,9 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useNavigate } from "react-router-dom";
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -76,7 +79,6 @@ export default function Employee() {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
     //Add Employee Form
     const [email, setEmail] = React.useState('');
     const [tennhanvien, setTenNhanVien] = React.useState('');
@@ -91,6 +93,9 @@ export default function Employee() {
     const [sdtError, setSdtError] = React.useState(false);
     const [diachiError, setDiaChiError] = React.useState(false);
     const [cccdError, setCCCDError] = React.useState(false);
+    //Search Bar
+    const [searchCategory, setSearchCategory] = React.useState('');
+    const [searchTerm, setSearchTerm] = React.useState('');
 
     const handleSearch = (e) => {
 
@@ -222,36 +227,49 @@ export default function Employee() {
                 Quản Lý Nhân Viên
             </Typography>
             <Divider sx={{ marginBottom : 3 }}></Divider>
-            <Grid container spacing={12}>
-              <Grid item xs={8}>
-                <TextField 
-                    id="outlined-search" 
-                    label="Tìm kiếm" 
-                    type="search" 
-                    sx={{ width: '70%' }}
-                />
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    size="large" 
-                    onClick={handleSearch} 
-                    startIcon={<SearchIcon />}
-                    sx={{ margin: 0.5, marginLeft: 2 }}
-                >
-                    Tìm Kiếm
-                </Button>
-              </Grid>
-              <Grid item xs={4}>
-                <Button 
-                        variant="contained" 
-                        color="primary" 
-                        size="large" 
-                        startIcon={< AddCircleOutlineIcon />}
-                        onClick={handleOpen}
-                    >
-                    Thêm Nhân Viên
-                </Button>
-              </Grid>
+            <Grid container spacing={2}>
+                <Grid item xs={2}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Danh Mục</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={'HoTen'}
+                            label="Danh Mục"
+                            onChange={(event) => {
+                                setSearchCategory(event.target.value)
+                            }}
+                        >
+                            <MenuItem value={'HoTen'}>Họ Tên</MenuItem>
+                            <MenuItem value={'MaNhanVien'}>Mã Nhân Viên</MenuItem>
+                            <MenuItem value={'Email'}>Email</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                
+                <Grid item xs={7}>
+                    <TextField 
+                        id="outlined-search" 
+                        label="Tìm kiếm" 
+                        type="search" 
+                        onChange={(event) => {
+                            setSearchTerm(event.target.value);
+                        }} 
+                        EndIco
+                        sx={{ width: '70%' }}
+                    />
+                </Grid>
+                <Grid item xs={3}>
+                    <Button 
+                            variant="contained" 
+                            color="primary" 
+                            size="large" 
+                            startIcon={< AddCircleOutlineIcon />}
+                            onClick={handleOpen}
+                        >
+                        Thêm Nhân Viên
+                    </Button>
+                </Grid>
             </Grid>
             
             <Modal
@@ -391,7 +409,20 @@ export default function Employee() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {employees.map((employee) => (
+                        {employees.filter((val) => {
+                            if (searchTerm == '') {
+                                return val;
+                            }else
+                            if (searchCategory === 'HoTen' &&  val.HoTen.toLowerCase().includes(searchTerm.toLowerCase())){
+                                return val;
+                            }else
+                            if (searchCategory === 'MaNhanVien' &&  val.MaNhanVien.toLowerCase().includes(searchTerm.toLowerCase())){
+                                return val;
+                            }else
+                            if (searchCategory === 'Email' &&  val.Email.toLowerCase().includes(searchTerm.toLowerCase())){
+                                return val;
+                            }
+                        }).map((employee) => (
                             <StyledTableRow
                                 key={employee.IDNhanVien}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -404,7 +435,7 @@ export default function Employee() {
                                 <StyledTableCell align="right">{employee.SoDienThoai}</StyledTableCell>
                                 <StyledTableCell align="left">{employee.Email}</StyledTableCell>
                                 <StyledTableCell align="left">{employee.GioiTinh}</StyledTableCell>
-                                <StyledTableCell align="left">{new Date(employee.NgaySinh).toLocaleDateString()}</StyledTableCell>
+                                <StyledTableCell align="right">{new Date(employee.NgaySinh).toLocaleDateString()}</StyledTableCell>
                                 <StyledTableCell align="center">
                                     <ButtonGroup variant="text" color="primary" aria-label="">
                                         <Button variant="text" color="primary" startIcon={< VisibilityIcon />} sx={{ paddingLeft: 2.5}}></Button>
