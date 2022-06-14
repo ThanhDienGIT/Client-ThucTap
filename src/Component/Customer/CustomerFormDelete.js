@@ -27,10 +27,10 @@ const style = {
     p: 4,
 };
 
-export default function CustomerFormDelete({ customer }) {
+export default function CustomerFormDelete({ customer, handleResetPage }) {
 
     const client = axios.create({
-        baseURL: "http://localhost:5199/api/KhachHang/"+customer.IDKhachHang
+        baseURL: "http://localhost:5199/api/KhachHang/" + customer.IDKhachHang
     });
 
     const [posts, setPosts] = React.useState([]);
@@ -63,6 +63,7 @@ export default function CustomerFormDelete({ customer }) {
                     // Anything else
                 }
             });
+        handleResetPage();
         handleClose();
     };
 

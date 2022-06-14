@@ -307,8 +307,7 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
         setChosenCustomerType(0);
         setChosenDistrict(0);  
         handleResetPage();     
-        handleClose();
-        
+        handleClose();   
     };
     return (
         <div>

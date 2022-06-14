@@ -20,7 +20,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-
+import Grid from '@mui/material/Grid';
+import { fontSize } from '@mui/system';
 
 const style = {
 
@@ -78,34 +79,41 @@ export default function CustomerFormView({ customer }) {
                     <Stack direction="column" spacing={2} alignItems="flex-end">
                         <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
                     </Stack>
-                    <Typography variant="h4" style={{ paddingBottom: 20 }}>
-                        Chi Tiết Thông Tin:
-                    </Typography>
                     <Box sx={Info__style}>
-                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Họ Tên: <Typography variant="h5">{customer.HoTenKH}</Typography>
-                        </Typography>
-                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Mã Số Khách Hàng: <Typography variant="h5">{customer.MaKhachHang}</Typography>
+                        <Typography variant="h4" style={{ width: 1200, paddingBottom: 40}}>
+                            Chi Tiết Khách Hàng
                         </Typography>
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Ngày Tạo: <Typography variant="h5">{getFormattedDate(NgayTao)}</Typography>
+                            Họ Tên: <Typography variant="inherit">{customer.HoTenKH}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Chỉnh Sửa Lần Cuối: <Typography variant="h5">{getFormattedDate(NgayChinhSua)}</Typography>
+                            Mã Số Khách Hàng: <Typography variant="inherit">{customer.MaKhachHang}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Số CCCD: <Typography variant="h5">{customer.CCCD}</Typography>
+                            Ngày Tạo: <Typography variant="inherit">{getFormattedDate(NgayTao)}</Typography>
+                        </Typography>
+                        {getFormattedDate(NgayChinhSua) != '01/01/1970' ?
+                            <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                                Chỉnh Sửa Lần Cuối: <Typography variant="inherit">{getFormattedDate(NgayChinhSua)}</Typography>
+                            </Typography>
+                            :
+                            <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                                Chỉnh Sửa Lần Cuối: <Typography variant="inherit">Chưa được chỉnh sửa</Typography>
+                            </Typography>
+                        }
+
+                        <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
+                            Số CCCD: <Typography variant="inherit">{customer.CCCD}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Ngày Cấp CCCD: <Typography variant="h5">{getFormattedDate(NgayCap)}</Typography>
+                            Ngày Cấp CCCD: <Typography variant="inherit">{getFormattedDate(NgayCap)}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Địa Chỉ: <Typography variant="h5">{customer.DiaChi}, {customer.TenQuanHuyen}, {customer.TenXaPhuong}</Typography>
+                            Địa Chỉ: <Typography variant="inherit">{customer.DiaChi}, {customer.TenQuanHuyen}, {customer.TenXaPhuong}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
-                            Loại Khách Hàng: <Typography variant="h5">{customer.TenLoai}</Typography>
-                        </Typography>
+                            Loại Khách Hàng: <Typography variant="inherit">{customer.TenLoai}</Typography>
+                        </Typography>                       
                     </Box>
                 </Box>
             </Modal>
