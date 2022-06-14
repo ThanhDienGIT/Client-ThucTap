@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState ,useContext} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -20,8 +21,13 @@ import '../../CSS/home.css'
 import { QuyenChung } from './HomeMenuData'
 import logo from '../../image/Logo.jpg';
 import { Link, Outlet } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import HomeHeader from './HomeHeader';
+import { GetCookie , cookie , BreakCookie} from '../Cookie/CookieFunc';
+import { LoginContext } from '../LoginContext/LoginContext';
+import axios from 'axios';
 function Home() {
-
+ 
   // Chiều dài của menu
   const drawerWidth = 260;
   // đặt lại nội dung sau khi mở
@@ -71,9 +77,7 @@ function Home() {
     justifyContent: 'flex-end',
   }));
 
-
-
-  const theme = useTheme();
+    // UseState dùng để đóng mở form
   const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
@@ -83,20 +87,102 @@ function Home() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const theme = useTheme();
+
+  const [mountBox , setMountBox] = useState(false);
 
 
-  const [open1, setOpen1] = React.useState(false);
+    const [infostaff,setInfostaff] = useState([{
+      CCCD: "092300003871",
+      DiaChi: "Xuân Khánh ,Ninh Kiều, Cần Thơ",
+      Email: "vanba1992@gmail.com",
+      GioiTinh: "Nam",
+      HoTen: "Nguyễn Văn Ba",
+      IDNhanVien: 1,
+      MaNhanVien: "NV0001",
+      MatKhau: "123456",
+      NgaySinh: "1992-04-24T00:00:00",
+      SoDienThoai: "0917562368",
+      TaiKhoan: "nvba0001",
+    }])
 
+    const [mastership , setMastership] = useState([{
+      IDNhanVien: 0,
+      IDQuyen: 0
+    }])
+    // Xử lý logic
 
+    GetCookie(document.cookie);
+    const ArrayMasterShip = [];
+    const ArrayMapMasterShip = [
+      {id:4,
+      icon : 'fi fi-rr-layout-fluid',
+      title : "TRANG CHÍNH",
+      // Chức năng
+      child : [
+          {
+              title : 'Thống kê',
+              path :'/home/statistical'
+          },
+          {
+              title : 'Xem phiếu thu',
+              path :''
+          },     
+      ]}];
+    mastership.map(element => {
+      ArrayMasterShip.push(element.IDQuyen);
+    })
+    if(ArrayMasterShip.length===0){
+      BreakCookie(cookie)
+      alert("Nhân viên không có quyền")
+      window.location.reload();
+    }
 
+   
 
+    
+    for(let i=0;i<QuyenChung.length;i++){
+        for(let j=0;j<ArrayMasterShip.length;j++){
+            if(QuyenChung[i].id === ArrayMasterShip[j]){
+              ArrayMapMasterShip.push(QuyenChung[i]);
+            }
+        }
+    }
 
+  
+    React.useEffect(()=> {
+        axios.get(`http://localhost:5199/api/Login/getinfobyID/${cookie}`) 
+          .then(res=>res.data)
+          .then(res=>
+            {
+              setInfostaff(res);
+              axios.get(`http://localhost:5199/api/Login/getmastership/${cookie}`) 
+              .then(res=>res.data)
+              .then(res=> setMastership(res)) 
+            })
+    },[cookie])
+    
+    
+    
+    
+    
 
+    
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar >
+       {/* Header */}
+        <Toolbar  
+          sx= {
+            {
+              display : 'flex',
+              justifyContent : 'space-between',
+              alignItems : 'center',
+              backgroundColor : 'var(--color3)'
+            }
+          }
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -107,9 +193,57 @@ function Home() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Công ty môi trường đô thị SHIZEN
+            Công ty môi trường SHIZEN
           </Typography>
+          {/* Avatar */}
+       <div style={{display:'flex'}}>
 
+         
+         
+          {/* Avatar nhân viên */}
+       <Avatar alt="Remy Sharp" src="https://hinhnen123.com/wp-content/uploads/2021/06/avatar.jpg" 
+       sx= {
+         {
+           border : "1px outset white"
+         }
+       }
+       />
+ {/* Tên nhân viên */}
+        <Typography variant="p" noWrap component="div" 
+        sx = {{
+          marginLeft : 2,
+          display : "flex",
+          justifyContent : 'center',
+          alignItems : 'center',
+         
+        }}
+      >
+          {infostaff[0].HoTen}
+      </Typography>
+          
+            <Box 
+            sx= {
+              {
+                width: 'auto',
+                height: 'auto',   
+                position : 'relative',
+              }
+            }
+            >
+                <IconButton onClick={()=> {setMountBox(!mountBox)}}
+                sx={{marginLeft:2}}
+                >
+                  <MenuIcon 
+                  sx={{color:'white'}}
+                  /> 
+                </IconButton>
+                
+              {mountBox && <HomeHeader/> }  
+
+            </Box>
+            
+        </div>
+          
         </Toolbar>
       </AppBar>
       <Drawer
@@ -125,8 +259,6 @@ function Home() {
         variant="persistent"
         anchor="left"
         open={open}
-
-
       >
 
         <DrawerHeader
@@ -136,7 +268,7 @@ function Home() {
             paddingLeft: '35px',
             paddingRight: '10px'
           }}>
-          <img src={logo} href='Logo' style={{ width: '50px' }} />
+          <img src={logo} alt='Logo' style={{ width: '50px' }} />
 
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -144,7 +276,7 @@ function Home() {
         </DrawerHeader>
         <Divider />
         {
-          QuyenChung.map(item => (
+          ArrayMapMasterShip.map(item => (
             // List
             <List
               sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
@@ -182,11 +314,10 @@ function Home() {
 
           ))
         }
-
       </Drawer>
       {/* Content */}
 
-      <Main open={open}>
+      <Main open={open} >
         <DrawerHeader />
         <Outlet />
       </Main>

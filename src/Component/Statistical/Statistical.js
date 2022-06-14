@@ -2,7 +2,7 @@ import React from 'react'
 
 function Statistical() {
   return (
-    <div>Statistical Vinh git</div>
+    <div>Trang thống kê</div>
   )
 }
 
