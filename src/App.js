@@ -5,12 +5,16 @@ import Client from './Component/Client'
 import Home from './Component/Home/Home';
 import Statistical from './Component/Statistical/Statistical';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Customer from './Component/Customer/Customer';
 =======
 // import PhieuThuMain from './Component/PhieuThu/PhieuThuMain';
 import KyThuMain from './Component/KyThu/KyThuMain';
 >>>>>>> QuangMinh
 
+=======
+import Receipt from './Component/Receipt/Receipt';
+>>>>>>> 8d8820c707706ea06b87c39c0666b067195bce23
 
 function App() {
 
@@ -26,6 +30,7 @@ function App() {
             <Route path='statistical' element={<Statistical />} />
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
           
@@ -35,6 +40,10 @@ function App() {
 >>>>>>> Vinh
 =======
 >>>>>>> QuangMinh
+=======
+            <Route path='staff' element={<Statistical />} />
+            <Route path='/home/receipt' element={<Receipt />} />
+>>>>>>> 8d8820c707706ea06b87c39c0666b067195bce23
           </Route>
           <Route path='*' element={<Client />} />
 =======
