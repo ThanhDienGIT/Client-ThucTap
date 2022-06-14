@@ -26,11 +26,7 @@ const QuyenChung = [
         child : [
             {
                 title : 'Danh sách nhân viên',
-<<<<<<< HEAD
-                path :''
-=======
                 path :'/home/employee'
->>>>>>> 3c9cc93948b887242e3495bf81b7ad741928db8a
             },
             {
                 title : 'Danh sách khách hàng',
@@ -38,7 +34,7 @@ const QuyenChung = [
             },
             {
                 title : 'Quản lý Kỳ thu',
-                path :'kythu'
+                path :'/home/kythu'
             },
         ]
     },

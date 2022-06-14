@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState ,useContext} from 'react';
+import { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -24,7 +24,7 @@ import { Link, Outlet } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import HomeHeader from './HomeHeader';
 import { GetCookie , cookie , BreakCookie} from '../Cookie/CookieFunc';
-import { LoginContext } from '../LoginContext/LoginContext';
+
 import axios from 'axios';
 function Home() {
  
@@ -131,16 +131,17 @@ function Home() {
       ]}];
     mastership.map(element => {
       ArrayMasterShip.push(element.IDQuyen);
+      return element;
     })
+
+
     if(ArrayMasterShip.length===0){
       BreakCookie(cookie)
       alert("Nhân viên không có quyền")
       window.location.reload();
     }
 
-   
-
-    
+  
     for(let i=0;i<QuyenChung.length;i++){
         for(let j=0;j<ArrayMasterShip.length;j++){
             if(QuyenChung[i].id === ArrayMasterShip[j]){
@@ -160,7 +161,7 @@ function Home() {
               .then(res=>res.data)
               .then(res=> setMastership(res)) 
             })
-    },[cookie])
+    },[])
     
     
     
