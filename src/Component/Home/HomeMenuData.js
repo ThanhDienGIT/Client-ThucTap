@@ -30,7 +30,7 @@ const QuyenChung = [
             },
             {
                 title : 'Danh sách khách hàng',
-                path :''
+                path :'/home/customer'
             },
         ]
     },
