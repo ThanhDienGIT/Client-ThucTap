@@ -1,16 +1,12 @@
 import React from 'react'
-import ReceiptList from './ReceiptList';
-import ReceiptAddModal from './ReceiptAddModal';
+import DiaChiSearch from './Search/DiaChiSearch';
+// import ReceiptAddModal from './ReceiptAddModal';
 function Receipt() {
   return (
     <div>
-        {/* <ReceiptSearch /> */}
-        <br></br>
-        {/* <FindSelect /> */}
-        <ReceiptAddModal />
-        <hr></hr>
-        <br></br>
-        <ReceiptList />
+        {/* <ReceiptAddModal /> */}
+      {/* <ReceiptList /> */}
+      <DiaChiSearch />
     </div>
   )
 }

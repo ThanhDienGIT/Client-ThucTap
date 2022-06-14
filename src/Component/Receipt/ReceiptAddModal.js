@@ -31,7 +31,7 @@ export default function PhieuThuAddModal() {
   const [khachHangList, setKhachHangList] = React.useState([]);
   const [kyThuList, setKyThuList] = React.useState([]);
   const [idKhachHang, setIDKhachHang] = React.useState('');
-  const [diaChiKH, setDiaChiKH] = React.useState('None');
+  const [diaChiKH, setDiaChiKH] = React.useState('---None---');
   const [idTuyenThu, setIDTuyenThu] = React.useState('');
   const [idKyThu, setIDKyThu] = React.useState('');
   const handleOpen = () => {
@@ -46,6 +46,7 @@ export default function PhieuThuAddModal() {
     setIDKyThu(event.target.value);
   };
 
+//submit  
   const handleSubmit = () => {
     fetch("http://localhost:5199/api/phieuthu/", {
       method: 'POST',
@@ -72,6 +73,7 @@ export default function PhieuThuAddModal() {
         (error) => {
           alert('Failed');
         });
+    
   }
 
   React.useEffect(() => {
@@ -137,6 +139,7 @@ export default function PhieuThuAddModal() {
             fullWidth
             style={{ paddingBottom: 20 }}
             label="Địa chỉ khách hàng"
+            disabled
             value={diaChiKH}
           />
           <TextField
