@@ -24,6 +24,8 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import Typography from '@mui/material/Typography';
+import { tableCellClasses } from '@mui/material/TableCell';
+import { styled } from '@mui/material/styles';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -88,6 +90,28 @@ TablePaginationActions.propTypes = {
 
 
 export default function KyThuMain() {
+
+    // Table Style
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: 'var(--color3)',
+            color: theme.palette.common.white,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+        },
+    }));
+
+    const StyledTableRow = styled(TableRow)(({ theme }) => ({
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+        // hide last border
+        '&:last-child td, &:last-child th': {
+            border: 0,
+        },
+    }));
+    
     const [rows, setRows] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -96,7 +120,7 @@ export default function KyThuMain() {
     const [searchMonth, setSearchMonth] = React.useState(-1);
     const [searchYear, setSearchYear] = React.useState(-1);
 
-    
+
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -189,40 +213,39 @@ export default function KyThuMain() {
             <TableContainer style={{ marginTop: 20 }} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
-                        <TableRow>
-                            <TableCell>Tên Kỳ thu</TableCell>
-                            <TableCell align="center">Tháng</TableCell>
-                            <TableCell align="center">Năm</TableCell>
-                            <TableCell align="center"></TableCell>
-                            <TableCell align="center"></TableCell>
-                            <TableCell align="center"></TableCell>
-                        </TableRow>
+                        <StyledTableRow>
+                            <StyledTableCell>Tên Kỳ thu</StyledTableCell>
+                            <StyledTableCell align="center">Tháng</StyledTableCell>
+                            <StyledTableCell align="center">Năm</StyledTableCell>
+                            <StyledTableCell align="center"></StyledTableCell>
+                            <StyledTableCell align="center"></StyledTableCell>
+                        </StyledTableRow>
                     </TableHead>
                     <TableBody>
                         {(rowsPerPage > 0
                             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : rows
                         ).map((row) => (
-                            <TableRow
+                            <StyledTableRow
                                 key={row.IDKyThu}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row">
+                                <StyledTableCell component="th" scope="row">
                                     {row.TenKyThu}
-                                </TableCell>
-                                <TableCell align="center">{row.Thang}</TableCell>
-                                <TableCell align="center">{row.Nam}</TableCell>
-                                <TableCell align="center">
+                                </StyledTableCell>
+                                <StyledTableCell align="center">{row.Thang}</StyledTableCell>
+                                <StyledTableCell align="center">{row.Nam}</StyledTableCell>
+                                <StyledTableCell align="center">
                                     <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
-                                </TableCell>
-                                <TableCell align="center">
+                                </StyledTableCell>
+                                <StyledTableCell align="center">
                                     <IconButton onClick={() => handleDelete(row.IDKyThu)}>
                                         <Tooltip title="Xoá">
                                             <DeleteIcon />
                                         </Tooltip>
                                     </IconButton>
-                                </TableCell>
-                            </TableRow>
+                                </StyledTableCell>
+                            </StyledTableRow>
                         ))}
 
                         {emptyRows > 0 && (
