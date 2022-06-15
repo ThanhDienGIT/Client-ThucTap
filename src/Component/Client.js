@@ -15,7 +15,7 @@ function Client() {
     Username : '',
     Password : ''
   });
-  console.log(login)
+  
   const [StateLogin , setStateLogin] = useState("Not connect")
   
   const Checklogin = () => {
