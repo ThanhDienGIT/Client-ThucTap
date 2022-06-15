@@ -94,9 +94,9 @@ export default function Employee() {
     const [diachiError, setDiaChiError] = React.useState(false);
     const [cccdError, setCCCDError] = React.useState(false);
     //Search Bar
-    const [searchCategory, setSearchCategory] = React.useState('');
+    const [searchCategory, setSearchCategory] = React.useState('HoTen');
     const [searchTerm, setSearchTerm] = React.useState('');
-
+    console.log(searchCategory);
     const handleSearch = (e) => {
 
     }
@@ -234,7 +234,8 @@ export default function Employee() {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={'HoTen'}
+                            
+                            value={searchCategory}
                             label="Danh Mục"
                             onChange={(event) => {
                                 setSearchCategory(event.target.value)

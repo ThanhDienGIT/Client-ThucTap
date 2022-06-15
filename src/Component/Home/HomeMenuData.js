@@ -1,22 +1,6 @@
 const QuyenChung = [
      
-    {
-        // Quyen Chung
-        id:4,
-        icon : 'fi fi-rr-layout-fluid',
-        title : "TRANG CHÍNH",
-        // Chức năng
-        child : [
-            {
-                title : 'Thống kê',
-                path :'/home/statistical'
-            },
-            {
-                title : 'Xem phiếu thu',
-                path :'phieuthu'
-            },     
-        ]
-    },
+    
     {
         // Quan Tri vien
         id:1,

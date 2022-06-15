@@ -10,7 +10,16 @@ import Button from '@mui/material/Button';
 export default function ReceiptDetailModal({receipt}) {
     const [open, setOpen] = React.useState(false);
     const [ngaythu,setNgayThu] = React.useState('');
-    const [ngaytao,setNgayTao] = React.useState('');
+    const [ngaytao, setNgayTao] = React.useState('');
+    //change tt
+     function change(date) {
+    if (!date) {
+      return 'Chưa thu';
+    } else {
+      return 'Đã thu';
+    }
+
+  }
     function getFormattedDate(date) {
         var year = date.getFullYear();
     
@@ -112,6 +121,9 @@ export default function ReceiptDetailModal({receipt}) {
                         </Typography>
                         <Typography variant="h6" style={{ width: 500, paddingBottom: 30, paddingRight: 40 }}>
                             <b>Ngày thu:</b> <Typography variant="h6">{ngaythu}</Typography>
+                        </Typography>
+                        <Typography variant="h6" style={{ width: 500, paddingBottom: 30, paddingRight: 40 }}>
+                            <b>Trạng Thái:</b> <Typography variant="h6">{change(receipt.NgayThu)}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 500, paddingBottom: 30, paddingRight: 40 }}>
                             <b>Giá:</b> <Typography variant="h6">{receipt.Gia} VND</Typography>

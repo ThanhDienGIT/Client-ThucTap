@@ -9,9 +9,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ReceiptDetailModal from './ReceiptDetailModal'
-import '../../CSS/App.css'
-function ReceiptCard() {
+import ReceiptDetailModal from './ReceiptDetailModal';
+import ReceiptAddModal from './ReceiptAddModal';
+import '../../CSS/App.css';
+function ReceiptList() {
   //style
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -33,18 +34,18 @@ function ReceiptCard() {
       border: 0,
     },
   }));
+
+
   //state
   const [rows, setRows] = React.useState([]);
-  const [updateState, setUpdateState] = React.useState(true);
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
-  // xác nhận
-  const handleChangeStatus = () =>{
+  const [updateState, setUpdateState] = React.useState(true); //state reRender
+  // change tt
+  function change(date) {
+    if (!date) {
+      return 'Chưa thu';
+    } else {
+      return 'Đã thu';
+    }
 
   }
   //get
@@ -52,14 +53,14 @@ function ReceiptCard() {
     fetch("http://localhost:5199/api/PhieuThu")
         .then(response => response.json())
         .then(function (PhieuThu) {
-            setRows(PhieuThu);
-            console.log(rows)
+          setRows(PhieuThu);
         },
+          
             (error) => {
                 alert('Failed');
             })
-}, [])
-//hadle
+  }, [updateState])
+//hadle delete
 const reRender = () => setUpdateState(!updateState);
 const handleDelete = (id) => {
   if (window.confirm('Xoá kỳ thu sẽ xoá theo các phiếu thu của kỳ thu tương ứng. Bạn có chắc chắn muốn xoá ?')) {
@@ -73,29 +74,19 @@ const handleDelete = (id) => {
           .then(res => res.json())
           .then((result) => {
               alert(result);
-          })
+          });
+          console.log('delete');
       reRender();
+      
   }
 }
-const handleEdit = () =>{
-
-}
-//format date
-function getFormattedDate(date) {
-  var year = date.getFullYear();
-
-  var month = (1 + date.getMonth()).toString();
-  month = month.length > 1 ? month : '0' + month;
-
-  var day = date.getDate().toString();
-  day = day.length > 1 ? day : '0' + day;
-
-  return day + '/' + month + '/' + year;
-}
-
-
+  
   return (
     <div>
+      <ReceiptAddModal />
+      <br></br>
+      <hr></hr>
+      <br></br>
       {/* list */}
       <div><h2>Danh sách phiếu thu</h2></div>
       <TableContainer component={Paper}>
@@ -121,18 +112,18 @@ function getFormattedDate(date) {
               <StyledTableCell align="left">{row.HoTenKH}</StyledTableCell>
               <StyledTableCell align="left">{row.TenLoai}</StyledTableCell>
               <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
-              <StyledTableCell align="left">{row.NgayThu}</StyledTableCell>
+              <StyledTableCell id="tt" align="left">{ change(row.NgayThu) }</StyledTableCell>
 
               {/* function */}
               
               <StyledTableCell align="left" padding='none'>
-                <Button onClick={() => handleChangeStatus()} sx={{display: "flex", justifyContent: "flex-end"}} variant="outlined" color="primary" >Xác nhận</Button>
+                <Button sx={{fontSize:12,display: "flex", justifyContent: "flex-end"}} variant="outlined" color="primary" >Xác nhận</Button>
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'>
                 <Button onClick={() => handleDelete(row.IDPhieu)} sx={{display: "flex", justifyContent: "flex-end"}} variant="outlined" color="error" startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'>
-                <ReceiptDetailModal receipt={row}/>
+                <ReceiptDetailModal receipt={row} />
               </StyledTableCell>
               
             </StyledTableRow>
@@ -144,4 +135,4 @@ function getFormattedDate(date) {
   )
 }
 
-export default ReceiptCard
+export default ReceiptList
