@@ -114,21 +114,7 @@ function Home() {
 
     GetCookie(document.cookie);
     const ArrayMasterShip = [];
-    const ArrayMapMasterShip = [
-      {id:4,
-      icon : 'fi fi-rr-layout-fluid',
-      title : "TRANG CHÍNH",
-      // Chức năng
-      child : [
-          {
-              title : 'Thống kê',
-              path :'/home/statistical'
-          },
-          {
-              title : 'Xem phiếu thu',
-              path :''
-          },     
-      ]}];
+    const ArrayMapMasterShip = [];
     mastership.map(element => {
       ArrayMasterShip.push(element.IDQuyen);
       return element;

@@ -25,17 +25,34 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Danh sách nhân viên',
+                title : 'Quản lý nhân viên',
                 path :'/home/employee'
             },
             {
-                title : 'Danh sách khách hàng',
+                title : 'Quản lý khách hàng',
                 path :'/home/customer'
-            },
+            },          
             {
                 title : 'Quản lý Kỳ thu',
                 path :'/home/kythu'
             },
+            {
+                title : 'Quản lý phiếu thu',
+                path :'/home/receipt'
+            },
+            {
+                title : 'Quản lý tuyến thu',
+                path :''
+            },
+            {
+                title : 'Phân quyền nhân viên',
+                path :''
+            },
+            {
+                title : 'Phân tuyến thu',
+                path :''
+            },
+            
         ]
     },
     {
@@ -46,10 +63,13 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Xem phiếu thu',
-                path :'phieuthu'
+                title : 'Danh sách khách hàng',
+                path :''
             },
-            
+            {
+                title : 'Danh sách phiếu thu',
+                path :''
+            },
         ]
     },
     {
@@ -60,37 +80,12 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Tạo báo cáo',
+                title : 'Thống kê',
                 path :''
             }
         ]
     },
-    {
-        // Báo cáo thống kê
-        id:5,
-        icon : 'fi fi-rr-chart-pie',
-        title : "QUẢN LÝ PHIẾU THU",
-        // Chức năng
-        child : [
-            {
-                title : 'Danh sách phiếu thu',
-                path :'/home/receipt'
-            }
-        ]
-    },
-    {
-        // Báo cáo thống kê
-        id:6,
-        icon : 'fi fi-rr-chart-pie',
-        title : "SEARCH",
-        // Chức năng
-        child : [
-            {
-                title : 'Search',
-                path :'/home/search'
-            }
-        ]
-    },
+    
 
 ]
 
