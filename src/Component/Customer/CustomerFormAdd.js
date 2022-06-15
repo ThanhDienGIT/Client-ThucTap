@@ -39,7 +39,7 @@ const Info__style = {
 const AddForm__style = {
     display: 'flex',
 };
-export default function CustomerFormAdd(customer) {
+export default function CustomerFormAdd({ customer, handleResetPage }) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
@@ -287,8 +287,10 @@ export default function CustomerFormAdd(customer) {
         setCCCD('');
         setDayGrant('');
         setChosenWard(0);
+        handleResetPage();
         setChosenCustomerType(0);
         setChosenDistrict(0);
+        handleClose();
     };
     return (
         <div>
