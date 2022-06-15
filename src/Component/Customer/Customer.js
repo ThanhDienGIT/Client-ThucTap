@@ -398,7 +398,7 @@ function Customer() {
                 {/* combobox Quan Huyen */}
                 <FormControl sx={{ m: 1, minWidth: 180 }}>
                     <Select
-                        labelId="demo-simple-select-standard-label"
+                        labelId="demo-simple-select-standard-labe"
                         id="select-district"
                         value={chosenDistrict}
                         onChange={handleChangeDistrict}
