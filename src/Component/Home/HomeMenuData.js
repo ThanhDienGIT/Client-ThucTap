@@ -15,6 +15,10 @@ const QuyenChung = [
             {
                 title : 'Quản lý khách hàng',
                 path :'/home/customer'
+            },
+            {
+                title : 'Quản lý tỉnh thành',
+                path :'/home/districtandward'
             },          
             {
                 title : 'Quản lý Kỳ thu',

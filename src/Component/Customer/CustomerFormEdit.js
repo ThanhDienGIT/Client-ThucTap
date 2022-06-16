@@ -312,7 +312,7 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
-                <IconButton variant="text" color="primary">
+                <IconButton variant="text" color="warning">
                     <Tooltip title="Chỉnh Sửa"><EditIcon />
                     </Tooltip>
                 </IconButton>

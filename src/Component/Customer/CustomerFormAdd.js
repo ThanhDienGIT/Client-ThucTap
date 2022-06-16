@@ -294,9 +294,7 @@ export default function CustomerFormAdd({ customer, handleResetPage }) {
     };
     return (
         <div>
-            <Stack direction="column" spacing={2} alignItems="flex-end" marginBottom={1}>
-                <Button variant="contained" onClick={handleOpen}>Thêm Khách Hàng</Button>
-            </Stack>
+            <Button variant="contained" onClick={handleOpen} color="success">Thêm Khách Hàng</Button>
             <Modal
                 open={open}
                 onClose={handleClose}

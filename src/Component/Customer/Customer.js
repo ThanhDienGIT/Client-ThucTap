@@ -26,6 +26,11 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Stack from '@mui/material/Stack';
+import ReactHtmlTableToExcel from 'react-html-table-to-excel';
+import Button from '@mui/material/Button';
+import { border } from '@mui/system';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -51,10 +56,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const style = {
     display: 'flex',
     width: 'auto',
+    marginTop: 5,
     marginLeft: 2,
     color: 'black',
     alignItems: "center",
     justifyContent: "center"
+};
+
+const actionAreaStyle = {
+    display: 'flex',
+    justifyContent: 'space-between'
 };
 
 function Customer() {
@@ -177,6 +188,20 @@ function Customer() {
         setSearchField(event.target.value);
         console.log(searchField)
     };
+
+
+
+    function getFormattedDate(date) {
+        var year = date.getFullYear();
+
+        var month = (1 + date.getMonth()).toString();
+        month = month.length > 1 ? month : '0' + month;
+
+        var day = date.getDate().toString();
+        day = day.length > 1 ? day : '0' + day;
+
+        return day + '/' + month + '/' + year;
+    }
 
     //Hàm Xử Lý Hiển Thị Chuyển Trang
     const handleShowTablePagination = function () {
@@ -334,14 +359,12 @@ function Customer() {
                             <StyledTableCell>{customer.DiaChi}</StyledTableCell>
                             <StyledTableCell>{customer.TenXaPhuong}</StyledTableCell>
                             <StyledTableCell>{customer.TenQuanHuyen}</StyledTableCell>
-                            <StyledTableCell align='left' width={1}>
-                                <CustomerFormView customer={customer}></CustomerFormView>
-                            </StyledTableCell>
-                            <StyledTableCell align='left' width={1} >
-                                <CustomerFormEdit customer={customer} handleResetPage={handleResetPage}></CustomerFormEdit>
-                            </StyledTableCell>
-                            <StyledTableCell align='left' width={1}>
-                                <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                            <StyledTableCell align='center'>
+                                <ButtonGroup variant="text" aria-label="outlined button group">
+                                    <CustomerFormView customer={customer}></CustomerFormView>
+                                    <CustomerFormEdit customer={customer} handleResetPage={handleResetPage}></CustomerFormEdit>
+                                    <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                                </ButtonGroup>
                             </StyledTableCell>
                         </StyledTableRow>
                     ))
@@ -354,9 +377,60 @@ function Customer() {
             )
         }
     }
+    const showExportCustomer = function (Customers) {
+        if (Customers.length > 0) {
+            return (
+                Customers
+                    .map((customer) => (
+                        <StyledTableRow
+                            key={customer.IDKhachHang}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <StyledTableCell>{customer.IDKhachHang}</StyledTableCell>
+                            <StyledTableCell component="th" scope="row" >{customer.MaKhachHang}</StyledTableCell>
+                            <StyledTableCell>{customer.HoTenKH}</StyledTableCell>
+                            <StyledTableCell>{customer.TenLoai}</StyledTableCell>                       
+                            <StyledTableCell>{customer.CCCD}'</StyledTableCell>
+                            <StyledTableCell>{getFormattedDate(new Date(customer.NgayCap))}</StyledTableCell>
+                            <StyledTableCell>{customer.DiaChi}</StyledTableCell>
+                            <StyledTableCell>{customer.TenXaPhuong}</StyledTableCell>
+                            <StyledTableCell>{customer.TenQuanHuyen}</StyledTableCell>
+                            <StyledTableCell>{getFormattedDate(new Date(customer.NgayTao))}</StyledTableCell>
+                            {
+                                getFormattedDate(new Date(customer.NgayChinhSua)) != '01/01/1970' ?
+                                    <StyledTableCell>{getFormattedDate(new Date(customer.NgayChinhSua))}</StyledTableCell>
+                                    :
+                                    <StyledTableCell>Chưa được chỉnh sửa</StyledTableCell>
+                            }
+                            {
+                                customer.TrangThai === 1 ?
+                                    <StyledTableCell>Đang Sử Dụng</StyledTableCell>
+                                    :
+                                    <StyledTableCell>Tạm Dừng Sử Dụng</StyledTableCell>
+                            }
+                        </StyledTableRow>
+                    ))
+            );
+        } else {
+            return (
+                <TableRow>
+                    <StyledTableCell align='center' colSpan={8} width={5}>Không tìm thấy kết quả tương ứng</StyledTableCell>
+                </TableRow>
+            )
+        }
+    }
+
     return (
         <div>
-            <Typography id="post-request-error-handling" variant="h4" style={{ paddingLeft: 10, paddingBottom: 10 }}>
+            <Typography variant="p"
+                sx={
+                    {
+                        fontSize: 30,
+                        color: "var(--color2)",
+                        fontWeight: "bold",
+                    }
+                }
+            >
                 Quản Lý Khách Hàng
             </Typography>
             <Box sx={style}>
@@ -398,7 +472,7 @@ function Customer() {
                 {/* combobox Quan Huyen */}
                 <FormControl sx={{ m: 1, minWidth: 180 }}>
                     <Select
-                        labelId="demo-simple-select-standard-labe"
+                        labelId="demo-simple-select-standard-label"
                         id="select-district"
                         value={chosenDistrict}
                         onChange={handleChangeDistrict}
@@ -432,39 +506,52 @@ function Customer() {
                     </Select>
                 </FormControl>
             </Box>
-            <CustomerFormAdd handleResetPage={handleResetPage}></CustomerFormAdd>
-            {/* Toggle CustomerType */}
-            <ToggleButtonGroup
-                aria-label="CustomerType"
-                value={chosenCustomerTypes}
-                onChange={handleChangeCustomerType}
-                size = 'large'
-                
-            >
-                {customerTypes
-                    .map((customerType) => (
-                        <ToggleButton 
-                        color='primary' 
-                        value={customerType.TenLoai} 
-                        aria-label={customerType.IDLoaiKhachHang} 
-                        key={customerType.IDLoaiKhachHang}
-                        >
-                            {customerType.TenLoai}
-                        </ToggleButton>
-                    ))}
-            </ToggleButtonGroup>
+            <Box sx={actionAreaStyle}>
+                {/* Toggle CustomerType */}
+                <ToggleButtonGroup
+                    aria-label="CustomerType"
+                    value={chosenCustomerTypes}
+                    onChange={handleChangeCustomerType}
+                    size='large'
+
+                >
+                    {customerTypes
+                        .map((customerType) => (
+                            <ToggleButton
+                                color='primary'
+                                value={customerType.TenLoai}
+                                aria-label={customerType.IDLoaiKhachHang}
+                                key={customerType.IDLoaiKhachHang}
+                            >
+                                {customerType.TenLoai}
+                            </ToggleButton>
+                        ))}
+                </ToggleButtonGroup>
+                <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={1}>
+                    <CustomerFormAdd handleResetPage={handleResetPage}></CustomerFormAdd>
+                    <ReactHtmlTableToExcel
+                        id="ExportExcelButton"
+                        className="btn btn-info"
+                        table="customers-export-table"
+                        filename="DanhSachKhachHang"
+                        sheet="Sheet"
+                        buttonText="Xuất file Excel"
+                    >
+                    </ReactHtmlTableToExcel>
+                </Stack>
+            </Box>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">
                         <TableRow>
-                            <StyledTableCell >Mã Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Tên Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Loại Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Căn Cước Công Dân</StyledTableCell>
-                            <StyledTableCell >Địa Chỉ</StyledTableCell>
-                            <StyledTableCell >Xã Phường</StyledTableCell>
-                            <StyledTableCell >Quận Huyện</StyledTableCell>
-                            <StyledTableCell align='center' colSpan={3} width={5}>Thao Tác</StyledTableCell>
+                            <StyledTableCell style={{ width: '5%' }}>Mã Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Tên Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Loại Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Căn Cước Công Dân</StyledTableCell>
+                            <StyledTableCell style={{ width: '20%' }}>Địa Chỉ</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Xã Phường</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Quận Huyện</StyledTableCell>
+                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -473,6 +560,35 @@ function Customer() {
                             showCustomer(chosenCustomers)
                             :
                             showCustomer(customers)
+                        }
+                    </TableBody>
+                </Table>
+                {handleShowTablePagination()}
+            </TableContainer>
+            <TableContainer component={Paper} >
+                <Table id="customers-export-table">
+                    <TableHead color="black">
+                        <TableRow>
+                            <StyledTableCell>ID Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Mã Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Họ Tên Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Tên Loại Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Căn Cước Công Dân</StyledTableCell>
+                            <StyledTableCell>Ngày Cấp CCCD</StyledTableCell>
+                            <StyledTableCell>Địa Chỉ</StyledTableCell>
+                            <StyledTableCell>Xã Phường</StyledTableCell>
+                            <StyledTableCell>Quận Huyện</StyledTableCell>
+                            <StyledTableCell>Ngày Tạo Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Ngày Chỉnh Sửa Khách Hàng</StyledTableCell>
+                            <StyledTableCell>Trạng Thái Khách Hàng</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
+                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 ?
+                            showExportCustomer(chosenCustomers)
+                            :
+                            showExportCustomer(customers)
                         }
                     </TableBody>
                 </Table>

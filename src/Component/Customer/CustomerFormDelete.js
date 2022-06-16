@@ -70,7 +70,7 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
-                <IconButton variant="text" color="primary">
+                <IconButton variant="text" color="error">
                     <Tooltip title="Xoá"><DeleteIcon />
                     </Tooltip>
                 </IconButton>
