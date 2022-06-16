@@ -1,11 +1,11 @@
 import React from 'react'
-import {Box, Typography} from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { BreakCookie, GetCookie , cookie } from '../Cookie/CookieFunc';
+import { BreakCookie, GetCookie, cookie } from '../Cookie/CookieFunc';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useNavigate } from 'react-router-dom';
 function HomeHeader() {
-  
+
   const navigate = useNavigate();
 
   const Logout = () => {
@@ -14,70 +14,70 @@ function HomeHeader() {
     window.location.reload();
   }
 
-  
+
   return (
     <Box
-    sx= {
-        {   
+      sx={
+        {
           width: 200,
           height: 'auto',
-          backgroundColor : 'var(--color3)',
-          position : 'absolute',
-          right : 5,
-          borderRadius : 2,
-          top : 54,
-          display : "flex",
-          flexDirection : 'column',
-          color : 'white'
+          backgroundColor: 'var(--color3)',
+          position: 'absolute',
+          right: 5,
+          borderRadius: 2,
+          top: 54,
+          display: "flex",
+          flexDirection: 'column',
+          color: 'white'
         }
       }
-      >
-    <Box sx={{
-        display:'flex',justifyContent:'left',alignItems:'center',paddingTop:1,paddingLeft:2,paddingBottom:1 ,
-        width : "100%", height : "100%",
+    >
+      <Box sx={{
+        display: 'flex', justifyContent: 'left', alignItems: 'center', paddingTop: 1, paddingLeft: 2, paddingBottom: 1,
+        width: "100%", height: "100%",
         '&:hover': {
-            color: 'var(--color3)',
-            backgroundColor: 'var(--color1)',
-            borderRadius: 2,
-            cursor: 'pointer',
-          },
-    }}>
-      
+          color: 'var(--color3)',
+          backgroundColor: 'var(--color1)',
+          borderRadius: 2,
+          cursor: 'pointer',
+        },
+      }}>
+
         <AccountCircleIcon
-        sx={{marginRight:1}}
+          sx={{ marginRight: 1 }}
         />
-      
-      <Typography>
-      Thông tin cá nhân
-      </Typography>
-   
-    </Box>
-    <Box
-    onClick={Logout}
-    sx={{
-        display:'flex',justifyContent:'left',alignItems:'center',paddingTop:1,paddingLeft:2,paddingBottom:1 ,
-        width : "100%", height : "100%",
-        '&:hover': {
+
+        <Typography>
+          Thông tin cá nhân
+        </Typography>
+
+      </Box>
+      <Box
+        onClick={Logout}
+        sx={{
+          display: 'flex', justifyContent: 'left', alignItems: 'center', paddingTop: 1, paddingLeft: 2, paddingBottom: 1,
+          width: "100%", height: "100%",
+          '&:hover': {
             color: 'var(--color3)',
             backgroundColor: 'var(--color1)',
             borderRadius: 2,
             cursor: 'pointer',
           },
-    }}>
+        }}>
 
-    <PowerSettingsNewIcon
-    sx={{marginRight:1}}
-    />
-        
+        <PowerSettingsNewIcon
+          sx={{ marginRight: 1 }}
+        />
+
         <Typography
-       
-        >
-        Thoát
-        </Typography>
- 
-    </Box>
 
-    
+        >
+          Thoát
+        </Typography>
+
+      </Box>
+
+
     </Box>
   )
 }

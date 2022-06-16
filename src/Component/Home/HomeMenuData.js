@@ -26,7 +26,7 @@ const QuyenChung = [
             },
             {
                 title : 'Quản lý tuyến thu',
-                path :''
+                path :'/home/tuyenthu'
             },
             {
                 title : 'Phân quyền nhân viên',

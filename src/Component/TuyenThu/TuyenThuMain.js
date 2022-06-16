@@ -10,12 +10,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import KyThuEditModal from './KyThuEditModal';
-import KyThuAddModal from './KyThuAddModal';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
-import KyThuFilter from './KyThuFilter';
 import Stack from '@mui/material/Stack';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
@@ -27,6 +25,8 @@ import Typography from '@mui/material/Typography';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import TuyenThuAddModal from './TuyenThuAddModal';
+import TuyenThuFilter from './TuyenThuFilter';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -90,7 +90,7 @@ TablePaginationActions.propTypes = {
 };
 
 
-export default function KyThuMain() {
+export default function TuyenThuMain() {
 
     // Table Style
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -117,11 +117,10 @@ export default function KyThuMain() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [updateState, setUpdateState] = React.useState(true);
-    const [yearsList, setYearsList] = React.useState([]);
-    const [searchMonth, setSearchMonth] = React.useState(-1);
-    const [searchYear, setSearchYear] = React.useState(-1);
-
-
+    const [searchQuanHuyen, setSearchQuanHuyen] = React.useState(-1);
+    const [searchXaPhuong, setSearchXaPhuong] = React.useState(-1);
+    const [quanHuyenList, setQuanHuyenList] = React.useState([]);
+    const [xaPhuongList, setXaPhuongList] = React.useState([]);
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -154,33 +153,52 @@ export default function KyThuMain() {
         }
     }
 
-    const handleChangeMonth = (month) => {
-        setSearchMonth(month);
+    const handleChangeQuanHuyen = (quanHuyen) => {
+        setSearchQuanHuyen(quanHuyen);
     };
 
-    const handleChangeYear = (year) => {
-        setSearchYear(year);
+    const handleChangeXaPhuong = (xaPhuong) => {
+        setSearchXaPhuong(xaPhuong);
     };
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/kythu/" + searchMonth + "/" + searchYear)
+        fetch("http://localhost:5199/api/quanhuyen/")
             .then(response => response.json())
-            .then(function (kyThu) {
-                setRows(kyThu);
+            .then(function (quanHuyenList) {
+                setQuanHuyenList(quanHuyenList);
             },
                 (error) => {
                     alert('Failed');
                 });
-    }, [updateState, searchMonth, searchYear])
+    }, [])
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/kythu/years")
+        setSearchXaPhuong(-1);
+        if (searchQuanHuyen === -1) {
+            setXaPhuongList([]);
+        }
+        else {
+            fetch("http://localhost:5199/api/xaphuong/" + searchQuanHuyen)
+                .then(response => response.json())
+                .then(function (xaPhuongList) {
+                    setXaPhuongList(xaPhuongList);
+                },
+                    (error) => {
+                        alert('Failed');
+                    });
+        }
+    }, [searchQuanHuyen])
+
+    React.useEffect(() => {
+        fetch("http://localhost:5199/api/tuyenthu/" + searchQuanHuyen + "/" + searchXaPhuong)
             .then(response => response.json())
-            .then(function (years) {
-                setYearsList(years);
-                setSearchYear(-1);
-            })
-    }, [updateState])
+            .then(function (tuyenThu) {
+                setRows(tuyenThu);
+            },
+                (error) => {
+                    alert('Failed');
+                });
+    }, [updateState, searchQuanHuyen, searchXaPhuong])
 
     return (
         <>
@@ -193,7 +211,7 @@ export default function KyThuMain() {
                     }
                 }
             >
-                Quản lý kỳ thu
+                Quản lý tuyến thu
                 <IconButton>
                     <Tooltip title="Tải lại">
                         <RefreshIcon onClick={() => window.location.reload()} />
@@ -201,23 +219,27 @@ export default function KyThuMain() {
                 </IconButton>
             </Typography>
 
-            <KyThuAddModal reRenderKyThuMain={reRender} />
+            <TuyenThuAddModal reRenderKyThuMain={reRender} />
             <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} >
-                <KyThuFilter
-                    month={searchMonth}
-                    year={searchYear}
-                    years={yearsList}
-                    changeMonth={handleChangeMonth}
-                    changeYear={handleChangeYear}
+                <TuyenThuFilter
+                    quanHuyen={searchQuanHuyen}
+                    xaPhuong={searchXaPhuong}
+                    quanHuyenList={quanHuyenList}
+                    xaPhuongList={xaPhuongList}
+                    changeQuanHuyen={handleChangeQuanHuyen}
+                    changeXaPhuong={handleChangeXaPhuong}
                 />
             </Stack>
             <TableContainer style={{ marginTop: 20 }} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <StyledTableRow>
-                            <StyledTableCell>Tên Kỳ thu</StyledTableCell>
-                            <StyledTableCell align="center">Tháng</StyledTableCell>
-                            <StyledTableCell align="center">Năm</StyledTableCell>
+                            <StyledTableCell>Mã tuyến thu</StyledTableCell>
+                            <StyledTableCell align="center">Tên tuyến thu</StyledTableCell>
+                            <StyledTableCell align="center">Tên quận huyện</StyledTableCell>
+                            <StyledTableCell align="center">Tên nhân viên</StyledTableCell>
+                            <StyledTableCell align="center">Ngày bắt đầu</StyledTableCell>
+                            <StyledTableCell align="center">Ngày kết thúc</StyledTableCell>
                             <StyledTableCell align="center">Thao tác</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
@@ -227,17 +249,28 @@ export default function KyThuMain() {
                             : rows
                         ).map((row) => (
                             <StyledTableRow
-                                key={row.IDKyThu}
+                                key={row.IDTuyenThu}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <StyledTableCell component="th" scope="row">
-                                    {row.TenKyThu}
+                                    {row.IDTuyenThu}
                                 </StyledTableCell>
-                                <StyledTableCell align="center">{row.Thang}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Nam}</StyledTableCell>
+                                <StyledTableCell align="center">{row.TenTuyenThu}</StyledTableCell>
+                                <StyledTableCell align="center">{row.TenQuanHuyen}</StyledTableCell>
+                                <StyledTableCell align="center">{row.HoTen}</StyledTableCell>
+                                <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>
+                                <StyledTableCell align="center">{row.NgayKetThuc}</StyledTableCell>
+                                {/* {
+                                    row.NgayBatDau === null ?
+                                        <StyledTableCell colSpan={3}>Không có nhân viên tiếp nhận</StyledTableCell>
+                                        :
+                                        ( (row) =>{
+                                        <StyledTableCell align="center">{row.HoTen}</StyledTableCell>;
+                                        <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>;
+                                        })
+                                } */}
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
                                         <IconButton onClick={() => handleDelete(row.IDKyThu)}>
                                             <Tooltip color="error" title="Xoá">
                                                 <DeleteIcon />
