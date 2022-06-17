@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
+import TextField from '@mui/material/TextField';
 
 const style = {
     position: 'absolute',
@@ -24,43 +25,36 @@ const style = {
     p: 4,
 };
 
-let yearArray = [];
 
-let curYear = new Date().getFullYear();
-for (let i = curYear - 30; i <= curYear + 10; i++) {
-    yearArray.push(i);
-}
-
-
-export default function TuyenThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain }) {
+export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien, idQuanHuyen, nhanVienList, reRenderTuyenThuMain }) {
     const [open, setOpen] = React.useState(false);
-    const [Thang, setThang] = React.useState(thang);
-    const [Nam, setNam] = React.useState(nam);
+    const [nhanVien, setNhanVien] = React.useState(-1);
     const handleOpen = () => {
-        setThang(thang);
-        setNam(nam);
+        if(idNhanVien !== null){
+            setNhanVien(idNhanVien);
+        }
+        else{
+            setNhanVien(-1);
+        }
         setOpen(true);
     }
     const handleClose = () => setOpen(false);
 
-    const handleThangChange = (event) => {
-        setThang(event.target.value);
-    };
-    const handleNamChange = (event) => {
-        setNam(event.target.value);
+    const handleNhanVienChange = (event) => {
+        setNhanVien(event.target.value);
     };
 
     const handleSubmit = () => {
-        fetch("http://localhost:5199/api/kythu", {
+        fetch("http://localhost:5199/api/tuyenthu", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                IDKyThu: idKyThu,
-                Thang: Thang,
-                Nam: Nam
+                IDNhanVien: nhanVien,
+                IDTuyenThu: idTuyenThu,
+                IDQuanHuyen: idQuanHuyen,
             })
         })
             .then(res => res.json())
@@ -72,7 +66,7 @@ export default function TuyenThuEditModal({ idKyThu, thang, nam, reRenderKyThuMa
                     alert('Failed');
                 });
 
-        reRenderKyThuMain();
+        reRenderTuyenThuMain();
     }
 
     return (
@@ -90,43 +84,34 @@ export default function TuyenThuEditModal({ idKyThu, thang, nam, reRenderKyThuMa
             >
                 <Box sx={style}>
                     <Typography variant="h5" style={{ paddingBottom: 40 }}>
-                        Sửa thông tin kỳ thu
+                        Sửa thông tin tuyến thu
                     </Typography>
-                    <FormControl style={{ width: 200, paddingRight: 50 }}>
-                        <InputLabel>Tháng</InputLabel>
+                    {/* <Typography variant="h5" style={{ paddingBottom: 40 }}>
+                        {tenTuyenThu}
+                    </Typography> */}
+                    <TextField
+                        label="Tên tuyến thu"
+                        value={tenTuyenThu}
+                        style={{ paddingBottom: 20, width: 500 }}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />
+
+                    <FormControl style={{ width: 500 }}>
+                        <InputLabel>Tên nhân viên</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
-                            value={Thang}
-                            label="Tháng"
-                            onChange={handleThangChange}
-                        >
-                            <MenuItem value={1}>1</MenuItem>
-                            <MenuItem value={2}>2</MenuItem>
-                            <MenuItem value={3}>3</MenuItem>
-                            <MenuItem value={4}>4</MenuItem>
-                            <MenuItem value={5}>5</MenuItem>
-                            <MenuItem value={6}>6</MenuItem>
-                            <MenuItem value={7}>7</MenuItem>
-                            <MenuItem value={8}>8</MenuItem>
-                            <MenuItem value={9}>9</MenuItem>
-                            <MenuItem value={10}>10</MenuItem>
-                            <MenuItem value={11}>11</MenuItem>
-                            <MenuItem value={12}>12</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{ width: 200 }}>
-                        <InputLabel>Năm</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            value={Nam}
-                            label="Năm"
-                            onChange={handleNamChange}
+                            value={nhanVien}
+                            label="Tên nhân viên"
+                            onChange={handleNhanVienChange}
                         >
                             {
-                                yearArray.map(year => (
-                                    <MenuItem key={year} value={year}> {year} </MenuItem>
+                                nhanVienList.map(nhanVien => (
+                                    <MenuItem key={nhanVien.IDNhanVien} value={nhanVien.IDNhanVien}> {nhanVien.HoTen} </MenuItem>
                                 ))
                             }
+                            <MenuItem key="all-QuanHuyen" value={-1}>None</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -136,6 +121,6 @@ export default function TuyenThuEditModal({ idKyThu, thang, nam, reRenderKyThuMa
                     </Stack>
                 </Box>
             </Modal>
-        </div>
+        </div >
     );
 }

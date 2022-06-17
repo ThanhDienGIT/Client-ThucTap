@@ -292,7 +292,14 @@ export default function TuyenThuMain() {
                                 }
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <TuyenThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
+                                        <TuyenThuEditModal 
+                                            idTuyenThu={row.IDTuyenThu} 
+                                            tenTuyenThu={row.TenTuyenThu} 
+                                            idNhanVien={row.IDNhanVien} 
+                                            idQuanHuyen={row.IDQuanHuyen}
+                                            ngayBD={row.NgayBatDau}
+                                            nhanVienList={nhanVienList}
+                                            reRenderTuyenThuMain={reRender} />
                                         <IconButton onClick={() => handleDelete(row.IDTuyenThu)}>
                                             <Tooltip color="error" title="Kết thúc">
                                                 <DeleteIcon />
