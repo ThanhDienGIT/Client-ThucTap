@@ -26,6 +26,7 @@ import { styled } from '@mui/material/styles';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import TuyenThuAddModal from './TuyenThuAddModal';
 import TuyenThuFilter from './TuyenThuFilter';
+import TuyenThuEditModal from './TuyenThuEditModal';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -116,8 +117,10 @@ export default function TuyenThuMain() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [updateState, setUpdateState] = React.useState(true);
+    const [searchNhanVien, setSearchNhanVien] = React.useState(-1);
     const [searchQuanHuyen, setSearchQuanHuyen] = React.useState(-1);
     const [searchXaPhuong, setSearchXaPhuong] = React.useState(-1);
+    const [nhanVienList, setNhanVienList] = React.useState([]);
     const [quanHuyenList, setQuanHuyenList] = React.useState([]);
     const [xaPhuongList, setXaPhuongList] = React.useState([]);
 
@@ -136,8 +139,8 @@ export default function TuyenThuMain() {
     const reRender = () => setUpdateState(!updateState);
 
     const handleDelete = (id) => {
-        if (window.confirm('Xoá kỳ thu sẽ xoá theo các phiếu thu của kỳ thu tương ứng. Bạn có chắc chắn muốn xoá ?')) {
-            fetch("http://localhost:5199/api/kythu/" + id, {
+        if (window.confirm('Kết thúc tuyến thu sẽ giải phóng các xã phường trong tuyến thu. Bạn có chắc chắn muốn kết thúc tuyến thu này ?')) {
+            fetch("http://localhost:5199/api/tuyenthu/" + id, {
                 method: 'DELETE',
                 header: {
                     'Accept': 'application/json',
@@ -151,6 +154,10 @@ export default function TuyenThuMain() {
             reRender();
         }
     }
+
+    const handleChangeNhanVien = (nhanVien) => {
+        setSearchNhanVien(nhanVien);
+    };
 
     const handleChangeQuanHuyen = (quanHuyen) => {
         setSearchQuanHuyen(quanHuyen);
@@ -169,6 +176,15 @@ export default function TuyenThuMain() {
                 (error) => {
                     alert('Failed');
                 });
+        fetch("http://localhost:5199/api/nhanvien/")
+            .then(response => response.json())
+            .then(function (nhanVienList) {
+                setNhanVienList(nhanVienList);
+            },
+                (error) => {
+                    alert('Failed');
+                });
+
     }, [])
 
     React.useEffect(() => {
@@ -189,7 +205,7 @@ export default function TuyenThuMain() {
     }, [searchQuanHuyen])
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/tuyenthu/" + searchQuanHuyen + "/" + searchXaPhuong)
+        fetch("http://localhost:5199/api/tuyenthu/" + searchNhanVien + "/" + searchQuanHuyen + "/" + searchXaPhuong)
             .then(response => response.json())
             .then(function (tuyenThu) {
                 setRows(tuyenThu);
@@ -197,7 +213,7 @@ export default function TuyenThuMain() {
                 (error) => {
                     alert('Failed');
                 });
-    }, [updateState, searchQuanHuyen, searchXaPhuong])
+    }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong])
 
 
 
@@ -223,10 +239,13 @@ export default function TuyenThuMain() {
             <TuyenThuAddModal reRenderKyThuMain={reRender} />
             <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} >
                 <TuyenThuFilter
+                    nhanVien={searchNhanVien}
                     quanHuyen={searchQuanHuyen}
                     xaPhuong={searchXaPhuong}
+                    nhanVienList={nhanVienList}
                     quanHuyenList={quanHuyenList}
                     xaPhuongList={xaPhuongList}
+                    changeNhanVien={handleChangeNhanVien}
                     changeQuanHuyen={handleChangeQuanHuyen}
                     changeXaPhuong={handleChangeXaPhuong}
                 />
@@ -235,13 +254,13 @@ export default function TuyenThuMain() {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <StyledTableRow>
-                            <StyledTableCell>Mã tuyến thu</StyledTableCell>
-                            <StyledTableCell align="center">Tên tuyến thu</StyledTableCell>
-                            <StyledTableCell align="center">Tên quận huyện</StyledTableCell>
-                            <StyledTableCell align="center">Tên nhân viên</StyledTableCell>
-                            <StyledTableCell align="center">Ngày bắt đầu</StyledTableCell>
-                            <StyledTableCell align="center">Ngày kết thúc</StyledTableCell>
-                            <StyledTableCell align="center">Thao tác</StyledTableCell>
+                            <StyledTableCell style={{ width: "9%" }}>Mã tuyến thu</StyledTableCell>
+                            <StyledTableCell style={{ width: "31%" }} align="center">Tên tuyến thu</StyledTableCell>
+                            <StyledTableCell style={{ width: "15%" }} align="center">Tên quận huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: "15%" }} align="center">Tên nhân viên</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Ngày bắt đầu</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Ngày kết thúc</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Thao tác</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -254,7 +273,7 @@ export default function TuyenThuMain() {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <StyledTableCell component="th" scope="row">
-                                    {row.IDTuyenThu}
+                                    {row.MaTuyenThu}
                                 </StyledTableCell>
                                 <StyledTableCell align="center">{row.TenTuyenThu}</StyledTableCell>
                                 <StyledTableCell align="center">{row.TenQuanHuyen}</StyledTableCell>
@@ -271,11 +290,11 @@ export default function TuyenThuMain() {
                                             </>
                                         )
                                 }
-
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <IconButton onClick={() => handleDelete(row.IDKyThu)}>
-                                            <Tooltip color="error" title="Xoá">
+                                        <TuyenThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
+                                        <IconButton onClick={() => handleDelete(row.IDTuyenThu)}>
+                                            <Tooltip color="error" title="Kết thúc">
                                                 <DeleteIcon />
                                             </Tooltip>
                                         </IconButton>
