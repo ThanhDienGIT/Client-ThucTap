@@ -9,7 +9,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import KyThuEditModal from './KyThuEditModal';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -200,6 +199,8 @@ export default function TuyenThuMain() {
                 });
     }, [updateState, searchQuanHuyen, searchXaPhuong])
 
+
+
     return (
         <>
             <Typography variant="p"
@@ -257,18 +258,20 @@ export default function TuyenThuMain() {
                                 </StyledTableCell>
                                 <StyledTableCell align="center">{row.TenTuyenThu}</StyledTableCell>
                                 <StyledTableCell align="center">{row.TenQuanHuyen}</StyledTableCell>
-                                <StyledTableCell align="center">{row.HoTen}</StyledTableCell>
-                                <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>
-                                <StyledTableCell align="center">{row.NgayKetThuc}</StyledTableCell>
-                                {/* {
+                                {
                                     row.NgayBatDau === null ?
-                                        <StyledTableCell colSpan={3}>Không có nhân viên tiếp nhận</StyledTableCell>
+                                        <StyledTableCell colSpan={3} align="center" style={{ color: "#5f1ebde8" }}>Không có nhân viên tiếp nhận</StyledTableCell>
                                         :
-                                        ( (row) =>{
-                                        <StyledTableCell align="center">{row.HoTen}</StyledTableCell>;
-                                        <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>;
-                                        })
-                                } */}
+                                        // handleRenderInfo(row)
+                                        (
+                                            <>
+                                                <StyledTableCell align="center">{row.HoTen}</StyledTableCell>
+                                                <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>
+                                                <StyledTableCell align="center">{row.NgayKetThuc}</StyledTableCell>
+                                            </>
+                                        )
+                                }
+
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
                                         <IconButton onClick={() => handleDelete(row.IDKyThu)}>
