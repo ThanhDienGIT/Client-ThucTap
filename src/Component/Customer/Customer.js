@@ -28,9 +28,12 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Stack from '@mui/material/Stack';
-import ReactHtmlTableToExcel from 'react-html-table-to-excel';
 import Button from '@mui/material/Button';
-import { border } from '@mui/system';
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import Divider from '@mui/material/Divider';
+import { BorderAll } from '@mui/icons-material';
+import { GetCookie, cookie } from '../Cookie/CookieFunc';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -56,7 +59,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const style = {
     display: 'flex',
     width: 'auto',
-    marginTop: 5,
     marginLeft: 2,
     color: 'black',
     alignItems: "center",
@@ -68,7 +70,13 @@ const actionAreaStyle = {
     justifyContent: 'space-between'
 };
 
-function Customer() {
+GetCookie(document.cookie)
+
+function Customer({ collectCustomer }) {
+
+    const fileType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    const fileExtension = ".xlsx";
 
     const [searchField, setSearchField] = React.useState(1);
 
@@ -101,27 +109,51 @@ function Customer() {
     const [resetPage, setResetPage] = React.useState(true)
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/KhachHang/` + statusCustomer)
-            .then(res => {
-                const Customers = res.data;
-                setCustomer(Customers);
-            })
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/KhachHang/` + cookie)
+                .then(res => {
+                    const Customers = res.data;
+                    setCustomer(Customers);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/KhachHang`)
+                .then(res => {
+                    const Customers = res.data;
+                    setCustomer(Customers);
+                })
+        }
+
     }, [resetPage, statusCustomer])
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/QuanHuyen`)
-            .then(res => {
-                const districts = res.data;
-                setDistricts(districts);
-            })
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/QuanHuyen/` + cookie)
+                .then(res => {
+                    const districts = res.data;
+                    setDistricts(districts);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/QuanHuyen`)
+                .then(res => {
+                    const districts = res.data;
+                    setDistricts(districts);
+                })
+        }
     }, [])
-
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/XaPhuong/`)
-            .then(res => {
-                const wards = res.data;
-                setWards(wards);
-            })
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/XaPhuong/getbyidemp/` + cookie)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/XaPhuong/`)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
+        }
     }, [])
 
     React.useEffect(() => {
@@ -131,6 +163,16 @@ function Customer() {
                 setCustomerTypes(customerTypes);
             })
     }, [])
+
+    React.useEffect(() => {
+        handleResetPage()
+        setChosenCustomer([])
+        setSearchField(1)
+        setChosenDistrict(0)
+        setChosenWard(0)
+        setChosenCustomerTypes([])
+        setSearchInput("")
+    }, [collectCustomer])
 
     React.useEffect(() => {
         handleChosenCustomer(customers)
@@ -356,9 +398,12 @@ function Customer() {
                             <StyledTableCell>{customer.HoTenKH}</StyledTableCell>
                             <StyledTableCell>{customer.TenLoai}</StyledTableCell>
                             <StyledTableCell>{customer.CCCD}</StyledTableCell>
-                            <StyledTableCell>{customer.DiaChi}</StyledTableCell>
-                            <StyledTableCell>{customer.TenXaPhuong}</StyledTableCell>
-                            <StyledTableCell>{customer.TenQuanHuyen}</StyledTableCell>
+                            <StyledTableCell>{customer.DiaChi}, {customer.TenXaPhuong}, {customer.TenQuanHuyen}</StyledTableCell>
+                            {customer.TrangThai === 1 ?
+                                <StyledTableCell color='success'>Đang sử dụng</StyledTableCell>
+                                :
+                                <StyledTableCell color='warring'>Tạm dừng sử dụng</StyledTableCell>
+                            }
                             <StyledTableCell align='center'>
                                 <ButtonGroup variant="text" aria-label="outlined button group">
                                     <CustomerFormView customer={customer}></CustomerFormView>
@@ -377,62 +422,80 @@ function Customer() {
             )
         }
     }
-    const showExportCustomer = function (Customers) {
-        if (Customers.length > 0) {
-            return (
-                Customers
-                    .map((customer) => (
-                        <StyledTableRow
-                            key={customer.IDKhachHang}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <StyledTableCell>{customer.IDKhachHang}</StyledTableCell>
-                            <StyledTableCell component="th" scope="row" >{customer.MaKhachHang}</StyledTableCell>
-                            <StyledTableCell>{customer.HoTenKH}</StyledTableCell>
-                            <StyledTableCell>{customer.TenLoai}</StyledTableCell>                       
-                            <StyledTableCell>{customer.CCCD}'</StyledTableCell>
-                            <StyledTableCell>{getFormattedDate(new Date(customer.NgayCap))}</StyledTableCell>
-                            <StyledTableCell>{customer.DiaChi}</StyledTableCell>
-                            <StyledTableCell>{customer.TenXaPhuong}</StyledTableCell>
-                            <StyledTableCell>{customer.TenQuanHuyen}</StyledTableCell>
-                            <StyledTableCell>{getFormattedDate(new Date(customer.NgayTao))}</StyledTableCell>
-                            {
-                                getFormattedDate(new Date(customer.NgayChinhSua)) != '01/01/1970' ?
-                                    <StyledTableCell>{getFormattedDate(new Date(customer.NgayChinhSua))}</StyledTableCell>
-                                    :
-                                    <StyledTableCell>Chưa được chỉnh sửa</StyledTableCell>
-                            }
-                            {
-                                customer.TrangThai === 1 ?
-                                    <StyledTableCell>Đang Sử Dụng</StyledTableCell>
-                                    :
-                                    <StyledTableCell>Tạm Dừng Sử Dụng</StyledTableCell>
-                            }
-                        </StyledTableRow>
-                    ))
-            );
-        } else {
-            return (
-                <TableRow>
-                    <StyledTableCell align='center' colSpan={8} width={5}>Không tìm thấy kết quả tương ứng</StyledTableCell>
-                </TableRow>
-            )
-        }
-    }
 
+    const exportToCSV = (apiData, fileName) => {
+        const ws = XLSX.utils.json_to_sheet(apiData);
+        const wb = { Sheets: { khachhang: ws }, SheetNames: ["khachhang"] };
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const khachhang = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(khachhang, fileName + fileExtension);
+    };
+
+    const handleExportCustomer = function (Customers) {
+        var chosenExportCustomers = [];
+        if (Customers.length > 0) {
+            Customers
+                .map(function (customer) {
+                    var ngaychinhsua
+                    if (customer.NgayChinhSua !== null) {
+                        ngaychinhsua = getFormattedDate(new Date(customer.NgayChinhSua))
+                    } else {
+                        ngaychinhsua = "Chưa được chỉnh sửa"
+                    }
+                    var trangthai
+                    if (customer.TrangThai == 1) {
+                        trangthai = "Đang sử dụng"
+                    } else {
+                        trangthai = "Tạm dừng sử dụng"
+                    }
+                    var chosenExportCustomer = {
+                        "ID Khách Hàng": customer.IDKhachHang,
+                        "Mã Khách Hàng": customer.MaKhachHang,
+                        "Họ Tên Khách Hàng": customer.HoTenKH,
+                        "Căn Cước Công Dân": customer.CCCD,
+                        "Ngày Cấp CCCD": getFormattedDate(new Date(customer.NgayCap)),
+                        "Địa Chỉ": customer.DiaChi,
+                        "Xã Phường": customer.TenXaPhuong,
+                        "Quận Huyện": customer.TenQuanHuyen,
+                        "Ngày Tạo Khách Hàng": getFormattedDate(new Date(customer.NgayTao)),
+                        "Ngày Chỉnh Sửa Khách Hàng": ngaychinhsua,
+                        "Trạng Thái": trangthai
+                    }
+                    chosenExportCustomers.push(chosenExportCustomer)
+                }
+                )
+        }
+        return (chosenExportCustomers)
+    }
     return (
         <div>
-            <Typography variant="p"
-                sx={
-                    {
-                        fontSize: 30,
-                        color: "var(--color2)",
-                        fontWeight: "bold",
+            {collectCustomer?
+                <Typography variant="p"
+                    sx={
+                        {
+                            fontSize: 30,
+                            color: "var(--color2)",
+                            fontWeight: "bold",
+                        }
                     }
-                }
-            >
-                Quản Lý Khách Hàng
-            </Typography>
+                >
+                    Quản Lý Khách Hàng Tuyến Thu
+                </Typography>
+                :
+                <Typography variant="p"
+                    sx={
+                        {
+                            fontSize: 30,
+                            color: "var(--color2)",
+                            fontWeight: "bold",
+                        }
+                    }
+                >
+                    Quản Lý Khách Hàng
+                </Typography>
+            }
+
+            <Divider sx={{ marginBottom: 3 }}></Divider>
             <Box sx={style}>
                 {/* Truong tim kiem */}
                 <FormControl sx={{ m: 1, minWidth: 170 }}>
@@ -512,8 +575,6 @@ function Customer() {
                     aria-label="CustomerType"
                     value={chosenCustomerTypes}
                     onChange={handleChangeCustomerType}
-                    size='large'
-
                 >
                     {customerTypes
                         .map((customerType) => (
@@ -522,6 +583,12 @@ function Customer() {
                                 value={customerType.TenLoai}
                                 aria-label={customerType.IDLoaiKhachHang}
                                 key={customerType.IDLoaiKhachHang}
+                                sx={{
+                                    border: 0,
+                                    fontWeight: "bold",
+                                    borderRadius: 2,
+                                    backgroundColor: "var(--color1)",
+                                }}
                             >
                                 {customerType.TenLoai}
                             </ToggleButton>
@@ -529,28 +596,24 @@ function Customer() {
                 </ToggleButtonGroup>
                 <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={1}>
                     <CustomerFormAdd handleResetPage={handleResetPage}></CustomerFormAdd>
-                    <ReactHtmlTableToExcel
-                        id="ExportExcelButton"
-                        className="btn btn-info"
-                        table="customers-export-table"
-                        filename="DanhSachKhachHang"
-                        sheet="Sheet"
-                        buttonText="Xuất file Excel"
-                    >
-                    </ReactHtmlTableToExcel>
+                    {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 ?
+                        <Button variant="contained" color="success" onClick={(e) => exportToCSV(handleExportCustomer(chosenCustomers), 'KhachHang')}>Xuất file Excel</Button>
+                        :
+                        <Button variant="contained" color="success" onClick={(e) => exportToCSV(handleExportCustomer(customers), 'KhachHang')}>Xuất file Excel</Button>
+                    }
+
                 </Stack>
             </Box>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">
                         <TableRow>
-                            <StyledTableCell style={{ width: '5%' }}>Mã Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '12%' }}>Mã Khách Hàng</StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }}>Tên Khách Hàng</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Loại Khách Hàng</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Căn Cước Công Dân</StyledTableCell>
-                            <StyledTableCell style={{ width: '20%' }}>Địa Chỉ</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Xã Phường</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '12%' }}>Loại Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '11%' }}>CCCD</StyledTableCell>
+                            <StyledTableCell style={{ width: '30%' }}>Địa Chỉ</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Trạng Thái</StyledTableCell>
                             <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -560,35 +623,6 @@ function Customer() {
                             showCustomer(chosenCustomers)
                             :
                             showCustomer(customers)
-                        }
-                    </TableBody>
-                </Table>
-                {handleShowTablePagination()}
-            </TableContainer>
-            <TableContainer component={Paper} >
-                <Table id="customers-export-table">
-                    <TableHead color="black">
-                        <TableRow>
-                            <StyledTableCell>ID Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Mã Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Họ Tên Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Tên Loại Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Căn Cước Công Dân</StyledTableCell>
-                            <StyledTableCell>Ngày Cấp CCCD</StyledTableCell>
-                            <StyledTableCell>Địa Chỉ</StyledTableCell>
-                            <StyledTableCell>Xã Phường</StyledTableCell>
-                            <StyledTableCell>Quận Huyện</StyledTableCell>
-                            <StyledTableCell>Ngày Tạo Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Ngày Chỉnh Sửa Khách Hàng</StyledTableCell>
-                            <StyledTableCell>Trạng Thái Khách Hàng</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
-                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 ?
-                            showExportCustomer(chosenCustomers)
-                            :
-                            showExportCustomer(customers)
                         }
                     </TableBody>
                 </Table>

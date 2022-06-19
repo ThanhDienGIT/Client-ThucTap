@@ -52,7 +52,7 @@ const QuyenChung = [
         child : [
             {
                 title : 'Danh sách khách hàng',
-                path :''
+                path :'/home/collectcustomer'
             },
             {
                 title : 'Danh sách phiếu thu',
