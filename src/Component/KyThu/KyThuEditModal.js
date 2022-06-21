@@ -77,7 +77,7 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
 
     return (
         <div>
-            <IconButton variant="text" color="warning" onClick={handleOpen}>
+            <IconButton variant="text" sx={{ color: 'var(--color8)' }} onClick={handleOpen}>
                 <Tooltip title="Chỉnh Sửa">
                     <EditIcon />
                 </Tooltip>

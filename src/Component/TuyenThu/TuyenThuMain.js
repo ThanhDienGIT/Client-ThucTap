@@ -11,7 +11,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import TableFooter from '@mui/material/TableFooter';
@@ -139,7 +138,7 @@ export default function TuyenThuMain() {
     const reRender = () => setUpdateState(!updateState);
 
     const handleDelete = (id) => {
-        if (window.confirm('Kết thúc tuyến thu sẽ giải phóng các xã phường trong tuyến thu. Bạn có chắc chắn muốn kết thúc tuyến thu này ?')) {
+        if (window.confirm('Kết thúc tuyến thu sẽ giải phóng các xã phường trong tuyến thu và sẽ xoá tuyến thu nếu tuyến thu này chưa bao giờ phân tuyến. Bạn có chắc chắn muốn kết thúc tuyến thu này ?')) {
             fetch("http://localhost:5199/api/tuyenthu/" + id, {
                 method: 'DELETE',
                 header: {
@@ -172,19 +171,12 @@ export default function TuyenThuMain() {
             .then(response => response.json())
             .then(function (quanHuyenList) {
                 setQuanHuyenList(quanHuyenList);
-            },
-                (error) => {
-                    alert('Failed');
-                });
+            });
         fetch("http://localhost:5199/api/nhanvien/")
             .then(response => response.json())
             .then(function (nhanVienList) {
                 setNhanVienList(nhanVienList);
-            },
-                (error) => {
-                    alert('Failed');
-                });
-
+            });
     }, [])
 
     React.useEffect(() => {
@@ -197,10 +189,7 @@ export default function TuyenThuMain() {
                 .then(response => response.json())
                 .then(function (xaPhuongList) {
                     setXaPhuongList(xaPhuongList);
-                },
-                    (error) => {
-                        alert('Failed');
-                    });
+                });
         }
     }, [searchQuanHuyen])
 
@@ -215,8 +204,6 @@ export default function TuyenThuMain() {
                 });
     }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong])
 
-
-
     return (
         <>
             <Typography variant="p"
@@ -229,11 +216,6 @@ export default function TuyenThuMain() {
                 }
             >
                 Quản lý tuyến thu
-                <IconButton>
-                    <Tooltip title="Tải lại">
-                        <RefreshIcon onClick={() => window.location.reload()} />
-                    </Tooltip>
-                </IconButton>
             </Typography>
 
             <TuyenThuAddModal reRenderKyThuMain={reRender} />
@@ -301,7 +283,7 @@ export default function TuyenThuMain() {
                                             nhanVienList={nhanVienList}
                                             reRenderTuyenThuMain={reRender} />
                                         <IconButton onClick={() => handleDelete(row.IDTuyenThu)}>
-                                            <Tooltip color="error" title="Kết thúc">
+                                            <Tooltip sx={{ color: 'var(--color9)' }} title="Kết thúc">
                                                 <DeleteIcon />
                                             </Tooltip>
                                         </IconButton>

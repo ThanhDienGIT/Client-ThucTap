@@ -13,7 +13,6 @@ import KyThuEditModal from './KyThuEditModal';
 import KyThuAddModal from './KyThuAddModal';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
 import KyThuFilter from './KyThuFilter';
 import Stack from '@mui/material/Stack';
@@ -194,11 +193,6 @@ export default function KyThuMain() {
                 }
             >
                 Quản lý kỳ thu
-                <IconButton>
-                    <Tooltip title="Tải lại">
-                        <RefreshIcon onClick={() => window.location.reload()} />
-                    </Tooltip>
-                </IconButton>
             </Typography>
 
             <KyThuAddModal reRenderKyThuMain={reRender} />
@@ -239,7 +233,7 @@ export default function KyThuMain() {
                                     <ButtonGroup>
                                         <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
                                         <IconButton onClick={() => handleDelete(row.IDKyThu)}>
-                                            <Tooltip color="error" title="Xoá">
+                                            <Tooltip sx={{ color: 'var(--color9)' }} title="Xoá">
                                                 <DeleteIcon />
                                             </Tooltip>
                                         </IconButton>

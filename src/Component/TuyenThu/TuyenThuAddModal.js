@@ -54,26 +54,23 @@ export default function TuyenThuAddModal({ reRenderKyThuMain }) {
 
 
     const handleSubmit = () => {
-        // fetch("http://localhost:5199/api/kythu/" + statusAddPhieuThu, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         Thang: Thang,
-        //         Nam: Nam
-        //     })
-        // })
-        //     .then(res => res.json())
-        //     .then((result) => {
-        //         alert(result);
-        //         handleClose();
-        //     },
-        //         (error) => {
-        //             alert('Failed');
-        //         });
-        // reRenderKyThuMain();
+        fetch("http://localhost:5199/api/tuyenthu/" + quanHuyen, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(xaPhuong)
+        })
+            .then(res => res.json())
+            .then((result) => {
+                alert(result);
+                handleClose();
+            },
+                (error) => {
+                    alert('Failed');
+                });
+        reRenderKyThuMain();
     }
 
     React.useEffect(() => {

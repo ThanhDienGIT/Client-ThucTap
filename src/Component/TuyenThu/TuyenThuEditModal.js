@@ -30,10 +30,10 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
     const [open, setOpen] = React.useState(false);
     const [nhanVien, setNhanVien] = React.useState(-1);
     const handleOpen = () => {
-        if(idNhanVien !== null){
+        if (idNhanVien !== null) {
             setNhanVien(idNhanVien);
         }
-        else{
+        else {
             setNhanVien(-1);
         }
         setOpen(true);
@@ -45,33 +45,38 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
     };
 
     const handleSubmit = () => {
-        fetch("http://localhost:5199/api/tuyenthu", {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                IDNhanVien: nhanVien,
-                IDTuyenThu: idTuyenThu,
-                IDQuanHuyen: idQuanHuyen,
+        if (nhanVien !== -1) {
+            fetch("http://localhost:5199/api/tuyenthu", {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    IDNhanVien: nhanVien,
+                    IDTuyenThu: idTuyenThu,
+                    IDQuanHuyen: idQuanHuyen,
+                })
             })
-        })
-            .then(res => res.json())
-            .then((result) => {
-                alert(result);
-                handleClose();
-            },
-                (error) => {
-                    alert('Failed');
-                });
+                .then(res => res.json())
+                .then((result) => {
+                    alert(result);
+                    handleClose();
+                },
+                    (error) => {
+                        alert('Failed');
+                    });
 
-        reRenderTuyenThuMain();
+            reRenderTuyenThuMain();
+        }
+        else{
+            alert('Chỉnh sửa nhân viên không thể có giá trị: None');
+        }
     }
 
     return (
         <div>
-            <IconButton variant="text" color="warning" onClick={handleOpen}>
+            <IconButton variant="text" sx={{ color: 'var(--color8)' }} onClick={handleOpen}>
                 <Tooltip title="Chỉnh Sửa">
                     <EditIcon />
                 </Tooltip>

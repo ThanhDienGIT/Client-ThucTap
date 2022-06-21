@@ -74,8 +74,6 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
         reRenderKyThuMain();
     }
 
-    console.log("Rerender_AddModal");
-
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end">
