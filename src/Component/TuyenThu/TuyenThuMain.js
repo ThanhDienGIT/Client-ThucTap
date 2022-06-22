@@ -120,6 +120,7 @@ export default function TuyenThuMain() {
     const [searchQuanHuyen, setSearchQuanHuyen] = React.useState(-1);
     const [searchXaPhuong, setSearchXaPhuong] = React.useState(-1);
     const [nhanVienList, setNhanVienList] = React.useState([]);
+    const [nhanVienThuTienList, setNhanVienThuTienList] = React.useState([]);
     const [quanHuyenList, setQuanHuyenList] = React.useState([]);
     const [xaPhuongList, setXaPhuongList] = React.useState([]);
 
@@ -176,6 +177,11 @@ export default function TuyenThuMain() {
             .then(response => response.json())
             .then(function (nhanVienList) {
                 setNhanVienList(nhanVienList);
+            });
+        fetch("http://localhost:5199/api/nhanvien/quyen/2")
+            .then(response => response.json())
+            .then(function (nhanVienList) {
+                setNhanVienThuTienList(nhanVienList);
             });
     }, [])
 
@@ -274,14 +280,16 @@ export default function TuyenThuMain() {
                                 }
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <TuyenThuEditModal 
-                                            idTuyenThu={row.IDTuyenThu} 
-                                            tenTuyenThu={row.TenTuyenThu} 
-                                            idNhanVien={row.IDNhanVien} 
+                                        <TuyenThuEditModal
+                                            idTuyenThu={row.IDTuyenThu}
+                                            tenTuyenThu={row.TenTuyenThu}
+                                            idNhanVien={row.IDNhanVien}
+                                            tenNhanVien={row.HoTen}
                                             idQuanHuyen={row.IDQuanHuyen}
                                             ngayBD={row.NgayBatDau}
-                                            nhanVienList={nhanVienList}
-                                            reRenderTuyenThuMain={reRender} />
+                                            nhanVienList={nhanVienThuTienList}
+                                            reRenderTuyenThuMain={reRender}
+                                        />
                                         <IconButton onClick={() => handleDelete(row.IDTuyenThu)}>
                                             <Tooltip sx={{ color: 'var(--color9)' }} title="Kết thúc">
                                                 <DeleteIcon />

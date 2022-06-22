@@ -1,32 +1,29 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
+import EditNhanVien from './EditNhanVien';
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 600,
+    width: 570,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    borderRadius: 3,
     boxShadow: 24,
     p: 4,
 };
 
 
-export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien, idQuanHuyen, nhanVienList, reRenderTuyenThuMain }) {
+export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien, tenNhanVien, idQuanHuyen, nhanVienList, reRenderTuyenThuMain }) {
     const [open, setOpen] = React.useState(false);
     const [nhanVien, setNhanVien] = React.useState(-1);
     const handleOpen = () => {
@@ -39,10 +36,6 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
         setOpen(true);
     }
     const handleClose = () => setOpen(false);
-
-    const handleNhanVienChange = (event) => {
-        setNhanVien(event.target.value);
-    };
 
     const handleSubmit = () => {
         if (nhanVien !== -1) {
@@ -69,10 +62,11 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
 
             reRenderTuyenThuMain();
         }
-        else{
+        else {
             alert('Chỉnh sửa nhân viên không thể có giá trị: None');
         }
     }
+    console.log(nhanVien);
 
     return (
         <div>
@@ -102,24 +96,12 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
                             readOnly: true,
                         }}
                     />
-
-                    <FormControl style={{ width: 500 }}>
-                        <InputLabel>Tên nhân viên</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            value={nhanVien}
-                            label="Tên nhân viên"
-                            onChange={handleNhanVienChange}
-                        >
-                            {
-                                nhanVienList.map(nhanVien => (
-                                    <MenuItem key={nhanVien.IDNhanVien} value={nhanVien.IDNhanVien}> {nhanVien.HoTen} </MenuItem>
-                                ))
-                            }
-                            <MenuItem key="all-QuanHuyen" value={-1}>None</MenuItem>
-                        </Select>
-                    </FormControl>
-
+                    <EditNhanVien
+                        defaultIDNhanVien={idNhanVien}
+                        defaultLabelNhanVien={tenNhanVien}
+                        nhanVienList={nhanVienList}
+                        changeNhanVien={setNhanVien}
+                    />
                     <Stack direction="row" spacing={2} style={{ paddingTop: 40 }}>
                         <Button variant="contained" onClick={handleSubmit}>Chỉnh sửa</Button>
                         <Button variant="contained" onClick={handleClose}>Huỷ bỏ</Button>
