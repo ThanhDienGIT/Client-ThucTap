@@ -71,7 +71,10 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
                 <IconButton variant="text" color="error">
-                    <Tooltip title="Xoá"><DeleteIcon />
+                    <Tooltip title="Xoá">
+                        <DeleteIcon
+                            sx={{ color: 'var(--color9)' }}
+                        />
                     </Tooltip>
                 </IconButton>
             </Stack>

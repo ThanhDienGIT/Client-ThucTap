@@ -6,7 +6,7 @@ import Home from './Component/Home/Home';
 import Statistical from './Component/Statistical/Statistical';
 import Employee from './Component/Employee/Employee'
 import Customer from './Component/Customer/Customer'
-import  Receipt  from './Component/Receipt/Receipt';
+import Receipt from './Component/Receipt/Receipt';
 import KyThuMain from './Component/KyThu/KyThuMain';
 import DistrictAndWard from './Component/DistrictAndWard/DistrictAndWard';
 
@@ -18,17 +18,17 @@ function App() {
       <React.Fragment>
         <Routes>
           <Route path='/' element={<Client />} />
-          <Route path='/home' element={<Home />}>    
+          <Route path='/home' element={<Home />}>
             <Route path='statistical' element={<Statistical />} />
-            <Route path='customer' element={<Customer collectCustomer={false}/>} />
+            <Route path='customer' element={<Customer collectCustomer={false} />} />
             <Route path='districtandward' element={<DistrictAndWard />} />
             <Route path='staff' element={<Statistical />} />
             <Route path='receipt' element={<Receipt />} />
             <Route path='employee' element={<Employee />} />
             <Route path='kythu' element={<KyThuMain />} />
-            <Route path='collectcustomer' element={<Customer collectCustomer={true}/>} />
+            <Route path='collectcustomer' element={<Customer collectCustomer={true} />} />
           </Route>
-            {/* <Route path='phieuthu' element={<PhieuThuMain />} /> */}
+          {/* <Route path='phieuthu' element={<PhieuThuMain />} /> */}
           <Route path='*' element={<Client />} />
 
         </Routes>

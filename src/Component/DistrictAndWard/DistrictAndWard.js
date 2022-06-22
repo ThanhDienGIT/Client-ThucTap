@@ -18,6 +18,9 @@ import Stack from '@mui/material/Stack';
 import { autocompleteClasses, Box, TextField } from '@mui/material';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Tab from '@mui/material/Tab';
+import DistrictFormAdd from './DistrictFormAdd';
+import WardFormAdd from './WardFormAdd';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -47,7 +50,7 @@ const actionAreaStyle = {
 
 function DistrictAndWard() {
 
-    const [chosenField, setChosenField] = React.useState('XaPhuong');
+    const [chosenField, setChosenField] = React.useState('xaphuong');
 
     const [showTablePagination, setShowTablePagination] = React.useState(true);
 
@@ -75,7 +78,7 @@ function DistrictAndWard() {
     };
 
     const handleShowTablePagination = function () {
-        if (chosenField === "XaPhuong") {
+        if (chosenField === "xaphuong") {
             if (showTablePagination)
                 return (
                     <TablePagination
@@ -109,7 +112,7 @@ function DistrictAndWard() {
                 const districts = res.data;
                 setDistricts(districts);
             })
-    }, [])
+    }, [resetPage])
 
     React.useEffect(() => {
         axios.get(`http://localhost:5199/api/XaPhuong/`)
@@ -117,14 +120,17 @@ function DistrictAndWard() {
                 const wards = res.data;
                 setWards(wards);
             })
-    }, [])
+    }, [resetPage])
 
     const handleChangeChosenField = (event, newField) => {
-        setChosenField(newField);
+
+        if (newField !== null) {
+            setChosenField(newField);
+        }
     };
 
     const showDistrictsAndWards = function (Rows) {
-        if (chosenField === "XaPhuong") {
+        if (chosenField === "xaphuong") {
             if (Rows.length > 0) {
                 return (
                     Rows
@@ -186,6 +192,47 @@ function DistrictAndWard() {
         }
     }
 
+    const showDistricts = function () {
+        return (
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead color="black">
+                        <TableRow>
+                            <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {showDistrictsAndWards(districts)}
+                    </TableBody>
+                </Table>
+                {handleShowTablePagination()}
+            </TableContainer>
+        )
+    }
+
+    const showWards = function () {
+        return (
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead color="black">
+                        <TableRow>
+                            <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Tên Xã Phường</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {showDistrictsAndWards(wards)}
+                    </TableBody>
+                </Table>
+                {handleShowTablePagination()}
+            </TableContainer>
+        )
+    }
+
     return (
         <div>
             <Typography variant="p"
@@ -238,30 +285,18 @@ function DistrictAndWard() {
                     </ToggleButton>
                 </ToggleButtonGroup>
                 <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={1}>
-                    <Button>Thêm Quận Huyện</Button>
+                    {chosenField === "xaphuong" ?
+                        <WardFormAdd handleResetPage={handleResetPage} districts={districts}/>                        
+                        :                       
+                        <DistrictFormAdd handleResetPage={handleResetPage}/>
+                    }
                 </Stack>
             </Box>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead color="black">
-                        <TableRow>
-                            <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Tên Xã Phường</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
-                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
-                        {chosenField === "XaPhuong" ?
-                            showDistrictsAndWards(wards)
-                            :
-                            showDistrictsAndWards(districts)
-                        }
-                    </TableBody>
-                </Table>
-                {handleShowTablePagination()}
-            </TableContainer>
+            {chosenField === "xaphuong" ?
+                showWards()
+                :
+                showDistricts()
+            }
         </div>
     )
 }

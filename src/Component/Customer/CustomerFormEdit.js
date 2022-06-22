@@ -38,7 +38,7 @@ const Info__style = {
 const AddForm__style = {
     display: 'flex',
 };
-export default function CustomerFormEdit({ customer, handleResetPage}) {
+export default function CustomerFormEdit({ customer, handleResetPage, importdistricts, importwards }) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
@@ -67,28 +67,18 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
     const [customerTypes, setCustomerTypes] = React.useState([]);
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/XaPhuong/`)
-            .then(res => {
-                const wards = res.data;
-                setWards(wards);
-            })
-    }, [])
-
-    React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/QuanHuyen`)
-            .then(res => {
-                const districts = res.data;
-                setDistricts(districts);
-            })
-    }, [])
-
-    React.useEffect(() => {
         axios.get(`http://localhost:5199/api/LoaiKhachHang`)
             .then(res => {
                 const customerTypes = res.data;
                 setCustomerTypes(customerTypes);
             })
     }, [])
+
+    const handleOpen = () => {
+        setOpen(true);
+        setDistricts(importdistricts);
+        setWards(importwards);
+    }
 
     React.useEffect(() => {
         setName(customer.HoTenKH);
@@ -102,9 +92,7 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
 
     const [open, setOpen] = React.useState(false);
 
-    const handleOpen = () => {
-        setOpen(true);
-    }
+
     const handleInputName = (event) => {
         setName(event.target.value)
     }
@@ -178,7 +166,7 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
 
         if (DayGrant === "") {
             thongbao = thongbao + "\nNgày Cấp"
-        } else validDayGrant = true      
+        } else validDayGrant = true
 
         if (Address === "") {
             thongbao = thongbao + "\nĐịa Chỉ"
@@ -199,8 +187,8 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
         if (CCCD.length !== 12) {
             thongbao = thongbao + "\nCCCD phải đúng 12 ký tự"
         } else validNumberCCCD = true
-        
-        if (DayGrant > date ) {
+
+        if (DayGrant > date) {
             thongbao = thongbao + "\nNgày Cấp Phải Trước Ngày Hiện tại"
         } else validNumberDayGrant = true
 
@@ -305,15 +293,18 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
         setDayGrant('');
         setChosenWard(0);
         setChosenCustomerType(0);
-        setChosenDistrict(0);  
-        handleResetPage();     
-        handleClose();   
+        setChosenDistrict(0);
+        handleResetPage();
+        handleClose();
     };
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
                 <IconButton variant="text" color="warning">
-                    <Tooltip title="Chỉnh Sửa"><EditIcon />
+                    <Tooltip title="Chỉnh Sửa">
+                        <EditIcon
+                            sx={{ color: 'var(--color8)' }}
+                        />
                     </Tooltip>
                 </IconButton>
             </Stack>
@@ -404,6 +395,7 @@ export default function CustomerFormEdit({ customer, handleResetPage}) {
                                     ))}
                             </Select>
                             <Select
+                                disabled
                                 labelId="demo-simple-select-standard-label"
                                 id="select-ward"
                                 value={chosenCustomerType}
