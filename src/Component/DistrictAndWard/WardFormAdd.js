@@ -41,7 +41,7 @@ const AddForm__style = {
 
 
 
-export default function WardFormAdd({ handleResetPage, districts }) {
+export default function WardFormAdd({ handleResetPage, districts}) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/XaPhuong"

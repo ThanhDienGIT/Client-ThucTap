@@ -487,14 +487,13 @@ function Customer({ collectCustomer }) {
                             <InputAdornment position="end">
                                 <IconButton
                                     aria-label="button search"
-                                    edge="end"
-                                    onClick={handleChangeSearchInput}
+                                    edge="end"                                  
                                 >
                                     <SearchIcon />
                                 </IconButton>
                             </InputAdornment>
                         }
-                        label="Password"
+                        label=" Tìm Kiếm "
                     />
                 </FormControl>
                 {/* combobox Quan Huyen */}

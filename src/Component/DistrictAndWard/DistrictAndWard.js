@@ -21,6 +21,14 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tab from '@mui/material/Tab';
 import DistrictFormAdd from './DistrictFormAdd';
 import WardFormAdd from './WardFormAdd';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -43,6 +51,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+const style = {
+    display: 'flex',
+    width: 'auto',
+    marginLeft: 2,
+    color: 'black',
+    alignItems: "center",
+    justifyContent: "center"
+};
+
 const actionAreaStyle = {
     display: 'flex',
     justifyContent: 'space-between'
@@ -58,11 +75,19 @@ function DistrictAndWard() {
 
     const [districts, setDistricts] = React.useState([]);
 
+    const [chosenDistrict, setChosenDistrict] = React.useState(0);
+
+    const [searchDistricts, setSearchDistrict] = React.useState([]);
+
+    const [searchWards, setSearchWards] = React.useState([]);
+
     const [page, setPage] = React.useState(0);
 
     const [resetPage, setResetPage] = React.useState(true)
 
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+    const [searchInput, setSearchInput] = React.useState('');
 
     const handleResetPage = function () {
         setResetPage(!resetPage)
@@ -79,30 +104,61 @@ function DistrictAndWard() {
 
     const handleShowTablePagination = function () {
         if (chosenField === "xaphuong") {
-            if (showTablePagination)
-                return (
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 20]}
-                        component="div"
-                        count={wards.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                );
+            if (searchInput !== "" || chosenDistrict !== 0) {
+                if (showTablePagination)
+                    return (
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={searchWards.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    );
+            } else {
+                if (showTablePagination)
+                    return (
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={wards.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    );
+            }
         } else {
-            return (
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
-                    component="div"
-                    count={districts.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            );
+            if (chosenDistrict !== 0 || searchInput !== "") {
+                if (showTablePagination)
+                    return (
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={searchDistricts.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    );
+            } else {
+                if (showTablePagination)
+                    return (
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 20]}
+                            component="div"
+                            count={districts.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    );
+            }
         }
     }
 
@@ -122,12 +178,65 @@ function DistrictAndWard() {
             })
     }, [resetPage])
 
-    const handleChangeChosenField = (event, newField) => {
+    React.useEffect(() => {
+        handleChosenWards(wards)
+    }, [chosenDistrict, searchInput])
 
+    React.useEffect(() => {
+        handleChosenDistricts(districts)
+    }, [searchInput])
+
+    const handleChangeChosenField = (event, newField) => {
         if (newField !== null) {
             setChosenField(newField);
+
         }
     };
+
+    const handleChangeSearchInput = (event) => {
+        setSearchInput(event.target.value)
+        setPage(0);
+    }
+
+    const handleChangeSearchInputDistricts = (event) => {
+        setSearchInput(event.target.value)
+        setPage(0);
+    }
+
+    const handleChangeDistrict = (event) => {
+        setPage(0);
+        setChosenDistrict(event.target.value);
+    };
+
+    //Hàm Lọc Xã Phường Theo Điều Kiện
+    const handleChosenWards = function (Wards) {
+        var filteredWards = Wards.filter(function (Ward) {
+            //Tìm kiếm thao trường
+            if (Ward.TenXaPhuong.toLowerCase().includes(searchInput.toLowerCase())) {
+                if (chosenDistrict !== 0) {
+                    return (
+                        Ward.IDQuanHuyen === chosenDistrict
+                    )
+                } else {
+                    return (
+                        true
+                    )
+                }
+            }
+        })
+        setSearchWards(filteredWards)
+    }
+
+    //Hàm Lọc Quận Huyện Theo Điều Kiện
+    const handleChosenDistricts = function (Districts) {
+        var filteredDistricts = Districts.filter(function (District) {
+            //Tìm kiếm thao trường
+            if (District.TenQuanHuyen.toLowerCase().includes(searchInput.toLowerCase())) {
+                return (true)
+            }
+        })
+        setSearchDistrict(filteredDistricts)
+    }
 
     const showDistrictsAndWards = function (Rows) {
         if (chosenField === "xaphuong") {
@@ -144,12 +253,6 @@ function DistrictAndWard() {
                                 </StyledTableCell>
                                 <StyledTableCell>{row.TenXaPhuong}</StyledTableCell>
                                 <StyledTableCell>{row.TenQuanHuyen}</StyledTableCell>
-                                <StyledTableCell align='center'>
-                                    <ButtonGroup variant="text" aria-label="outlined button group">
-                                        <Button>Sửa</Button>
-                                        <Button>Xoá</Button>
-                                    </ButtonGroup>
-                                </StyledTableCell>
                             </StyledTableRow>
                         ))
                 );
@@ -173,12 +276,6 @@ function DistrictAndWard() {
                                 <StyledTableCell component="th" scope="row">{row.IDQuanHuyen}
                                 </StyledTableCell>
                                 <StyledTableCell>{row.TenQuanHuyen}</StyledTableCell>
-                                <StyledTableCell align='center'>
-                                    <ButtonGroup variant="text" aria-label="outlined button group">
-                                        <Button>Sửa</Button>
-                                        <Button>Xoá</Button>
-                                    </ButtonGroup>
-                                </StyledTableCell>
                             </StyledTableRow>
                         ))
                 );
@@ -200,11 +297,14 @@ function DistrictAndWard() {
                         <TableRow>
                             <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
-                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {showDistrictsAndWards(districts)}
+                        {searchInput !== ""?
+                            showDistrictsAndWards(searchDistricts)
+                            :
+                            showDistrictsAndWards(districts)
+                        }
                     </TableBody>
                 </Table>
                 {handleShowTablePagination()}
@@ -221,15 +321,89 @@ function DistrictAndWard() {
                             <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }}>Tên Xã Phường</StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
-                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {showDistrictsAndWards(wards)}
+                        {searchInput !== "" || chosenDistrict !== 0 ?
+                            showDistrictsAndWards(searchWards)
+                            :
+                            showDistrictsAndWards(wards)
+                        }
                     </TableBody>
                 </Table>
                 {handleShowTablePagination()}
             </TableContainer>
+        )
+    }
+    const showSearchWards = function () {
+        return (
+            <Box sx={style}>
+                {/* Truong tim kiem */}
+                <FormControl sx={{ m: 1, width: '60ch' }}>
+                    <InputLabel htmlFor="outlined-adornment-search">Tìm Kiếm</InputLabel>
+                    <OutlinedInput
+                        id="outlined-adornment-search"
+                        type="text"
+                        onChange={handleChangeSearchInput}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="button search"
+                                    edge="end"                                                        >
+                                    <SearchIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                        label=" Tìm Kiếm "
+                    />
+                </FormControl>
+                {/* combobox Quan Huyen */}
+                <FormControl sx={{ m: 1, minWidth: 180 }}>
+                    <Select
+                        labelId="demo-simple-select-standard-label"
+                        id="select-district"
+                        value={chosenDistrict}
+                        onChange={handleChangeDistrict}
+                    >
+                        <MenuItem value={0} key={0}>
+                            Chọn Quận Huyện
+                        </MenuItem>
+                        {districts
+                            .map((district) => (
+                                <MenuItem value={district.IDQuanHuyen} key={district.IDQuanHuyen}>
+                                    {district.TenQuanHuyen}
+                                </MenuItem>
+                            ))}
+                    </Select>
+                </FormControl>
+            </Box>
+        )
+    }
+
+    const showSearchDistricts = function () {
+        return (
+            <Box sx={style}>
+                {/* Truong tim kiem */}
+                <FormControl sx={{ m: 1, width: '60ch' }}>
+                    <InputLabel htmlFor="outlined-adornment-search">Tìm Kiếm</InputLabel>
+                    <OutlinedInput
+                        id="outlined-adornment-search"
+                        type="text"
+                        onChange={handleChangeSearchInput}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="button search"
+                                    edge="end"
+                                >
+                                    <SearchIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                        label=" Tìm Kiếm "
+                    />
+                </FormControl>
+            </Box>
         )
     }
 
@@ -244,8 +418,15 @@ function DistrictAndWard() {
                     }
                 }
             >
-                Tỉnh Thành
+                Quản Lý Tỉnh Thành
             </Typography>
+            <Stack direction="row" spacing={2} justifyContent='center' marginBottom={1}>
+                {chosenField === "xaphuong" ?
+                    showSearchWards()
+                    :
+                    showSearchDistricts()
+                }
+            </Stack>
             <Divider sx={{ marginBottom: 3 }}></Divider>
             <Box sx={actionAreaStyle}>
                 {/* Toggle CustomerType */}
@@ -286,9 +467,9 @@ function DistrictAndWard() {
                 </ToggleButtonGroup>
                 <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={1}>
                     {chosenField === "xaphuong" ?
-                        <WardFormAdd handleResetPage={handleResetPage} districts={districts}/>                        
-                        :                       
-                        <DistrictFormAdd handleResetPage={handleResetPage}/>
+                        <WardFormAdd handleResetPage={handleResetPage} districts={districts} />
+                        :
+                        <DistrictFormAdd handleResetPage={handleResetPage} />
                     }
                 </Stack>
             </Box>
