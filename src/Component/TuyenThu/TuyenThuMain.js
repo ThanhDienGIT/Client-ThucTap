@@ -26,6 +26,8 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import TuyenThuAddModal from './TuyenThuAddModal';
 import TuyenThuFilter from './TuyenThuFilter';
 import TuyenThuEditModal from './TuyenThuEditModal';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -112,6 +114,9 @@ export default function TuyenThuMain() {
         },
     }));
 
+    const [ , dispatch] = React.useContext(SnackBarContext)
+
+
     const [rows, setRows] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -149,7 +154,9 @@ export default function TuyenThuMain() {
             })
                 .then(res => res.json())
                 .then((result) => {
-                    alert(result);
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage(result.message));
+                    dispatch(setSeverity(result.severity));
                 })
             reRender();
         }
@@ -206,9 +213,13 @@ export default function TuyenThuMain() {
                 setRows(tuyenThu);
             },
                 (error) => {
-                    alert('Failed');
+                    dispatch(setOpenSnackBar())
+                    dispatch(setMessage("Failed"))
+                    dispatch(setSeverity("error"))
                 });
-    }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong])
+    }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong, dispatch])
+
+    console.log("Rerender main TuyenThu")
 
     return (
         <>

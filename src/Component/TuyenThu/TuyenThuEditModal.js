@@ -9,6 +9,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
 import EditNhanVien from './EditNhanVien';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
+import SnackBarContext from '../SnackBar/SnackBarContext';
 
 const style = {
     position: 'absolute',
@@ -24,6 +26,8 @@ const style = {
 
 
 export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien, tenNhanVien, idQuanHuyen, nhanVienList, reRenderTuyenThuMain }) {
+    const [, dispatch] = React.useContext(SnackBarContext)
+    
     const [open, setOpen] = React.useState(false);
     const [nhanVien, setNhanVien] = React.useState(-1);
     const handleOpen = () => {
@@ -53,11 +57,15 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
             })
                 .then(res => res.json())
                 .then((result) => {
-                    alert(result);
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage(result.message));
+                    dispatch(setSeverity(result.severity));
                     handleClose();
                 },
                     (error) => {
-                        alert('Failed');
+                        dispatch(setOpenSnackBar());
+                        dispatch(setMessage("Failed"));
+                        dispatch(setSeverity("error"));
                     });
 
             reRenderTuyenThuMain();
@@ -66,7 +74,6 @@ export default function TuyenThuEditModal({ idTuyenThu, tenTuyenThu, idNhanVien,
             alert('Chỉnh sửa nhân viên không thể có giá trị: None');
         }
     }
-    console.log(nhanVien);
 
     return (
         <div>

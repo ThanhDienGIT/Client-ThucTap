@@ -10,6 +10,8 @@ import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 
 const style = {
@@ -25,6 +27,7 @@ const style = {
 };
 
 export default function TuyenThuAddModal({ reRenderKyThuMain }) {
+    const [, dispatch] = React.useContext(SnackBarContext)
 
     const [open, setOpen] = React.useState(false);
 
@@ -64,7 +67,9 @@ export default function TuyenThuAddModal({ reRenderKyThuMain }) {
         })
             .then(res => res.json())
             .then((result) => {
-                alert(result);
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(result.message));
+                dispatch(setSeverity(result.severity));
                 handleClose();
             },
                 (error) => {

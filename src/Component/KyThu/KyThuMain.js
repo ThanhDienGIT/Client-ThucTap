@@ -26,6 +26,8 @@ import Typography from '@mui/material/Typography';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -112,15 +114,15 @@ export default function KyThuMain() {
         },
     }));
 
-    const [rows, setRows] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [updateState, setUpdateState] = React.useState(true);
-    const [yearsList, setYearsList] = React.useState([]);
-    const [searchMonth, setSearchMonth] = React.useState(-1);
-    const [searchYear, setSearchYear] = React.useState(-1);
+    const [ , dispatch] = React.useContext(SnackBarContext)
 
-
+    const [rows, setRows] = React.useState([])
+    const [page, setPage] = React.useState(0)
+    const [rowsPerPage, setRowsPerPage] = React.useState(10)
+    const [updateState, setUpdateState] = React.useState(true)
+    const [yearsList, setYearsList] = React.useState([])
+    const [searchMonth, setSearchMonth] = React.useState(-1)
+    const [searchYear, setSearchYear] = React.useState(-1)
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -147,8 +149,10 @@ export default function KyThuMain() {
             })
                 .then(res => res.json())
                 .then((result) => {
-                    alert(result);
-                })
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage(result.message));
+                    dispatch(setSeverity(result.severity));
+                });
             reRender();
         }
     }
@@ -168,9 +172,11 @@ export default function KyThuMain() {
                 setRows(kyThu);
             },
                 (error) => {
-                    alert('Failed');
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage("Failed"));
+                    dispatch(setSeverity("error"));
                 });
-    }, [updateState, searchMonth, searchYear])
+    }, [updateState, searchMonth, searchYear, dispatch])
 
     React.useEffect(() => {
         fetch("http://localhost:5199/api/kythu/years")
@@ -194,7 +200,6 @@ export default function KyThuMain() {
             >
                 Quản lý kỳ thu
             </Typography>
-
             <KyThuAddModal reRenderKyThuMain={reRender} />
             <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} >
                 <KyThuFilter

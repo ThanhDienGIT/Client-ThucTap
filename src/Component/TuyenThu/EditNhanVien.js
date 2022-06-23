@@ -2,7 +2,6 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-
 export default function EditNhanVien({ defaultIDNhanVien, defaultLabelNhanVien, nhanVienList, changeNhanVien }) {
 
     let nhanVienOptions = nhanVienList.map((nhanVien, index) => (
