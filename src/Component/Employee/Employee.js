@@ -690,21 +690,25 @@ export default function Employee() {
                             <FormControlLabel control={<Checkbox value="3" onChange={(e)=>getValue(e)} />} label="Thống Kê - Báo Cáo" />
                           </FormGroup>
                         </FormControl>
-
-                        <Button 
-                            type="submit" 
-                            variant="contained" 
-                            color="primary"  
-                        >
-                          Submit
-                        </Button>
-                        <Button 
-                            variant="contained" 
-                            color="primary" 
-                            onClick={handleClose} 
-                        >
-                            Cancel
-                        </Button>
+                        
+                        <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <Button 
+                                type="submit" 
+                                variant="contained" 
+                                color="primary"  
+                                sx={{marginRight: 2}}
+                            >
+                            Submit
+                            </Button>
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                onClick={handleClose} 
+                            >
+                                Cancel
+                            </Button>
+                        </Box>
+                        
                     </Box>
                 </Typography>
             </Box>

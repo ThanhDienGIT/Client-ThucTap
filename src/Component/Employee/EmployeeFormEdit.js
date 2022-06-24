@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import { FormControl, TextField, FormControlLabel, FormGroup, FormLabel } from '@mui/material';
+import { FormControl, TextField, FormControlLabel, FormGroup, FormLabel, ButtonGroup } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CloseIcon from '@mui/icons-material/Close';
@@ -28,7 +28,7 @@ const style = {
     bgcolor: 'background.paper',
     borderRadius: 2,
     boxShadow: 24,
-    p: 4,
+    p: 4
 };
 
 const Info__style = {
@@ -42,6 +42,8 @@ const Info__style = {
 
 const AddForm__style = {
     display: 'flex',
+    justifyContent: 'flex-end',
+    paddingLeft: 5
 };
 export default function EmployeeFormEdit({ employee, empRoles, handleResetPage}) {
     const [addEmp, setAddEmp] = React.useState({
@@ -58,7 +60,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         matkhau: employee.MatKhau,
         ngaysinh: employee.NgaySinh
     });
-
+    var md5 = require('md5');
     const [emailError, setEmailError] = React.useState(false);
     const [tennhanvienError, setTenNhanVienError] = React.useState(false);
     const [sdtError, setSdtError] = React.useState(false);
@@ -144,28 +146,30 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         });
         */
         
-        if(addEmp.email === '' || !validateEmail(addEmp.email)) {
+        if(addEmp.email == '' || !validateEmail(addEmp.email)) {
             setEmailError(true);
             //setHandleError({ ...handleError, emailError: true })
         }
 
-        if(addEmp.tennhanvien === '') {
+        if(addEmp.tennhanvien == '') {
             setTenNhanVienError(true);
             //setHandleError({ ...handleError, tennhanvienError: true })
         }
 
-        if(addEmp.sdt === '' || isNaN(+addEmp.sdt)) {
+        if(addEmp.sdt == '' || isNaN(+(addEmp.sdt))) {
             setSdtError(true);
             //setHandleError({ ...handleError, sdtError: true })
         }
+        console.log(sdtError);
 
-        if(addEmp.diachi === '') {
+        if(addEmp.diachi == '') {
             setDiaChiError(true);
             //setHandleError({ ...handleError, diachiError: true })
         }
 
-        if(addEmp.cccd === '') {
+        if(addEmp.cccd == '' || addEmp.cccd.length !== 11 || isNaN(+(addEmp.cccd))) {
             setCCCDError(true);
+            //console.log(cccdError);
             //setHandleError({ ...handleError, cccdError: true })
         }
 
@@ -184,10 +188,9 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                 setAddEmp({...addEmp, ngaysinh: '' });
             }
         }
-        
+        wait(2);
         //if(email && tennhanvien && sdt && diachi && cccd && ngaysinh!=null && !(today - ngaysinh.getFullYear() < 18) && validateEmail(email)) {
         if(!emailError && !tennhanvienError && !sdtError && !diachiError && !cccdError && ngaySinh!=null && !(today - ngaySinh.getFullYear() < 18) && !emailError) {
-            setOpen(false);
             deleteEmp(addEmp.idnhanvien);
             addEmp.ngaysinh = ngaySinh.toLocaleDateString();
             /*
@@ -250,8 +253,10 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                     }).then(data => console.log(data));
                 }
             }
+            setOpen(false);
             handleResetPage();
-        }        
+        }
+               
     };
 
     return (
@@ -270,10 +275,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
             >
                 
                 <Box sx={style}>
-                    <Stack direction="column" spacing={2} alignItems="flex-end">
-                        <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
-                    </Stack>
-                    <Typography id="post-request-error-handling" variant="h5" style={{ paddingBottom: 40 }}>
+                    <Typography id="post-request-error-handling" variant="h5">
                         Chỉnh Sửa Thông Tin Nhân Viên
                     </Typography>
                     <Box sx={AddForm__style}>
@@ -387,21 +389,32 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                                 <FormControlLabel control={<Checkbox value="3" defaultChecked={empRoles.includes(3) ? true : false} onChange={(e)=>getValue(e, empRoles)} />} label="Thống Kê - Báo Cáo" />
                             </FormGroup>
                             </FormControl>
-
-                            <Button 
-                                type="submit" 
-                                variant="contained" 
-                                color="primary"  
-                            >
-                            Submit
-                            </Button>
-                            <Button 
+                            <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <Button 
+                                    variant="contained" 
+                                    color="primary"  
+                                    onClick={(e) => setAddEmp({...addEmp, matkhau: md5('shizen123')})}
+                                    sx={{marginRight: 2}}
+                                >
+                                    Reset Mật Khẩu
+                                </Button>
+                                <Button 
+                                    type="submit" 
+                                    variant="contained" 
+                                    color="primary"  
+                                    sx={{marginRight: 2}}
+                                >
+                                    Xác Nhận
+                                </Button>
+                                <Button 
                                 variant="contained" 
                                 color="primary" 
                                 onClick={handleClose} 
-                            >
-                                Cancel
-                            </Button>
+                                >
+                                    Hủy Bỏ
+                                </Button>
+                            </Box>
+                            
                         </Box>
                     </Box>
                 </Box>
