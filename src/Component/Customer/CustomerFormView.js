@@ -66,7 +66,10 @@ export default function CustomerFormView({ customer }) {
     return (
         <div>
             <IconButton onClick={handleOpen} variant="text" color="primary">
-                <Tooltip title="Xem Chi Tiết"><VisibilityIcon />
+                <Tooltip title="Xem Chi Tiết">
+                    <VisibilityIcon
+                    sx={{ color: 'var(--color7)' }}
+                />
                 </Tooltip>
             </IconButton>
             <Modal

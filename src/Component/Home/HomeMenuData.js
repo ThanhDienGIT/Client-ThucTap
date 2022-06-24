@@ -15,6 +15,10 @@ const QuyenChung = [
             {
                 title : 'Quản lý khách hàng',
                 path :'/home/customer'
+            },
+            {
+                title : 'Quản lý tỉnh thành',
+                path :'/home/districtandward'
             },          
             {
                 title : 'Quản lý Kỳ thu',
@@ -48,7 +52,7 @@ const QuyenChung = [
         child : [
             {
                 title : 'Danh sách khách hàng',
-                path :''
+                path :'/home/collectcustomer'
             },
             {
                 title : 'Danh sách phiếu thu',

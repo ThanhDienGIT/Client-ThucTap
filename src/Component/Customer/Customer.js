@@ -26,6 +26,13 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import { GetCookie, cookie } from '../Cookie/CookieFunc';
+import ExportFileExcel from './ExportFileExcel';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -57,7 +64,15 @@ const style = {
     justifyContent: "center"
 };
 
-function Customer() {
+const actionAreaStyle = {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between'
+};
+
+GetCookie(document.cookie)
+
+function Customer({ collectCustomer }) {
 
     const [searchField, setSearchField] = React.useState(1);
 
@@ -89,29 +104,57 @@ function Customer() {
 
     const [resetPage, setResetPage] = React.useState(true)
 
-    React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/KhachHang/` + statusCustomer)
-            .then(res => {
-                const Customers = res.data;
-                setCustomer(Customers);
-            })
-    }, [resetPage, statusCustomer])
+    const [disableCustomer, setDisableCustomer] = React.useState(true);
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/QuanHuyen`)
-            .then(res => {
-                const districts = res.data;
-                setDistricts(districts);
-            })
-    }, [])
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/KhachHang/` + cookie)
+                .then(res => {
+                    const Customers = res.data;
+                    setCustomer(Customers);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/KhachHang`)
+                .then(res => {
+                    const Customers = res.data;
+                    setCustomer(Customers);
+                })
+        }
+
+    }, [resetPage, statusCustomer, collectCustomer])
+
+
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/XaPhuong/`)
-            .then(res => {
-                const wards = res.data;
-                setWards(wards);
-            })
-    }, [])
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/QuanHuyen/` + cookie)
+                .then(res => {
+                    const districts = res.data;
+                    setDistricts(districts);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/QuanHuyen`)
+                .then(res => {
+                    const districts = res.data;
+                    setDistricts(districts);
+                })
+        }
+    }, [collectCustomer])
+    React.useEffect(() => {
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/XaPhuong/getbyidemp/` + cookie)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/XaPhuong/`)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
+        }
+    }, [collectCustomer])
 
     React.useEffect(() => {
         axios.get(`http://localhost:5199/api/LoaiKhachHang`)
@@ -122,8 +165,18 @@ function Customer() {
     }, [])
 
     React.useEffect(() => {
+        handleResetPage()
+        setChosenCustomer([])
+        setSearchField(1)
+        setChosenDistrict(0)
+        setChosenWard(0)
+        setChosenCustomerTypes([])
+        setSearchInput("")
+    }, [collectCustomer])
+
+    React.useEffect(() => {
         handleChosenCustomer(customers)
-    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes])
+    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer])
 
     const handleResetPage = function () {
         setResetPage(!resetPage)
@@ -166,21 +219,23 @@ function Customer() {
         }
     }
 
+    const handleSelectionDisableCustomer = () => {
+        setDisableCustomer(!disableCustomer)
+    }
+
     const handleChangeSearchInput = (event) => {
         setSearchInput(event.target.value)
         setPage(0);
         setChosenCustomerTypes(['Hộ dân', 'Doanh Nghiệp'])
-        console.log(searchInput)
     }
 
     const handleChangeSearchField = (event) => {
         setSearchField(event.target.value);
-        console.log(searchField)
     };
 
     //Hàm Xử Lý Hiển Thị Chuyển Trang
     const handleShowTablePagination = function () {
-        if (searchInput === "" && chosenDistrict === 0 && chosenWard === 0 && chosenCustomerTypes.length === 0) {
+        if (searchInput === "" && chosenDistrict === 0 && chosenWard === 0 && chosenCustomerTypes.length === 0 && disableCustomer) {
             if (showTablePagination)
                 return (
                     <TablePagination
@@ -209,8 +264,9 @@ function Customer() {
     }
 
     //Hàm Lọc Khách Hàng Theo Điều Kiện
-    const handleChosenCustomer = function (customers) {
-        var filteredCustomer = customers.filter(function (customer) {
+    const handleChosenCustomer = function (Customers) {
+        
+        var filteredCustomer = Customers.filter(function (customer) {
             //Tìm kiếm thao trường
             switch (searchField) {
                 //Họ Tên
@@ -310,41 +366,62 @@ function Customer() {
                     break
                 }
             }
-        })
-        setChosenCustomer(filteredCustomer)
+        })      
+        if (!disableCustomer) {           
+            if (searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0){
+                var filteredStatusCustomer = filteredCustomer.filter(function (customer) {
+                    return (
+                        customer.TrangThai === 1
+                    )
+                })
+            }else{
+                var filteredStatusCustomer = customers.filter(function (customer) {
+                    return (
+                        customer.TrangThai === 1
+                    )
+                })
+            }
+        }
+        if (disableCustomer) {
+            setChosenCustomer(filteredCustomer)
+        } else {
+            setChosenCustomer(filteredStatusCustomer)
+        }
     }
-
     //Hàm Hiển Thị Khách Hàng
     const showCustomer = function (Customers) {
         if (Customers.length > 0) {
             return (
                 Customers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((customer) => (
-                        <StyledTableRow
-                            key={customer.IDKhachHang}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <StyledTableCell component="th" scope="row" >
-                                {customer.MaKhachHang}
-                            </StyledTableCell>
-                            <StyledTableCell>{customer.HoTenKH}</StyledTableCell>
-                            <StyledTableCell>{customer.TenLoai}</StyledTableCell>
-                            <StyledTableCell>{customer.CCCD}</StyledTableCell>
-                            <StyledTableCell>{customer.DiaChi}</StyledTableCell>
-                            <StyledTableCell>{customer.TenXaPhuong}</StyledTableCell>
-                            <StyledTableCell>{customer.TenQuanHuyen}</StyledTableCell>
-                            <StyledTableCell align='left' width={1}>
-                                <CustomerFormView customer={customer}></CustomerFormView>
-                            </StyledTableCell>
-                            <StyledTableCell align='left' width={1} >
-                                <CustomerFormEdit customer={customer} handleResetPage={handleResetPage}></CustomerFormEdit>
-                            </StyledTableCell>
-                            <StyledTableCell align='left' width={1}>
-                                <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
-                            </StyledTableCell>
-                        </StyledTableRow>
-                    ))
+                    .map(function (customer) {
+                        return (
+                            <StyledTableRow
+                                key={customer.IDKhachHang}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <StyledTableCell component="th" scope="row" >
+                                    {customer.MaKhachHang}
+                                </StyledTableCell>
+                                <StyledTableCell>{customer.HoTenKH}</StyledTableCell>
+                                <StyledTableCell>{customer.TenLoai}</StyledTableCell>
+                                <StyledTableCell>{customer.CCCD}</StyledTableCell>
+                                <StyledTableCell>{customer.DiaChi}, {customer.TenXaPhuong}, {customer.TenQuanHuyen}</StyledTableCell>
+                                {customer.TrangThai === 1 ?
+                                    <StyledTableCell color='success'>Đang sử dụng</StyledTableCell>
+                                    :
+                                    <StyledTableCell color='warring'>Tạm dừng sử dụng</StyledTableCell>
+                                }
+                                <StyledTableCell align='center'>
+                                    <ButtonGroup variant="text" aria-label="outlined button group">
+                                        <CustomerFormView customer={customer}></CustomerFormView>
+                                        <CustomerFormEdit customer={customer} handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormEdit>
+                                        <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                                    </ButtonGroup>
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        )
+                    })
             );
         } else {
             return (
@@ -354,11 +431,36 @@ function Customer() {
             )
         }
     }
+
     return (
         <div>
-            <Typography id="post-request-error-handling" variant="h4" style={{ paddingLeft: 10, paddingBottom: 10 }}>
-                Quản Lý Khách Hàng
-            </Typography>
+            {collectCustomer ?
+                <Typography variant="p"
+                    sx={
+                        {
+                            fontSize: 30,
+                            color: "var(--color2)",
+                            fontWeight: "bold",
+                        }
+                    }
+                >
+                    Quản Lý Khách Hàng Theo Tuyến Thu
+                </Typography>
+                :
+                <Typography variant="p"
+                    sx={
+                        {
+                            fontSize: 30,
+                            color: "var(--color2)",
+                            fontWeight: "bold",
+                        }
+                    }
+                >
+                    Quản Lý Khách Hàng
+                </Typography>
+            }
+
+            <Divider sx={{ marginBottom: 3 }}></Divider>
             <Box sx={style}>
                 {/* Truong tim kiem */}
                 <FormControl sx={{ m: 1, minWidth: 170 }}>
@@ -375,7 +477,7 @@ function Customer() {
                     </Select>
                 </FormControl>
                 {/* TextField tim kiem */}
-                <FormControl sx={{ m: 1, width: '70ch' }}>
+                <FormControl sx={{ m: 1, width: '60ch' }}>
                     <InputLabel htmlFor="outlined-adornment-search">Tìm Kiếm</InputLabel>
                     <OutlinedInput
                         id="outlined-adornment-search"
@@ -385,14 +487,13 @@ function Customer() {
                             <InputAdornment position="end">
                                 <IconButton
                                     aria-label="button search"
-                                    edge="end"
-                                    onClick={handleChangeSearchInput}
+                                    edge="end"                                  
                                 >
                                     <SearchIcon />
                                 </IconButton>
                             </InputAdornment>
                         }
-                        label="Password"
+                        label=" Tìm Kiếm "
                     />
                 </FormControl>
                 {/* combobox Quan Huyen */}
@@ -432,6 +533,7 @@ function Customer() {
                     </Select>
                 </FormControl>
             </Box>
+<<<<<<< HEAD
             <CustomerFormAdd handleResetPage={handleResetPage}></CustomerFormAdd>
             {/* Toggle CustomerType */}
             <ToggleButtonGroup
@@ -458,23 +560,63 @@ function Customer() {
                         </ToggleButton>
                     ))}
             </ToggleButtonGroup>
+=======
+            <Box sx={actionAreaStyle}>
+                {/* Toggle CustomerType */}
+                <Stack direction="row" spacing={2} alignItems="flex-end">
+                    <ToggleButtonGroup
+                        aria-label="CustomerType"
+                        value={chosenCustomerTypes}
+                        onChange={handleChangeCustomerType}
+                    >
+                        {customerTypes
+                            .map((customerType) => (
+                                <ToggleButton
+                                    color='primary'
+                                    value={customerType.TenLoai}
+                                    aria-label={customerType.IDLoaiKhachHang}
+                                    key={customerType.IDLoaiKhachHang}
+                                    sx={{
+                                        border: 0,
+                                        fontWeight: "bold",
+                                        borderRadius: 2,
+                                        backgroundColor: "var(--color1)",
+                                        maxHeight: 50,
+                                    }}
+
+                                >
+                                    {customerType.TenLoai}
+                                </ToggleButton>
+                            ))}
+                    </ToggleButtonGroup>
+                    <FormControlLabel control={<Checkbox defaultChecked onClick={handleSelectionDisableCustomer} />} label="Hiển Thị Thêm Khách Hàng Ngừng Sử Dụng" />
+                </Stack>
+                <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
+                    <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
+                    {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0?
+                        <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
+                        :
+                        <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
+                    }
+                </Stack>
+            </Box>
+>>>>>>> Vinh
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">
                         <TableRow>
-                            <StyledTableCell >Mã Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Tên Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Loại Khách Hàng</StyledTableCell>
-                            <StyledTableCell >Căn Cước Công Dân</StyledTableCell>
-                            <StyledTableCell >Địa Chỉ</StyledTableCell>
-                            <StyledTableCell >Xã Phường</StyledTableCell>
-                            <StyledTableCell >Quận Huyện</StyledTableCell>
-                            <StyledTableCell align='center' colSpan={3} width={5}>Thao Tác</StyledTableCell>
+                            <StyledTableCell style={{ width: '12%' }}>Mã Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Tên Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '12%' }}>Loại Khách Hàng</StyledTableCell>
+                            <StyledTableCell style={{ width: '11%' }}>CCCD</StyledTableCell>
+                            <StyledTableCell style={{ width: '30%' }}>Địa Chỉ</StyledTableCell>
+                            <StyledTableCell style={{ width: '15%' }}>Trạng Thái</StyledTableCell>
+                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
-                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 ?
+                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0?
                             showCustomer(chosenCustomers)
                             :
                             showCustomer(customers)

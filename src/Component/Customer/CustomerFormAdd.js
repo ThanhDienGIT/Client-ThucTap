@@ -39,7 +39,7 @@ const Info__style = {
 const AddForm__style = {
     display: 'flex',
 };
-export default function CustomerFormAdd({ customer, handleResetPage }) {
+export default function CustomerFormAdd({ customer, handleResetPage, importdistricts, importwards}) {
 
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
@@ -68,22 +68,6 @@ export default function CustomerFormAdd({ customer, handleResetPage }) {
     const [customerTypes, setCustomerTypes] = React.useState([]);
 
     React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/QuanHuyen`)
-            .then(res => {
-                const districts = res.data;
-                setDistricts(districts);
-            })
-    }, [])
-
-    React.useEffect(() => {
-        axios.get(`http://localhost:5199/api/XaPhuong/`)
-            .then(res => {
-                const wards = res.data;
-                setWards(wards);
-            })
-    }, [])
-
-    React.useEffect(() => {
         axios.get(`http://localhost:5199/api/LoaiKhachHang`)
             .then(res => {
                 const customerTypes = res.data;
@@ -95,6 +79,8 @@ export default function CustomerFormAdd({ customer, handleResetPage }) {
 
     const handleOpen = () => {
         setOpen(true);
+        setDistricts(importdistricts);
+        setWards(importwards);
     }
     const handleInputName = (event) => {
         setName(event.target.value)
@@ -294,9 +280,7 @@ export default function CustomerFormAdd({ customer, handleResetPage }) {
     };
     return (
         <div>
-            <Stack direction="column" spacing={2} alignItems="flex-end" marginBottom={1}>
-                <Button variant="contained" onClick={handleOpen}>Thêm Khách Hàng</Button>
-            </Stack>
+            <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: 'var(--color7)' }}>Thêm Khách Hàng</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
