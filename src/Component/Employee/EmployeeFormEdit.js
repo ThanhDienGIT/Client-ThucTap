@@ -65,8 +65,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
     const [diachiError, setDiaChiError] = React.useState(false);
     const [cccdError, setCCCDError] = React.useState(false);
 
-    const [addEmpRoles, setAddEmpRoles] = React.useState([]);
-
+    const [addEmpRoles, setAddEmpRoles] = React.useState([empRoles]);
 
 
     const getValue = (e, empCurrentRoles) =>{
@@ -108,6 +107,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
+        setAddEmpRoles(empRoles);
         setOpen(true);
     }
 
@@ -229,6 +229,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                 /*
                 console.log('idnhanvien: '+addEmp.idnhanvien);
                 */
+                
                 for(var i=0; i < addEmpRoles.length; i++){
                     /*
                     console.log(
@@ -246,10 +247,9 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                             IDNhanVien: addEmp.idnhanvien,
                             IDQuyen: addEmpRoles[i]
                         })
-                    });
+                    }).then(data => console.log(data));
                 }
             }
-            setAddEmpRoles([]);
             handleResetPage();
         }        
     };
