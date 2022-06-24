@@ -444,10 +444,15 @@ function Customer() {
                 {customerTypes
                     .map((customerType) => (
                         <ToggleButton 
-                        color='primary' 
+                        
                         value={customerType.TenLoai} 
                         aria-label={customerType.IDLoaiKhachHang} 
                         key={customerType.IDLoaiKhachHang}
+                        sx= {{
+                            marginBottom : 1,
+                            border: "1px solid var(--color3)",
+                            color : "var(--color2)"
+                        }}
                         >
                             {customerType.TenLoai}
                         </ToggleButton>
@@ -482,4 +487,4 @@ function Customer() {
     )
 }
 
-export default Customer
+export default  Customer

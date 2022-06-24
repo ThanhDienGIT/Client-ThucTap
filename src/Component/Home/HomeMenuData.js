@@ -64,8 +64,8 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Thống kê',
-                path :''
+                title : 'Doanh thu',
+                path :'/home/turnover'
             }
         ]
     },
