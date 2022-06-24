@@ -6,21 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
 import { FormControl, FormControlLabel, FormLabel, FormHelperText, FormGroup } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -34,14 +27,12 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import Checkbox from '@mui/material/Checkbox';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
 import EmployeeFormView from './EmployeeFormView';
 import EmployeeFormEdit from './EmployeeFormEdit';
-import { wait } from '@testing-library/user-event/dist/utils';
 import EmployeeFormAdd from './EmployeeFormAdd';
 import ExportFileExcel from './ExportFileExcel';
+import EmployeeFormDelete from './EmployeeFormDelete';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -125,24 +116,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
     }));
 
-// Modal Form Style (Form Thêm Nhân Viên, ...)
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 800,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-
-function validateEmail(email){
-    var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return EMAIL_REGEX.test(email);
-}
-
 export default function Employee() {
     //API input data
     const [employees, setEmployees] = React.useState([]);
@@ -150,8 +123,6 @@ export default function Employee() {
     const [roles, setRoles] = React.useState([]);
 
     const [disabledEmployee, setDisabledEmployee] = React.useState(false);
-
-    const [addEmpRoles, setAddEmpRoles] = React.useState([]);
     /*
     const [handleError, setHandleError] = React.useState({
         emailError: false,
@@ -205,19 +176,6 @@ export default function Employee() {
     const handleSelectionDisabledEmployee = () => {
         setDisabledEmployee(!disabledEmployee)
         handleResetPage()
-    }
-
-    function deleteEmp(id) {
-        //console.log('http://localhost:5199/api/nhanvien/' + id);
-        setAddEmpRoles([]);
-        //console.log(addEmpRoles);
-        fetch('http://localhost:5199/api/nhanvien/' + id, {
-            method: 'DELETE'
-        })
-        .then(alert("Xóa Nhân Viên Thành Công"))
-        .then(() =>{
-            handleResetPage();
-        })
     }
 
     
@@ -405,13 +363,7 @@ export default function Employee() {
                                     <ButtonGroup variant="text" color="primary" aria-label="">
                                         <EmployeeFormView employee={employee} empRoles={getQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles)} ></EmployeeFormView>
                                         <EmployeeFormEdit employee={employee} employeeList={employees} getIDQuyenByIDNhanVien={getIDQuyenByIDNhanVien} empRolesEdit={empRoles} rolesEdit={roles} handleResetPage={handleResetPage}></EmployeeFormEdit>
-                                        <Stack direction="column" spacing={2} alignItems="flex-end" marginBottom={1} onClick={(e) => deleteEmp(employee.IDNhanVien)}>
-                                            <IconButton variant="text" color="primary">
-                                                <Tooltip title="Xoá"><DeleteIcon sx={{ color: 'var(--color9)' }} />
-                                                </Tooltip>
-                                            </IconButton>
-                                        </Stack>
-                                        
+                                        <EmployeeFormDelete employee={employee} handleResetPage={handleResetPage}></EmployeeFormDelete>
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>

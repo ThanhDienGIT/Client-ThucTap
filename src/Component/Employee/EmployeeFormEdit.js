@@ -30,15 +30,6 @@ const style = {
     p: 4
 };
 
-const Info__style = {
-    display: 'flex',
-    width: 400,
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    marginLeft: 2,
-    color: 'black'
-};
-
 const AddForm__style = {
     display: 'flex',
     justifyContent: 'flex-end',
