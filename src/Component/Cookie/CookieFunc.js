@@ -2,7 +2,7 @@
 
  var cookie;
     const CreateCookie = (user) => {
-        document.cookie = 'StaffId=' + user + ';  max-age=600;';
+        document.cookie = 'StaffId=' + user + ';  max-age=6000;';
     }
 
     const BreakCookie = (user) => {

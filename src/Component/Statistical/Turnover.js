@@ -125,8 +125,8 @@ function Turnover() {
   },[])
 
   const [mountchart, setMountchart] = useState(0);
-  
-
+  console.log(NumberKythu)
+  console.log(kythu);
   return (
     <Box  width ="100%" height="100%">
 
