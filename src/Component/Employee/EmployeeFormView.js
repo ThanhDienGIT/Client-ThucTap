@@ -92,7 +92,10 @@ export default function EmployeeFormView({ employee, empRoles }) {
                         </Typography> 
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
                             Địa Chỉ: <Typography variant="inherit">{employee.DiaChi}</Typography>
-                        </Typography>          
+                        </Typography>  
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Tài Khoản: <Typography variant="inherit">{employee.TaiKhoan}</Typography>
+                        </Typography>        
                     </Box>
                 </Box>
             </Modal>
