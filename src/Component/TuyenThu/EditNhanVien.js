@@ -4,7 +4,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 export default function EditNhanVien({ defaultIDNhanVien, defaultLabelNhanVien, nhanVienList, changeNhanVien }) {
 
-    console.log(nhanVienList);
 
     let nhanVienOptions = nhanVienList.map((nhanVien, index) => (
         {
