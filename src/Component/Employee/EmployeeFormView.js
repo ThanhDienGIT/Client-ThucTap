@@ -49,7 +49,7 @@ export default function EmployeeFormView({ employee, empRoles }) {
     return (
         <div>
             <IconButton onClick={handleOpen} variant="text" color="primary">
-                <Tooltip title="Xem Chi Tiết"><VisibilityIcon />
+                <Tooltip title="Xem Chi Tiết"><VisibilityIcon sx={{ color: 'var(--color7)' }} />
                 </Tooltip>
             </IconButton>
             <Modal
@@ -92,7 +92,10 @@ export default function EmployeeFormView({ employee, empRoles }) {
                         </Typography> 
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
                             Địa Chỉ: <Typography variant="inherit">{employee.DiaChi}</Typography>
-                        </Typography>          
+                        </Typography>  
+                        <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
+                            Tài Khoản: <Typography variant="inherit">{employee.TaiKhoan}</Typography>
+                        </Typography>        
                     </Box>
                 </Box>
             </Modal>
