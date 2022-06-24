@@ -533,34 +533,6 @@ function Customer({ collectCustomer }) {
                     </Select>
                 </FormControl>
             </Box>
-<<<<<<< HEAD
-            <CustomerFormAdd handleResetPage={handleResetPage}></CustomerFormAdd>
-            {/* Toggle CustomerType */}
-            <ToggleButtonGroup
-                aria-label="CustomerType"
-                value={chosenCustomerTypes}
-                onChange={handleChangeCustomerType}
-                size = 'large'
-                
-            >
-                {customerTypes
-                    .map((customerType) => (
-                        <ToggleButton 
-                        
-                        value={customerType.TenLoai} 
-                        aria-label={customerType.IDLoaiKhachHang} 
-                        key={customerType.IDLoaiKhachHang}
-                        sx= {{
-                            marginBottom : 1,
-                            border: "1px solid var(--color3)",
-                            color : "var(--color2)"
-                        }}
-                        >
-                            {customerType.TenLoai}
-                        </ToggleButton>
-                    ))}
-            </ToggleButtonGroup>
-=======
             <Box sx={actionAreaStyle}>
                 {/* Toggle CustomerType */}
                 <Stack direction="row" spacing={2} alignItems="flex-end">
@@ -600,7 +572,6 @@ function Customer({ collectCustomer }) {
                     }
                 </Stack>
             </Box>
->>>>>>> Vinh
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">

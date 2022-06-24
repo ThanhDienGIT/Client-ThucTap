@@ -32,15 +32,8 @@ const QuyenChung = [
                 title : 'Quản lý tuyến thu',
                 path :'/home/tuyenthu'
             },
-            {
-                title : 'Phân quyền nhân viên',
-                path :''
-            },
-            {
-                title : 'Phân tuyến thu',
-                path :''
-            },
-            
+
+
         ]
     },
     {
