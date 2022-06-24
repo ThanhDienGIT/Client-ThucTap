@@ -6,11 +6,11 @@ import Home from './Component/Home/Home';
 import Employee from './Component/Employee/Employee'
 import Customer from './Component/Customer/Customer'
 import Turnover from './Component/Statistical/Turnover';
-import Receipt from './Component/Receipt/Receipt';
 import DistrictAndWard from './Component/DistrictAndWard/DistrictAndWard';
-import KyThuMain from './Component/KyThu/KyThuMain';
 import TuyenThuMain from './Component/TuyenThu/TuyenThuMain';
-
+import  Receipt  from './Component/Receipt/Receipt';
+import KyThuMain from './Component/KyThu/KyThuMain';
+import EmployeeReceipt from './Component/EmployeeReceipt/EmployeeReceipt';
 function App() {
 
 
@@ -28,6 +28,7 @@ function App() {
             <Route path='districtandward' element={<DistrictAndWard />} />
 
             <Route path='receipt' element={<Receipt />} />
+            <Route path='empreceipt' element={<EmployeeReceipt />} />
             <Route path='employee' element={<Employee />} />
             <Route path='kythu' element={<KyThuMain />} />
 

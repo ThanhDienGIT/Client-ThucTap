@@ -49,7 +49,7 @@ const QuyenChung = [
             },
             {
                 title : 'Danh sách phiếu thu',
-                path :''
+                path :'/home/empreceipt'
             },
         ]
     },
