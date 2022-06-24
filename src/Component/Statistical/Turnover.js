@@ -9,6 +9,7 @@ import axios from 'axios';
 import Chartjs from './Chartjs';
 import ChartRound from './ChartRound';
 import Chartjs2 from './Chartjs2';
+import { cookie, GetCookie } from '../Cookie/CookieFunc';
 function Turnover() {
   
   const [kythu, setKythu] = React.useState([{
@@ -105,7 +106,7 @@ function Turnover() {
     phantramSophieuthu = -99999999
   }
 
-
+    
   const handleChange = (event) => {
     setNumberKythu(event.target.value);
   };
