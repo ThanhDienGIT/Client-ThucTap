@@ -11,6 +11,8 @@ import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 const style = {
     position: 'absolute',
@@ -19,7 +21,7 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 600,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    borderRadius: 3,
     boxShadow: 24,
     p: 4,
 };
@@ -33,6 +35,8 @@ for (let i = curYear - 30; i <= curYear + 10; i++) {
 
 
 export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain }) {
+    const [ , dispatch] = React.useContext(SnackBarContext)
+
     const [open, setOpen] = React.useState(false);
     const [Thang, setThang] = React.useState(thang);
     const [Nam, setNam] = React.useState(nam);
@@ -65,11 +69,15 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
         })
             .then(res => res.json())
             .then((result) => {
-                alert(result);
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(result.message));
+                dispatch(setSeverity(result.severity));
                 handleClose();
             },
                 (error) => {
-                    alert('Failed');
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage("Failed"));
+                    dispatch(setSeverity("error"));
                 });
 
         reRenderKyThuMain();
@@ -77,7 +85,7 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
 
     return (
         <div>
-            <IconButton variant="text" color="primary" onClick={handleOpen}>
+            <IconButton variant="text" sx={{ color: 'var(--color8)' }} onClick={handleOpen}>
                 <Tooltip title="Chỉnh Sửa">
                     <EditIcon />
                 </Tooltip>

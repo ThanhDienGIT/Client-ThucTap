@@ -8,6 +8,7 @@ import Employee from './Component/Employee/Employee'
 import Customer from './Component/Customer/Customer'
 <<<<<<< HEAD
 import  Receipt  from './Component/Receipt/Receipt';
+<<<<<<< HEAD
 import KyThuMain from './Component/KyThu/KyThuMain'
 import Turnover from './Component/Statistical/Turnover';
 =======
@@ -16,6 +17,10 @@ import KyThuMain from './Component/KyThu/KyThuMain';
 import DistrictAndWard from './Component/DistrictAndWard/DistrictAndWard';
 
 >>>>>>> Vinh
+=======
+import KyThuMain from './Component/KyThu/KyThuMain';
+import TuyenThuMain from './Component/TuyenThu/TuyenThuMain';
+>>>>>>> QuangMinh
 function App() {
 
 
@@ -38,7 +43,11 @@ function App() {
             <Route path='receipt' element={<Receipt />} />
             <Route path='employee' element={<Employee />} />
             <Route path='kythu' element={<KyThuMain />} />
+<<<<<<< HEAD
             <Route path='collectcustomer' element={<Customer collectCustomer={true} />} />
+=======
+            <Route path='tuyenthu' element={<TuyenThuMain />} />
+>>>>>>> QuangMinh
           </Route>
           {/* <Route path='phieuthu' element={<PhieuThuMain />} /> */}
           <Route path='*' element={<Client />} />
