@@ -7,7 +7,8 @@ import Statistical from './Component/Statistical/Statistical';
 import Employee from './Component/Employee/Employee'
 import Customer from './Component/Customer/Customer'
 import  Receipt  from './Component/Receipt/Receipt';
-import KyThuMain from './Component/KyThu/KyThuMain'
+import KyThuMain from './Component/KyThu/KyThuMain';
+import EmployeeReceipt from './Component/EmployeeReceipt/EmployeeReceipt';
 function App() {
 
 
@@ -21,6 +22,7 @@ function App() {
             <Route path='customer' element={<Customer />} />
             <Route path='staff' element={<Statistical />} />
             <Route path='receipt' element={<Receipt />} />
+            <Route path='empreceipt' element={<EmployeeReceipt />} />
             <Route path='employee' element={<Employee />} />
             <Route path='kythu' element={<KyThuMain />} />
           </Route>

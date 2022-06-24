@@ -72,7 +72,7 @@ export default function ReceiptDetailModal({receipt}) {
         <div>
            <Stack direction="column" spacing={2} alignItems="flex-end">
                 <Button onClick={handleOpen}
-                    sx={{display: "flex", justifyContent: "flex-end",color: "var(--color7)" }}
+                    sx={{display: "flex", justifyContent: "flex-end", color: "var(--color7)"}}
                     startIcon={<VisibilityIcon sx={{ fontSize: "80px" }} />}>
 
                 </Button>

@@ -18,6 +18,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
+import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
 import ExportReceiptList from './ExportReceiptList';
 function ReceiptList() {
@@ -57,10 +58,9 @@ function ReceiptList() {
   const [chosenTuyenThu, setChosenTuyenThu] = React.useState(0);// state TuyenThu
   const [chosenTrangThai, setChosenTrangThai] = React.useState(0);// state TuyenThu
   const [chosenTenKhachHang, setChosenTenKhachHang] = React.useState('');// state TenKhachHang
-  const [chosenTenNhanVien, setChosenTenNhanVien] = React.useState('');// state TenNhanVien
   const [chosenLoaiKhachHang, setChosenLoaiKhachHang] = React.useState(0);// state TuyenThu
   const [changeshow, setChangeShow] = React.useState([]); // state Change
-
+  GetCookie(document.cookie)
   // change status
   function change(date) {
     if (!date) {
@@ -78,7 +78,7 @@ function ReceiptList() {
   };  
   //get PhieuThu
   React.useEffect(() => {
-    fetch("http://localhost:5199/api/PhieuThu")
+    fetch("http://localhost:5199/api/PhieuThu/nhanvien/" + cookie)
       .then(response => response.json())
       .then(function (PhieuThu) {
         const Rows = PhieuThu;
@@ -101,10 +101,11 @@ function ReceiptList() {
     }, [updateState]);
   //get XaPhuong
     React.useEffect(() => {
-    fetch("http://localhost:5199/api/PhieuThu/xaphuong")
+    fetch("http://localhost:5199/api/PhieuThu/getbyidemp/" + cookie)
       .then(response => response.json())
       .then(function (xaphuong) {
         setXaPhuong(xaphuong);   
+        console.log('xp',xaphuong);
       },
           
         (error) => {
@@ -249,6 +250,7 @@ const handleDelete = (id) => {
     console.log('value', event.target.value);
     setChosenLoaiKhachHang(event.target.value);
   }
+
   React.useEffect(() => {
     LoaiKhachHang(rows);
   }, [chosenLoaiKhachHang]);  
@@ -279,10 +281,19 @@ const handleDelete = (id) => {
               <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
               <StyledTableCell id="tt" align="left">{change(row.NgayThu)}</StyledTableCell>
               {/* function */}
-              <StyledTableCell align="left" padding='none'>
-              </StyledTableCell>
                 <StyledTableCell align="left" padding='none'>
-                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",  }} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                  <Button
+                    sx={{ fontSize: 12, display: "flex", justifyContent: "flex-end" }}
+                    variant="p"
+                    color="primary"
+                    onClick={XacNhan()}
+                    disabled={row.NgayThu}
+                  >
+                    {hiddenButtonStatus(row.NgayThu)}
+                  </Button>
+                </StyledTableCell>
+                <StyledTableCell align="left" padding='none'>
+                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end", color: "var(--color9)",}} variant="p" color="error" startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
                 </StyledTableCell>
                 <StyledTableCell align="left" padding='none'>
                   <ReceiptDetailModal receipt={row} />
@@ -337,7 +348,6 @@ const handleDelete = (id) => {
     setChosenLoaiKhachHang(0);
     setChosenQuanHuyen(0);
     setChosenTenKhachHang('');
-    setChosenTenNhanVien('');
     setChosenTrangThai(0);
     setChosenTuyenThu(0);
     setChosenXaPhuong(0);
@@ -358,22 +368,6 @@ const handleDelete = (id) => {
       }
     })
     setChangeShow(f);
-  }
-  //handleSearchInput
-  const handleChangeSearchInputNV = (event) => {
-    setChosenTenNhanVien(event.target.value);
-    console.log(event.target.value);
-  }
-  React.useEffect(() => {
-    TenNhanVien(rows);
-  }, [chosenTenNhanVien]);  
-  const TenNhanVien = (tennhanvien) => {
-    const g = rows.filter((row) => {
-      if (row.HoTen !== null && row.HoTen.toLowerCase().includes(chosenTenNhanVien.toLowerCase())) {
-          return row;
-      }
-    })
-    setChangeShow(g);
   }
   //show filter DiaChi
   function showfilterQuanHuyen() {
@@ -498,36 +492,9 @@ const handleDelete = (id) => {
     }
     
   }
-  //show filter TenNhanVien
-      function showfilterTenNhanVien() {
-    if (searchField === 5) {
-      return (
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-           <InputLabel htmlFor="outlined-adornment-search">Tên nhân viên</InputLabel>
-                    <OutlinedInput
-                        id="outlined-adornment-search"
-                        type="text"
-                        onChange={handleChangeSearchInputNV}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="button search"
-                                    edge="end"                                  
-                                >
-                                    <SearchIcon />
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label=" Tìm Kiếm "
-                    />
-        </FormControl>
-      )
-    }
-    
-  }
   //show filter LoaiKhachHang
   function showfilterLoaiKhachHang() {
-    if (searchField === 6) {
+    if (searchField === 5) {
       return (
         <FormControl sx={{ m: 1, minWidth: 300 }}>
         <Select
@@ -564,8 +531,7 @@ const handleDelete = (id) => {
             <MenuItem value={2}>Tuyến Thu</MenuItem>
             <MenuItem value={3}>Trạng Thái</MenuItem>
             <MenuItem value={4}>Tên Khách Hàng</MenuItem>
-            <MenuItem value={5}>Tên Nhân Viên</MenuItem>
-            <MenuItem value={6}>Loại Khách Hàng</MenuItem>
+            <MenuItem value={5}>Loại Khách Hàng</MenuItem>
           </Select>
       </FormControl>
       {/* QuanHuyen */}
@@ -578,8 +544,6 @@ const handleDelete = (id) => {
         {showfilterTrangThai()}
       {/* Ten Khach Hang */}
         {showfilterTenKhachHang()}
-      {/* Ten Nhan Vien */}
-      {showfilterTenNhanVien()}
       {/* Loai Khach Hang */}
         {showfilterLoaiKhachHang()}
       <ReceiptAddModal />
@@ -603,7 +567,7 @@ const handleDelete = (id) => {
         </TableHead>
         <TableBody>
           {
-            chosenQuanHuyen !== 0 || chosenXaPhuong !== 0 || chosenLoaiKhachHang !== 0 || chosenTuyenThu !== 0 || chosenTrangThai !==0 ||chosenTenKhachHang !== '' || chosenTenNhanVien != '' ? 
+            chosenQuanHuyen !== 0 || chosenXaPhuong !== 0 || chosenLoaiKhachHang !== 0 || chosenTuyenThu !== 0 || chosenTrangThai !==0 ||chosenTenKhachHang !== ''? 
               showPhieuThu(changeshow)
               :
               showPhieuThu(rows)
@@ -616,7 +580,7 @@ const handleDelete = (id) => {
             <ExportReceiptList phieuthu={changeshow} />
               :
             <ExportReceiptList phieuthu={rows} />
-            }
+          }
         </Stack>
     </div>
   )
