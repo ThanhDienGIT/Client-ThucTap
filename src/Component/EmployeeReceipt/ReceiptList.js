@@ -21,6 +21,7 @@ import IconButton from '@mui/material/IconButton';
 import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
 import ExportReceiptList from './ExportReceiptList';
+import axios from 'axios';
 function ReceiptList() {
   //style
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -264,10 +265,46 @@ const handleDelete = (id) => {
     })
     setChangeShow(i);
   }
+  //update trangthai
+ const getFormattedDate = (date) => {
+            var year = date.getFullYear();
+        
+            var month = (1 + date.getMonth()).toString();
+            month = month.length > 1 ? month : '0' + month;
+        
+            var day = date.getDate().toString();
+            day = day.length > 1 ? day : '0' + day;
+            return day + '-' + month + '-' + year;
+    }
   // Button XacNhan
-  const XacNhan = () => {
+  const XacNhan = (IDPhieu,NgayTao,MauSoPhieu,IDNhanVien) => {
+    console.log('idPhieu', IDPhieu);
+    console.log('idNhanVien', IDNhanVien);
+    var today = new Date();
+    const  date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    const gDate = getFormattedDate(new Date(date))
+    fetch("http://localhost:5199/api/PhieuThu", {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        IDPhieu: IDPhieu,
+        NgayTao: NgayTao,
+        MauSoPhieu: MauSoPhieu,
+        IDNhanVien: IDNhanVien,
+        NgayThu: gDate,
+      })
+    })
+      .then(res => res.json())
+      .then((result) => {
+        alert(result);
+      });
+      console.log('update');
+      reRender();
   }
-    //show phieu thu
+  //show phieu thu
   const showPhieuThu = function (Phieu) {
     if (Phieu.length > 0) {
       return (
@@ -286,7 +323,7 @@ const handleDelete = (id) => {
                     sx={{ fontSize: 12, display: "flex", justifyContent: "flex-end" }}
                     variant="p"
                     color="primary"
-                    onClick={XacNhan()}
+                    onClick={() => XacNhan(row.IDPhieu ,row.NgayTao, row.MauSoPhieu, cookie)}
                     disabled={row.NgayThu}
                   >
                     {hiddenButtonStatus(row.NgayThu)}
