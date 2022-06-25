@@ -40,6 +40,8 @@ function Client() {
       handleClick1();
     }
   }
+ 
+
 
   const handleClick = () => {
     setOpen(true);
@@ -67,7 +69,6 @@ function Client() {
   };
 
 
-
   if(cookie.length === 0){
     if(StateLogin === 'Connect'){
       axios.get(`http://localhost:5199/api/Login/${login.Username}`)
@@ -81,7 +82,7 @@ function Client() {
     }else{
       console.log("Đã có cookie")
     }
-
+    
   return (
     
     
@@ -104,7 +105,7 @@ function Client() {
         }
       >
 
-            <Box width="33%" height="70%" display="flex"
+            <Box width="33%" height="65%" display="flex"
             sx={{backgroundColor: "white",
              
               opacity : 0.9,
@@ -116,7 +117,7 @@ function Client() {
             > 
             
              {/*Logo */}
-                <Box width="100%" height="42%" display="flex"
+                <Box width="100%" height="38%" display="flex"
                 sx={{  
                   alignItems : 'center',
                   justifyContent: 'center',
@@ -148,6 +149,7 @@ function Client() {
                     
                   }}
                   onChange={(e)=> {setLogin({...login,Username: e.target.value})}}
+                  
                   />
                   <TextField id="outlined-basic" label="Mật khẩu" variant="outlined"
                   type={'password'}
@@ -155,7 +157,9 @@ function Client() {
                    
                     width : "50%"
                   }}
+                  floatingLabelText="Receipt Desc"
                   onChange={(e)=> {setLogin({...login,Password: e.target.value})}}
+                  
                   />
                 </Box>
                 {/*Button */}
@@ -164,21 +168,26 @@ function Client() {
                   display : "flex",
                   justifyContent : "space-between",
                   alignItems : "center",
-                  marginTop: 2
+                  marginTop: 2,
+                  flexDirection : "column",
                 }}>
                 <Button variant="outlined" size="large"  
                   sx={{
-                    marginRight:2
-                    
+                    width : '100%',
+                    marginBottom: 2,
+                   
                   }}
                   onClick={Checklogin}
                       
                   
                 >Đăng nhập</Button>
-                <Button variant="outlined" size="large" onClick={()=>{alert('Hủy bỏ')}}>Hủy bỏ</Button>
+                <Button variant="text" size="large" color="error" 
+                sx={{ width : '30%',marginTop:2 ,textDecoration : "underline"}} 
+                >Hủy bỏ</Button>
                 
                 </Box>
-               
+
+                
             </Box>
            
       </Box>
