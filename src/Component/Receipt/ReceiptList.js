@@ -262,9 +262,6 @@ const handleDelete = (id) => {
     })
     setChangeShow(i);
   }
-  // Button XacNhan
-  const XacNhan = () => {
-  }
     //show phieu thu
   const showPhieuThu = function (Phieu) {
     if (Phieu.length > 0) {
