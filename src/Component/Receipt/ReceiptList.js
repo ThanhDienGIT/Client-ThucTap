@@ -6,6 +6,7 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptDetailModal from './ReceiptDetailModal';
 import ReceiptAddModal from './ReceiptAddModal';
@@ -275,15 +276,16 @@ const handleDelete = (id) => {
               <StyledTableCell align="left">{row.TenLoai}</StyledTableCell>
               <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
               <StyledTableCell id="tt" align="left">{change(row.NgayThu)}</StyledTableCell>
+              <StyledTableCell align="left">{row.TenKyThu}</StyledTableCell>
               {/* function */}
               <StyledTableCell align="left" padding='none'>
               </StyledTableCell>
-                <StyledTableCell align="left" padding='none'>
-                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",  }} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
-                </StyledTableCell>
-                <StyledTableCell align="left" padding='none'>
+              <StyledTableCell align="left" padding='none'> 
+                <ButtonGroup variant="" aria-label="button group">       
                   <ReceiptDetailModal receipt={row} />
-                </StyledTableCell>
+                   <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                </ButtonGroup>  
+              </StyledTableCell>
             </StyledTableRow>
           ))
       )
@@ -593,7 +595,7 @@ const handleDelete = (id) => {
             <StyledTableCell align="left">Loại khách hàng</StyledTableCell>
             <StyledTableCell align="left">Nhân viên thu</StyledTableCell>
             <StyledTableCell align="left">Trạng thái</StyledTableCell>
-            <StyledTableCell align="left"></StyledTableCell>
+            <StyledTableCell align="left">Tên kỳ thu</StyledTableCell>
             <StyledTableCell align="left"></StyledTableCell>
             <StyledTableCell align="left"></StyledTableCell>
           </TableRow>
