@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 const style = {
     position: 'absolute',
@@ -19,7 +21,7 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 600,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    borderRadius: 3,
     boxShadow: 24,
     p: 4,
 };
@@ -32,9 +34,11 @@ for (let i = curYear - 30; i <= curYear + 10; i++) {
 }
 
 export default function KyThuAddModal({ reRenderKyThuMain }) {
+    const [, dispatch] = React.useContext(SnackBarContext)
+
     const [open, setOpen] = React.useState(false);
     const [statusAddPhieuThu, setStatus] = React.useState(true);
-    const [Thang, setThang] = React.useState(new Date().getMonth()+1);
+    const [Thang, setThang] = React.useState(new Date().getMonth() + 1);
     const [Nam, setNam] = React.useState(new Date().getFullYear());
     const handleOpen = () => {
         setOpen(true);
@@ -52,7 +56,7 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
     };
 
     const handleSubmit = () => {
-        fetch("http://localhost:5199/api/kythu/"+statusAddPhieuThu, {
+        fetch("http://localhost:5199/api/kythu/" + statusAddPhieuThu, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -65,16 +69,20 @@ export default function KyThuAddModal({ reRenderKyThuMain }) {
         })
             .then(res => res.json())
             .then((result) => {
-                alert(result);
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(result.message));
+                dispatch(setSeverity(result.severity));
                 handleClose();
             },
                 (error) => {
-                    alert('Failed');
+                    dispatch(setOpenSnackBar());
+                    dispatch(setMessage("Failed"));
+                    dispatch(setSeverity("error"));
                 });
         reRenderKyThuMain();
     }
 
-    console.log("Rerender_AddModal");
+    console.log("Rerender main KyThu")
 
     return (
         <div>

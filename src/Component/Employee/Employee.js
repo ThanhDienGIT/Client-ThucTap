@@ -6,21 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
 import { FormControl, FormControlLabel, FormLabel, FormHelperText, FormGroup } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -34,12 +27,12 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import Checkbox from '@mui/material/Checkbox';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from '@mui/material/Stack';
 import EmployeeFormView from './EmployeeFormView';
 import EmployeeFormEdit from './EmployeeFormEdit';
-import { wait } from '@testing-library/user-event/dist/utils';
+import EmployeeFormAdd from './EmployeeFormAdd';
+import ExportFileExcel from './ExportFileExcel';
+import EmployeeFormDelete from './EmployeeFormDelete';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -123,100 +116,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
     }));
 
-// Modal Form Style (Form Thêm Nhân Viên, ...)
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 800,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-
-function validateEmail(email){
-    var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return EMAIL_REGEX.test(email);
-}
-
 export default function Employee() {
     //API input data
     const [employees, setEmployees] = React.useState([]);
     const [empRoles, setEmpRoles] = React.useState([]);
     const [roles, setRoles] = React.useState([]);
-    //Modal const
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    //Add Employee Form
-    /*
-    const [email, setEmail] = React.useState('');
-    const [tennhanvien, setTenNhanVien] = React.useState('');
-    const [sdt, setSdt] = React.useState('');
-    const [diachi, setDiaChi] = React.useState('');
-    const [cccd, setCCCD] = React.useState('');
-    const [gioiTinh, setGioiTinh] = React.useState('Nam');
-    */
-    const [addEmp, setAddEmp] = React.useState({
-        idnhanvien: '',
-        email: '',
-        tennhanvien: '',
-        sdt: '',
-        diachi: '',
-        cccd: '',
-        gioiTinh: 'Nam',
-        ngaysinh: null
-    });
-    const [addEmpRoles, setAddEmpRoles] = React.useState([]);
-    const getValue = (e) =>{
-        let data = addEmpRoles;
-        
-        if(addEmpRoles.includes(e.target.value)){
-            addEmpRoles.splice(addEmpRoles.indexOf(e.target.value), 1);
-        }else{
-            data.push(e.target.value);
-            setAddEmpRoles(data);
-        }
 
-        fetch('http://localhost:5199/api/nhanvien/getlastempid')
-            .then(res => res.json())
-            .then(data => setAddEmp({...addEmp, idnhanvien: data[0].IDNhanVien+1 }))
-        /*
-        if(!addEmpRoles.includes(e.target.value)){
-            data.push(e.target.value);
-            setAddEmpRoles(data);
-        }else{
-            data.pop(e.target.value);
-            setAddEmpRoles(data);
-        }
-        */
-        /*
-        console.log(addEmpRoles.includes(e.target.value))
-        console.log(addEmpRoles);
-        */
-        /*
-        for(var i=0; i < addEmpRoles.length; i++){
-            console.log(addEmpRoles[i]);
-
-            console.log(
-                JSON.stringify({
-                    IDNhanVien: addEmp.idnhanvien,
-                    IDQuyen: addEmpRoles[i]
-                })
-            );
-        }*/
-        //console.log(addEmp.idnhanvien);
-    }
-
-    //var [ngaysinh, setNgaySinh] = React.useState(null);
-    //Add Employee Form Handle Error
-    const [emailError, setEmailError] = React.useState(false);
-    const [tennhanvienError, setTenNhanVienError] = React.useState(false);
-    const [sdtError, setSdtError] = React.useState(false);
-    const [diachiError, setDiaChiError] = React.useState(false);
-    const [cccdError, setCCCDError] = React.useState(false);
+    const [disabledEmployee, setDisabledEmployee] = React.useState(false);
     /*
     const [handleError, setHandleError] = React.useState({
         emailError: false,
@@ -267,205 +173,58 @@ export default function Employee() {
     const handleResetPage = function () {
         setResetPage(!resetPage)
     }
-
-    function deleteEmp(id) {
-        //console.log('http://localhost:5199/api/nhanvien/' + id);
-        setAddEmpRoles([]);
-        //console.log(addEmpRoles);
-        fetch('http://localhost:5199/api/nhanvien/' + id, {
-            method: 'DELETE'
-        }).then(() =>{
-            handleResetPage();
-        })
+    const handleSelectionDisabledEmployee = () => {
+        setDisabledEmployee(!disabledEmployee)
+        handleResetPage()
     }
 
-    async function postData(url = '', data = {}) {
-        /*
-        fetch('http://localhost:5199/api/nhanvien',{
-            method: 'POST',
-            headers: {"Content-type": "application/json"},
-            body: JSON.stringify({
-                MaNhanVien: newMaNhanVien,
-                HoTen: addEmp.tennhanvien,
-                Email: addEmp.email,
-                GioiTinh: addEmp.gioiTinh,
-                SoDienThoai: addEmp.sdt,
-                NgaySinh: addEmp.ngaysinh,
-                DiaChi: addEmp.diachi,
-                CCCD: addEmp.cccd,
-                ProfilePicture: profilePicture,
-                TaiKhoan: taikhoan,
-                MatKhau: matkhau
-            })
-        })
-        */
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {"Content-type": "application/json"},
-            body: JSON.stringify(data)
-        })
-        return response.json();
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        setEmailError(false);
-        setTenNhanVienError(false);
-        setSdtError(false);
-        setDiaChiError(false);
-        setCCCDError(false);
-        
-        /*
-        setHandleError({...handleError, 
-            emailError: false,
-            tennhanvienError : false,
-            sdtError: false,
-            diachiError : false,
-            cccdError : false
-        });
-        */
-        
-        if(addEmp.email === '' || !validateEmail(addEmp.email)) {
-            setEmailError(true);
-            //setHandleError({ ...handleError, emailError: true })
-        }
-
-        if(addEmp.tennhanvien === '') {
-            setTenNhanVienError(true);
-            //setHandleError({ ...handleError, tennhanvienError: true })
-        }
-
-        if(addEmp.sdt === '' || isNaN(+addEmp.sdt)) {
-            setSdtError(true);
-            //setHandleError({ ...handleError, sdtError: true })
-        }
-
-        if(addEmp.diachi === '') {
-            setDiaChiError(true);
-            //setHandleError({ ...handleError, diachiError: true })
-        }
-
-        if(addEmp.cccd === '') {
-            setCCCDError(true);
-            //setHandleError({ ...handleError, cccdError: true })
-        }
-
-        if(addEmp.ngaysinh == null) {
-            //setNgaySinh('');
-            setAddEmp({...addEmp, ngaysinh: '' });
-        }
-
-        const today = new Date().getFullYear();
-        if(addEmp.ngaysinh){
-            //console.log(today - addEmp.ngaysinh.getFullYear());
-            if(addEmp.ngaysinh!=null && (today - addEmp.ngaysinh.getFullYear() < 18)){
-                //setNgaySinh('');
-                setAddEmp({...addEmp, ngaysinh: '' });
-            }
-        }
-        
-        //if(email && tennhanvien && sdt && diachi && cccd && ngaysinh!=null && !(today - ngaysinh.getFullYear() < 18) && validateEmail(email)) {
-        if(!emailError && !tennhanvienError && !sdtError && !diachiError && !cccdError && addEmp.ngaysinh!=null && !(today - addEmp.ngaysinh.getFullYear() < 18) && !emailError) {
-            setOpen(false);
-            addEmp.ngaysinh = addEmp.ngaysinh.toLocaleDateString();
-            //create new MaNhanVien
-            var lastMaNhanVien = employees[employees.length-1].MaNhanVien;
-            var newMaNhanVien = parseInt(lastMaNhanVien.substring(2));
-            newMaNhanVien = newMaNhanVien+1;
-            newMaNhanVien = newMaNhanVien.toString().padStart(4, '0');
-            newMaNhanVien = 'NV' + newMaNhanVien;
-            //create taikhoan
-            var taikhoan = addEmp.email.substring(0, addEmp.email.lastIndexOf('@'));
-            //hash default Matkhau
-            var md5 = require('md5');
-            var matkhau = md5('shizen123');
-            //default profile picture
-            var profilePicture = 'anonymous.png';
-            /*
-            console.log(JSON.stringify({
-                MaNhanVien: newMaNhanVien,
-                HoTen: addEmp.tennhanvien,
-                Email: addEmp.email,
-                GioiTinh: addEmp.gioiTinh,
-                SoDienThoai: addEmp.sdt,
-                NgaySinh: addEmp.ngaysinh,
-                DiaChi:addEmp. diachi,
-                CCCD: addEmp.cccd,
-                ProfilePicture: profilePicture,
-                TaiKhoan: taikhoan,
-                MatKhau: matkhau
-                }) );
-            */
-            postData('http://localhost:5199/api/nhanvien', {
-                MaNhanVien: newMaNhanVien,
-                HoTen: addEmp.tennhanvien,
-                Email: addEmp.email,
-                GioiTinh: addEmp.gioiTinh,
-                SoDienThoai: addEmp.sdt,
-                NgaySinh: addEmp.ngaysinh,
-                DiaChi: addEmp.diachi,
-                CCCD: addEmp.cccd,
-                ProfilePicture: profilePicture,
-                TaiKhoan: taikhoan,
-                MatKhau: matkhau
-            }).then(data => console.log(data));
-            /*
-            fetch('http://localhost:5199/api/nhanvien',{
-                method: 'POST',
-                headers: {"Content-type": "application/json"},
-                body: JSON.stringify({
-                    MaNhanVien: newMaNhanVien,
-                    HoTen: addEmp.tennhanvien,
-                    Email: addEmp.email,
-                    GioiTinh: addEmp.gioiTinh,
-                    SoDienThoai: addEmp.sdt,
-                    NgaySinh: addEmp.ngaysinh,
-                    DiaChi: addEmp.diachi,
-                    CCCD: addEmp.cccd,
-                    ProfilePicture: profilePicture,
-                    TaiKhoan: taikhoan,
-                    MatKhau: matkhau
-                })
-            })
-            */
-            if(addEmpRoles) {
-                //console.log(addEmp.idnhanvien);
-                
-                for(var i=0; i < addEmpRoles.length; i++){
-                    /*
-                    console.log(
-                        JSON.stringify({
-                            IDNhanVien: addEmp.idnhanvien,
-                            IDQuyen: addEmpRoles[i]
-                        })
-                    );
-                    
-                    postData('http://localhost:5199/api/phanquyen', {
-                        IDNhanVien: addEmp.idnhanvien,
-                        IDQuyen: addEmpRoles[i]
-                    })
-                    */
-                    wait(1);
-                    fetch('http://localhost:5199/api/phanquyen',{
-                        method: 'POST',
-                        headers: {"Content-type": "application/json"},
-                        body: JSON.stringify({
-                            IDNhanVien: addEmp.idnhanvien,
-                            IDQuyen: addEmpRoles[i]
-                        })
-                    });
-                    
+    
+    function filterEmpList(){
+        const empList = employees.filter((val) => {
+            console.log(val.CCCD);
+            console.log('SearchTerm')
+            console.log(val.CCCD.toString().includes(searchHandle.searchTerm))
+            if (!disabledEmployee){
+                if(getIDQuyenByIDNhanVien(val.IDNhanVien, empRoles, roles).length !== 0){
+                    if (searchHandle.searchTerm == '') {
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'HoTen' &&  val.HoTen.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'MaNhanVien' &&  val.MaNhanVien.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'Email' &&  val.Email.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'CCCD' &&  val.CCCD.includes(searchHandle.searchTerm)){
+                        return val;
+                    }
+                }
+            }else{
+                if(getIDQuyenByIDNhanVien(val.IDNhanVien, empRoles, roles).length === 0){
+                    if (searchHandle.searchTerm == '') {
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'HoTen' &&  val.HoTen.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'MaNhanVien' &&  val.MaNhanVien.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'Email' &&  val.Email.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
+                        return val;
+                    }else
+                    if (searchHandle.searchCategory === 'CCCD' &&  val.CCCD.includes(searchHandle.searchTerm)){
+                        return val;
+                    }
                 }
             }
-            //setNgaySinh(null);
-            setAddEmp({...addEmp, ngaysinh: null });
-            setAddEmpRoles([]);
-            handleResetPage();
-            //navigate(0);
-        }        
-    };
-
+        });
+        return empList;
+    }
+    //console.log(filterEmpList());
 
     function getIDQuyenByIDNhanVien (idNV, empRoles, roles) {
         let quyenNV;
@@ -481,7 +240,7 @@ export default function Employee() {
         }
         return idQuyenNV;
     }
-    
+    //console.log(getIDQuyenByIDNhanVien(9, empRoles, roles).length)
     function getQuyenByIDNhanVien (idNV, empRoles, roles) {
         let quyenNV;
         let tenQuyenNV = '';
@@ -505,13 +264,6 @@ export default function Employee() {
     console.log(x.includes(2));
     */
     return (
-        /*
-        <div>
-            {employees.map(employee => (
-                <p key={ employee.IDNhanVien }>{ employee.HoTen }</p>
-            ))}
-        </div>
-        */
         <div>
             <Typography variant="p"
                 sx={
@@ -525,7 +277,9 @@ export default function Employee() {
                 Quản Lý Nhân Viên
             </Typography>
             <Divider sx={{ marginBottom : 3 }}></Divider>
-            <Grid container spacing={2}>
+            
+            {/* Search Bar */}
+            <Grid container spacing={2} justifyContent='center'>
                 <Grid item xs={2}>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Danh Mục</InputLabel>
@@ -541,6 +295,7 @@ export default function Employee() {
                             <MenuItem value={'HoTen'}>Họ Tên</MenuItem>
                             <MenuItem value={'MaNhanVien'}>Mã Nhân Viên</MenuItem>
                             <MenuItem value={'Email'}>Email</MenuItem>
+                            <MenuItem value={'CCCD'}>CCCD</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -555,171 +310,22 @@ export default function Employee() {
                         sx={{ width: '70%' }}
                     />
                 </Grid>
-                <Grid item xs={3}>
-                    <Button 
-                            variant="contained" 
-                            size="large"    
-                            sx={{ color : "var(--color7) "}}
-                            onClick={handleOpen}
-                        >
-                            <Typography variant="p"
-                                sx={
-                                    {
-                                        color: "var(--color1)",
-                                    }
-                                }
-                            >Thêm Nhân Viên</Typography>
-                    </Button>
-                </Grid>
             </Grid>
             
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-            <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Thêm Nhân Viên
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }} component={'span'}>
-                    <Box
-                        component="form" 
-                        sx={{
-                            '& > :not(style)': { m: 1 },
-                          }} 
-                        noValidate
-                        autoComplete="off" 
-                        onSubmit={handleSubmit}
-                    >
-                        <Grid container spacing={2}>
-                          <Grid item xs={5}>
-                            <TextField
-                                onChange={(e) => setAddEmp({...addEmp, tennhanvien: e.target.value})}
-                                label="Tên Nhân Viên"
-                                variant="outlined"
-                                fullWidth
-                                required 
-                                error={tennhanvienError}
-                            />
-                          </Grid>
-                          <Grid item xs={5}>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DatePicker
-                                    label="Ngày Sinh"
-                                    value={addEmp.ngaysinh} 
-
-                                    onChange={(newNgaySinh) => {
-                                        setAddEmp({...addEmp, ngaysinh: newNgaySinh });
-                                    }}
-                                    renderInput={(params) => 
-                                        <TextField 
-                                            fullWidth 
-                                            required 
-                                            {...params} 
-                                        />}
-                                />
-                            </LocalizationProvider>
-                          </Grid>
-                          <Grid item xs={5}>
-                            <TextField
-                                onChange={(e) => setAddEmp({...addEmp, sdt: e.target.value})}
-                                label="Số Điện Thoại" 
-                                variant="outlined" 
-                                display="block"
-                                fullWidth 
-                                required 
-                                error={sdtError}
-                            />
-                          </Grid>
-                          <Grid item xs={5}>
-                            <TextField
-                                onChange={(e) => setAddEmp({...addEmp, cccd: e.target.value})}
-                                label="Căn Cước Công Dân" 
-                                variant="outlined" 
-                                display="block"
-                                fullWidth 
-                                required 
-                                error={cccdError}
-                            />
-                          </Grid>
-                          <Grid item xs={5}>
-                            <TextField
-                                onChange={(e) => setAddEmp({...addEmp, email: e.target.value})}
-                                label="Email" 
-                                variant="outlined" 
-                                display="block"
-                                fullWidth 
-                                required 
-                                error={emailError}
-                            />
-                          </Grid>
-                          <Grid item xs={5}>
-                            <TextField
-                                onChange={(e) => setAddEmp({...addEmp, diachi: e.target.value})}
-                                label="Địa Chỉ" 
-                                variant="outlined" 
-                                display="block"
-                                fullWidth 
-                                required 
-                                error={diachiError}
-                            />
-                          </Grid>
-                        </Grid>
-                        
-                        <FormControl sx={{display: 'block'}}>
-                            <FormLabel>Giới Tính</FormLabel>
-                            <RadioGroup value={addEmp.gioiTinh} onChange={(e) => setAddEmp({...addEmp, gioiTinh: e.target.value})}>
-                                <Grid container spacing={2}>
-                                <Grid item>
-                                    <FormControlLabel value="Nam" control={<Radio></Radio>} label="Nam"/>
-                                </Grid>
-                                <Grid item>
-                                <FormControlLabel value="Nữ" control={<Radio></Radio>} label="Nữ"/>
-                                </Grid>
-                                </Grid>
-                            </RadioGroup>
-                        </FormControl>
-
-                        <FormControl sx={{display: 'block'}}>
-                          <FormLabel>Phân Quyền</FormLabel>
-                          <FormGroup>
-                            <FormControlLabel control={<Checkbox value="1" onChange={(e)=>getValue(e)} />} label="Quản Trị" />
-                            <FormControlLabel control={<Checkbox value="2" onChange={(e)=>getValue(e)} />} label="Thu Tiền" />
-                            <FormControlLabel control={<Checkbox value="3" onChange={(e)=>getValue(e)} />} label="Thống Kê - Báo Cáo" />
-                          </FormGroup>
-                        </FormControl>
-                        
-                        <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <Button 
-                                type="submit" 
-                                variant="contained" 
-                                color="primary"  
-                                sx={{marginRight: 2}}
-                            >
-                            Submit
-                            </Button>
-                            <Button 
-                                variant="contained" 
-                                color="primary" 
-                                onClick={handleClose} 
-                            >
-                                Cancel
-                            </Button>
-                        </Box>
-                        
-                    </Box>
-                </Typography>
-            </Box>
-            </Modal>
+            {/* Buttons: Xuất Excel, Thêm Nhân Viên */}
+            <Stack direction="row-reverse" spacing={2} marginBottom={1}>
+                <EmployeeFormAdd employees={employees} handleResetPage={handleResetPage}></EmployeeFormAdd>
+                <ExportFileExcel employees={filterEmpList()} getQuyenByIDNhanVien={getQuyenByIDNhanVien} empRolesExcel={empRoles} rolesExcel={roles} handleResetPage={handleResetPage}></ExportFileExcel>
+            </Stack>
+            
+            {/* Table Danh Sách Nhân Viên */}
             <Typography 
                 variant="h5" 
                 component="h2" 
                 color="initial" 
                 sx={{ margin : 2 }}
             >
-                Danh Sách Nhân Viên
+                Danh Sách Nhân Viên <FormControlLabel sx={{paddingLeft: 5}} control={<Checkbox onClick={handleSelectionDisabledEmployee} />} label="Hiển Thị Nhân Viên Không Hoạt Động" />
             </Typography>
             <TableContainer component={Paper}>
                 <Table aria-label="customized table">
@@ -737,22 +343,9 @@ export default function Employee() {
                     </TableHead>
                     <TableBody>
                         {(rowsPerPage > 0
-                            ? employees.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : employees
-                          ).filter((val) => {
-                            if (searchHandle.searchTerm == '') {
-                                return val;
-                            }else
-                            if (searchHandle.searchCategory === 'HoTen' &&  val.HoTen.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
-                                return val;
-                            }else
-                            if (searchHandle.searchCategory === 'MaNhanVien' &&  val.MaNhanVien.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
-                                return val;
-                            }else
-                            if (searchHandle.searchCategory === 'Email' &&  val.Email.toLowerCase().includes(searchHandle.searchTerm.toLowerCase())){
-                                return val;
-                            }
-                        }).map((employee) => (
+                            ? filterEmpList().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : filterEmpList()
+                          ).map((employee) => (
                             <StyledTableRow
                                 key={employee.IDNhanVien}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -769,14 +362,8 @@ export default function Employee() {
                                 <StyledTableCell align="center">
                                     <ButtonGroup variant="text" color="primary" aria-label="">
                                         <EmployeeFormView employee={employee} empRoles={getQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles)} ></EmployeeFormView>
-                                        <EmployeeFormEdit employee={employee} empRoles={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles)} handleResetPage={handleResetPage}></EmployeeFormEdit>
-                                        <Stack direction="column" spacing={2} alignItems="flex-end" marginBottom={1} onClick={(e) => deleteEmp(employee.IDNhanVien)}>
-                                            <IconButton variant="text" color="primary">
-                                                <Tooltip title="Xoá"><DeleteIcon />
-                                                </Tooltip>
-                                            </IconButton>
-                                        </Stack>
-                                        
+                                        <EmployeeFormEdit employee={employee} employeeList={employees} getIDQuyenByIDNhanVien={getIDQuyenByIDNhanVien} empRolesEdit={empRoles} rolesEdit={roles} handleResetPage={handleResetPage}></EmployeeFormEdit>
+                                        <EmployeeFormDelete employee={employee} handleResetPage={handleResetPage}></EmployeeFormDelete>
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>
@@ -787,7 +374,7 @@ export default function Employee() {
                             <TablePagination
                             rowsPerPageOptions={[10, 15, 30, { label: 'All', value: -1 }]}
                             colSpan={3}
-                            count={employees.length}
+                            count={filterEmpList().length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             SelectProps={{

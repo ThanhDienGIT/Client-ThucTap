@@ -100,5 +100,5 @@ export default function EmployeeFormView({ employee, empRoles }) {
                 </Box>
             </Modal>
         </div >
-    );
+    )
 }

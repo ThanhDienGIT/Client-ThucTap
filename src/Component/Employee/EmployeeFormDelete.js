@@ -5,14 +5,8 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, TextField } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import axios from 'axios';
-import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
-import EditIcon from '@mui/icons-material/Edit';
-import { SettingsApplicationsRounded } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const style = {
@@ -27,14 +21,7 @@ const style = {
     p: 4,
 };
 
-export default function CustomerFormDelete({ customer, handleResetPage }) {
-
-    const client = axios.create({
-        baseURL: "http://localhost:5199/api/KhachHang/" + customer.IDKhachHang
-    });
-
-    const [posts, setPosts] = React.useState([]);
-
+export default function EmployeeFormDelete({ employee, handleResetPage }) {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -43,29 +30,18 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
 
     const handleClose = () => setOpen(false);
 
-    const handleSubmit = () => {
-        client
-            .put('', {
-            })
-            .then((response) => {
-                setPosts([response.data, ...posts]);
-                alert(response.data)
-            })
-            .catch((err) => {
-                if (err.response) {
-                    // The client was given an error response (5xx, 4xx)
-                    console.log(err.response.data);
-                    console.log(err.response.status);
-                    console.log(err.response.headers);
-                } else if (err.request) {
-                    // The client never received a response, and the request was never left
-                } else {
-                    // Anything else
-                }
-            });
-        handleResetPage();
-        handleClose();
-    };
+    function deleteEmp(id) {
+        //console.log('http://localhost:5199/api/nhanvien/' + id);
+        //console.log(addEmpRoles);
+        fetch('http://localhost:5199/api/nhanvien/' + id, {
+            method: 'DELETE'
+        })
+        .then(alert("Xóa Nhân Viên Thành Công"))
+        .then(() => handleClose())
+        .then(() =>{
+            handleResetPage();
+        })
+    }
 
     return (
         <div>
@@ -86,13 +62,13 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
             >
                 <Box sx={style}>
                     <Typography id="post-request-error-handling" variant="h5" style={{ paddingBottom: 20 }}>
-                        Xác Nhận Xoá Khách hàng
+                        Xác Nhận Xoá Nhân Viên
                     </Typography>
                     <Typography id="post-request-error-handling" variant="h4" style={{ paddingBottom: 40 }}>
-                        {customer.HoTenKH}
+                        {employee.HoTen}
                     </Typography>
                     <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-evenly" >
-                        <Button variant="contained" onClick={handleSubmit}>Xác Nhận</Button>
+                        <Button variant="contained" onClick={(e) => deleteEmp(employee.IDNhanVien)}>Xác Nhận</Button>
                         <Button variant="contained" onClick={handleClose}>Huỷ</Button>
                     </Stack>
                 </Box>

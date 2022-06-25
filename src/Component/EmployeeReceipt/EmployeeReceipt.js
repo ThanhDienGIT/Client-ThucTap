@@ -2,7 +2,7 @@ import React from 'react'
 import ReceiptList from './ReceiptList';
 import "../../CSS/App.css";
 import Typography from '@mui/material/Typography';
-function Receipt() {
+function EmployeeReceipt() {
   return (
     <div>
       <Typography variant="p"
@@ -17,11 +17,9 @@ function Receipt() {
                 Quản lý phiếu thu
             </Typography>
       <br></br>
-      {/* <ReceiptAddModal /> */}
-      {/* <ReceiptList /> */}
       <ReceiptList />
     </div>
   )
 }
 
-export default Receipt
+export default EmployeeReceipt

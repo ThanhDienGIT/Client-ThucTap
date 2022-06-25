@@ -9,12 +9,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import KyThuEditModal from './KyThuEditModal';
-import KyThuAddModal from './KyThuAddModal';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import KyThuFilter from './KyThuFilter';
 import Stack from '@mui/material/Stack';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
@@ -26,6 +23,9 @@ import Typography from '@mui/material/Typography';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import TuyenThuAddModal from './TuyenThuAddModal';
+import TuyenThuFilter from './TuyenThuFilter';
+import TuyenThuEditModal from './TuyenThuEditModal';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
@@ -91,7 +91,7 @@ TablePaginationActions.propTypes = {
 };
 
 
-export default function KyThuMain() {
+export default function TuyenThuMain() {
 
     // Table Style
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -116,13 +116,18 @@ export default function KyThuMain() {
 
     const [ , dispatch] = React.useContext(SnackBarContext)
 
-    const [rows, setRows] = React.useState([])
-    const [page, setPage] = React.useState(0)
-    const [rowsPerPage, setRowsPerPage] = React.useState(10)
-    const [updateState, setUpdateState] = React.useState(true)
-    const [yearsList, setYearsList] = React.useState([])
-    const [searchMonth, setSearchMonth] = React.useState(-1)
-    const [searchYear, setSearchYear] = React.useState(-1)
+
+    const [rows, setRows] = React.useState([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [updateState, setUpdateState] = React.useState(true);
+    const [searchNhanVien, setSearchNhanVien] = React.useState(-1);
+    const [searchQuanHuyen, setSearchQuanHuyen] = React.useState(-1);
+    const [searchXaPhuong, setSearchXaPhuong] = React.useState(-1);
+    const [nhanVienList, setNhanVienList] = React.useState([]);
+    const [nhanVienThuTienList, setNhanVienThuTienList] = React.useState([]);
+    const [quanHuyenList, setQuanHuyenList] = React.useState([]);
+    const [xaPhuongList, setXaPhuongList] = React.useState([]);
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -139,8 +144,8 @@ export default function KyThuMain() {
     const reRender = () => setUpdateState(!updateState);
 
     const handleDelete = (id) => {
-        if (window.confirm('Xoá kỳ thu sẽ xoá theo các phiếu thu của kỳ thu tương ứng. Bạn có chắc chắn muốn xoá ?')) {
-            fetch("http://localhost:5199/api/kythu/" + id, {
+        if (window.confirm('Kết thúc tuyến thu sẽ giải phóng các xã phường trong tuyến thu và sẽ xoá tuyến thu nếu tuyến thu này chưa bao giờ phân tuyến. Bạn có chắc chắn muốn kết thúc tuyến thu này ?')) {
+            fetch("http://localhost:5199/api/tuyenthu/" + id, {
                 method: 'DELETE',
                 header: {
                     'Accept': 'application/json',
@@ -152,40 +157,69 @@ export default function KyThuMain() {
                     dispatch(setOpenSnackBar());
                     dispatch(setMessage(result.message));
                     dispatch(setSeverity(result.severity));
-                });
+                })
             reRender();
         }
     }
 
-    const handleChangeMonth = (month) => {
-        setSearchMonth(month);
+    const handleChangeNhanVien = (nhanVien) => {
+        setSearchNhanVien(nhanVien);
     };
 
-    const handleChangeYear = (year) => {
-        setSearchYear(year);
+    const handleChangeQuanHuyen = (quanHuyen) => {
+        setSearchQuanHuyen(quanHuyen);
+    };
+
+    const handleChangeXaPhuong = (xaPhuong) => {
+        setSearchXaPhuong(xaPhuong);
     };
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/kythu/" + searchMonth + "/" + searchYear)
+        fetch("http://localhost:5199/api/quanhuyen/")
             .then(response => response.json())
-            .then(function (kyThu) {
-                setRows(kyThu);
+            .then(function (quanHuyenList) {
+                setQuanHuyenList(quanHuyenList);
+            });
+        fetch("http://localhost:5199/api/nhanvien/")
+            .then(response => response.json())
+            .then(function (nhanVienList) {
+                setNhanVienList(nhanVienList);
+            });
+        fetch("http://localhost:5199/api/nhanvien/quyen/2")
+            .then(response => response.json())
+            .then(function (nhanVienList) {
+                setNhanVienThuTienList(nhanVienList);
+            });
+    }, [])
+
+    React.useEffect(() => {
+        setSearchXaPhuong(-1);
+        if (searchQuanHuyen === -1) {
+            setXaPhuongList([]);
+        }
+        else {
+            fetch("http://localhost:5199/api/xaphuong/" + searchQuanHuyen)
+                .then(response => response.json())
+                .then(function (xaPhuongList) {
+                    setXaPhuongList(xaPhuongList);
+                });
+        }
+    }, [searchQuanHuyen])
+
+    React.useEffect(() => {
+        fetch("http://localhost:5199/api/tuyenthu/" + searchNhanVien + "/" + searchQuanHuyen + "/" + searchXaPhuong)
+            .then(response => response.json())
+            .then(function (tuyenThu) {
+                setRows(tuyenThu);
             },
                 (error) => {
-                    dispatch(setOpenSnackBar());
-                    dispatch(setMessage("Failed"));
-                    dispatch(setSeverity("error"));
+                    dispatch(setOpenSnackBar())
+                    dispatch(setMessage("Failed"))
+                    dispatch(setSeverity("error"))
                 });
-    }, [updateState, searchMonth, searchYear, dispatch])
+    }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong, dispatch])
 
-    React.useEffect(() => {
-        fetch("http://localhost:5199/api/kythu/years")
-            .then(response => response.json())
-            .then(function (years) {
-                setYearsList(years);
-                setSearchYear(-1);
-            })
-    }, [updateState])
+    console.log("Rerender main TuyenThu")
 
     return (
         <>
@@ -198,26 +232,34 @@ export default function KyThuMain() {
                     }
                 }
             >
-                Quản lý kỳ thu
+                Quản lý tuyến thu
             </Typography>
-            <KyThuAddModal reRenderKyThuMain={reRender} />
+
+            <TuyenThuAddModal reRenderKyThuMain={reRender} />
             <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} >
-                <KyThuFilter
-                    month={searchMonth}
-                    year={searchYear}
-                    years={yearsList}
-                    changeMonth={handleChangeMonth}
-                    changeYear={handleChangeYear}
+                <TuyenThuFilter
+                    nhanVien={searchNhanVien}
+                    quanHuyen={searchQuanHuyen}
+                    xaPhuong={searchXaPhuong}
+                    nhanVienList={nhanVienList}
+                    quanHuyenList={quanHuyenList}
+                    xaPhuongList={xaPhuongList}
+                    changeNhanVien={handleChangeNhanVien}
+                    changeQuanHuyen={handleChangeQuanHuyen}
+                    changeXaPhuong={handleChangeXaPhuong}
                 />
             </Stack>
             <TableContainer style={{ marginTop: 20 }} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <StyledTableRow>
-                            <StyledTableCell>Tên Kỳ thu</StyledTableCell>
-                            <StyledTableCell align="center">Tháng</StyledTableCell>
-                            <StyledTableCell align="center">Năm</StyledTableCell>
-                            <StyledTableCell align="center">Thao tác</StyledTableCell>
+                            <StyledTableCell style={{ width: "9%" }}>Mã tuyến thu</StyledTableCell>
+                            <StyledTableCell style={{ width: "31%" }} align="center">Tên tuyến thu</StyledTableCell>
+                            <StyledTableCell style={{ width: "15%" }} align="center">Tên quận huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: "15%" }} align="center">Tên nhân viên</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Ngày bắt đầu</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Ngày kết thúc</StyledTableCell>
+                            <StyledTableCell style={{ width: "10%" }} align="center">Thao tác</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
                     <TableBody>
@@ -226,19 +268,41 @@ export default function KyThuMain() {
                             : rows
                         ).map((row) => (
                             <StyledTableRow
-                                key={row.IDKyThu}
+                                key={row.IDTuyenThu}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <StyledTableCell component="th" scope="row">
-                                    {row.TenKyThu}
+                                    {row.MaTuyenThu}
                                 </StyledTableCell>
-                                <StyledTableCell align="center">{row.Thang}</StyledTableCell>
-                                <StyledTableCell align="center">{row.Nam}</StyledTableCell>
+                                <StyledTableCell align="center">{row.TenTuyenThu}</StyledTableCell>
+                                <StyledTableCell align="center">{row.TenQuanHuyen}</StyledTableCell>
+                                {
+                                    row.NgayBatDau === null ?
+                                        <StyledTableCell colSpan={3} align="center" style={{ color: "#5f1ebde8" }}>Không có nhân viên tiếp nhận</StyledTableCell>
+                                        :
+                                        // handleRenderInfo(row)
+                                        (
+                                            <>
+                                                <StyledTableCell align="center">{row.HoTen}</StyledTableCell>
+                                                <StyledTableCell align="center">{row.NgayBatDau}</StyledTableCell>
+                                                <StyledTableCell align="center">{row.NgayKetThuc}</StyledTableCell>
+                                            </>
+                                        )
+                                }
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
-                                        <IconButton onClick={() => handleDelete(row.IDKyThu)}>
-                                            <Tooltip sx={{ color: 'var(--color9)' }} title="Xoá">
+                                        <TuyenThuEditModal
+                                            idTuyenThu={row.IDTuyenThu}
+                                            tenTuyenThu={row.TenTuyenThu}
+                                            idNhanVien={row.IDNhanVien}
+                                            tenNhanVien={row.HoTen}
+                                            idQuanHuyen={row.IDQuanHuyen}
+                                            ngayBD={row.NgayBatDau}
+                                            nhanVienList={nhanVienThuTienList}
+                                            reRenderTuyenThuMain={reRender}
+                                        />
+                                        <IconButton onClick={() => handleDelete(row.IDTuyenThu)}>
+                                            <Tooltip sx={{ color: 'var(--color9)' }} title="Kết thúc">
                                                 <DeleteIcon />
                                             </Tooltip>
                                         </IconButton>

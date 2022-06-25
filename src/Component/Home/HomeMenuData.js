@@ -15,6 +15,10 @@ const QuyenChung = [
             {
                 title : 'Quản lý khách hàng',
                 path :'/home/customer'
+            },
+            {
+                title : 'Quản lý tỉnh thành',
+                path :'/home/districtandward'
             },          
             {
                 title : 'Quản lý Kỳ thu',
@@ -26,17 +30,10 @@ const QuyenChung = [
             },
             {
                 title : 'Quản lý tuyến thu',
-                path :''
+                path :'/home/tuyenthu'
             },
-            {
-                title : 'Phân quyền nhân viên',
-                path :''
-            },
-            {
-                title : 'Phân tuyến thu',
-                path :''
-            },
-            
+
+
         ]
     },
     {
@@ -48,11 +45,11 @@ const QuyenChung = [
         child : [
             {
                 title : 'Danh sách khách hàng',
-                path :''
+                path :'/home/collectcustomer'
             },
             {
                 title : 'Danh sách phiếu thu',
-                path :''
+                path :'/home/empreceipt'
             },
         ]
     },
@@ -64,8 +61,8 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Thống kê',
-                path :''
+                title : 'Doanh thu',
+                path :'/home/turnover'
             }
         ]
     },

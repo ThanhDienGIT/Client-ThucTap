@@ -8,7 +8,6 @@ import Modal from '@mui/material/Modal';
 import { FormControl, TextField, FormControlLabel, FormGroup, FormLabel, ButtonGroup } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
@@ -31,21 +30,12 @@ const style = {
     p: 4
 };
 
-const Info__style = {
-    display: 'flex',
-    width: 400,
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    marginLeft: 2,
-    color: 'black'
-};
-
 const AddForm__style = {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingLeft: 5
 };
-export default function EmployeeFormEdit({ employee, empRoles, handleResetPage}) {
+export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit, rolesEdit, getIDQuyenByIDNhanVien, handleResetPage}) {
     const [addEmp, setAddEmp] = React.useState({
         idnhanvien: employee.IDNhanVien,
         email: employee.Email,
@@ -67,7 +57,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
     const [diachiError, setDiaChiError] = React.useState(false);
     const [cccdError, setCCCDError] = React.useState(false);
 
-    const [addEmpRoles, setAddEmpRoles] = React.useState([empRoles]);
+    const [addEmpRoles, setAddEmpRoles] = React.useState([getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit)]);
 
 
     const getValue = (e, empCurrentRoles) =>{
@@ -75,7 +65,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         //console.log(empCurrentRoles);
         if(addEmpRoles.length == 0 && empCurrentRoles.length > 0){
             for(var i = 0; i<empCurrentRoles.length; i++){
-                data.push(empCurrentRoles[i].toString());
+                data.push(parseInt(empCurrentRoles[i].toString()));
                 setAddEmpRoles(data);
             }
         }
@@ -85,10 +75,10 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         console.log(addEmpRoles);
         console.log(addEmpRoles.includes(e.target.value));
         */
-        if(addEmpRoles.includes(e.target.value)){
-            addEmpRoles.splice(addEmpRoles.indexOf(e.target.value), 1);
+        if(addEmpRoles.includes(parseInt(e.target.value))){
+            addEmpRoles.splice(addEmpRoles.indexOf(parseInt(e.target.value)), 1);
         }else{
-            data.push(e.target.value);
+            data.push(parseInt(e.target.value));
             setAddEmpRoles(data);
         }
         /*
@@ -109,22 +99,82 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
-        setAddEmpRoles(empRoles);
+        setEmailError(false);
+        setTenNhanVienError(false);
+        setSdtError(false);
+        setDiaChiError(false);
+        setCCCDError(false);
+        setAddEmpRoles(getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit));
+        setAddEmp({
+            ...addEmp, 
+            idnhanvien: employee.IDNhanVien,
+            email: employee.Email,
+            manhanvien: employee.MaNhanVien,
+            tennhanvien: employee.HoTen,
+            sdt: employee.SoDienThoai,
+            diachi: employee.DiaChi,
+            cccd: employee.CCCD,
+            gioiTinh: employee.GioiTinh,
+            profilepicture: employee.ProfilePicture,
+            taikhoan: employee.TaiKhoan,
+            matkhau: employee.MatKhau,
+            ngaysinh: employee.NgaySinh
+        });
         setOpen(true);
     }
-
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setEmailError(false);
+        setTenNhanVienError(false);
+        setSdtError(false);
+        setDiaChiError(false);
+        setCCCDError(false);
+        setAddEmpRoles(getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit));
+        setAddEmp({
+            ...addEmp, 
+            idnhanvien: employee.IDNhanVien,
+            email: employee.Email,
+            manhanvien: employee.MaNhanVien,
+            tennhanvien: employee.HoTen,
+            sdt: employee.SoDienThoai,
+            diachi: employee.DiaChi,
+            cccd: employee.CCCD,
+            gioiTinh: employee.GioiTinh,
+            profilepicture: employee.ProfilePicture,
+            taikhoan: employee.TaiKhoan,
+            matkhau: employee.MatKhau,
+            ngaysinh: employee.NgaySinh
+        });
+        setOpen(false)
+    };
 
     function validateEmail(email){
         var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return EMAIL_REGEX.test(email);
     }
+    //console.log(employeeList);
+    function isDuplicateCCCD(idNV, cccd){
+        var result = false;
+        for(var i=0; i < employeeList.length; i++){
+            if(employeeList[i].IDNhanVien === idNV){
+                continue;
+            }
+            if(employeeList[i].CCCD === cccd.toString()) {
+                result = true;
+                console.log('loop #' + i + ' id: '+ employeeList[i].IDNhanVien)
+                console.log( cccd.toString());
+                break;
+            }
+        }
+        return result;
+    }
+    
 
     async function deleteEmp(id) {
         //console.log('http://localhost:5199/api/nhanvien/' + id);
         await fetch('http://localhost:5199/api/nhanvien/' + id, {
             method: 'DELETE'
         }).then(console.log)
+        .catch((error) => {console.error('Error:', error)})
     }
 
     const handleSubmit = (e) => {
@@ -135,43 +185,33 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         setSdtError(false);
         setDiaChiError(false);
         setCCCDError(false);
-        
-        /*
-        setHandleError({...handleError, 
-            emailError: false,
-            tennhanvienError : false,
-            sdtError: false,
-            diachiError : false,
-            cccdError : false
-        });
-        */
+
+        let validHoTen = false;
+        let validCCCD = false;
+        let validDiaChi = false;
+        let validSDT = false;
+        let validEmail = false;
+        let validNgaySinh = false;
         
         if(addEmp.email == '' || !validateEmail(addEmp.email)) {
             setEmailError(true);
-            //setHandleError({ ...handleError, emailError: true })
-        }
+        }else validEmail = true
 
         if(addEmp.tennhanvien == '') {
             setTenNhanVienError(true);
-            //setHandleError({ ...handleError, tennhanvienError: true })
-        }
+        }else validHoTen = true
 
-        if(addEmp.sdt == '' || isNaN(+(addEmp.sdt))) {
+        if((addEmp.sdt === '' || isNaN(+addEmp.sdt) || addEmp.sdt.length !== 10) ) {
             setSdtError(true);
-            //setHandleError({ ...handleError, sdtError: true })
-        }
-        console.log(sdtError);
+        }else validSDT= true
 
         if(addEmp.diachi == '') {
             setDiaChiError(true);
-            //setHandleError({ ...handleError, diachiError: true })
-        }
+        }else validDiaChi = true
 
-        if(addEmp.cccd == '' || addEmp.cccd.length !== 11 || isNaN(+(addEmp.cccd))) {
+        if(addEmp.cccd === '' || addEmp.cccd.length !== 12 || isNaN(+(addEmp.cccd)) || isDuplicateCCCD(addEmp.idnhanvien, addEmp.cccd)) {
             setCCCDError(true);
-            //console.log(cccdError);
-            //setHandleError({ ...handleError, cccdError: true })
-        }
+        }else validCCCD = true
 
         if(addEmp.ngaysinh == null) {
             //setNgaySinh('');
@@ -186,11 +226,11 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
             if(ngaySinh!=null && (today - ngaySinh.getFullYear() < 18)){
                 //setNgaySinh('');
                 setAddEmp({...addEmp, ngaysinh: '' });
-            }
+            }else validNgaySinh = true;
         }
-        wait(2);
+ 
         //if(email && tennhanvien && sdt && diachi && cccd && ngaysinh!=null && !(today - ngaysinh.getFullYear() < 18) && validateEmail(email)) {
-        if(!emailError && !tennhanvienError && !sdtError && !diachiError && !cccdError && ngaySinh!=null && !(today - ngaySinh.getFullYear() < 18) && !emailError) {
+        if(validCCCD && validDiaChi && validEmail && validHoTen && validNgaySinh && validSDT) {
             deleteEmp(addEmp.idnhanvien);
             addEmp.ngaysinh = ngaySinh.toLocaleDateString();
             /*
@@ -263,7 +303,7 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
                 <IconButton variant="text" color="primary">
-                    <Tooltip title="Chỉnh Sửa"><EditIcon />
+                    <Tooltip title="Chỉnh Sửa"><EditIcon sx={{ color: 'var(--color8)' }} />
                     </Tooltip>
                 </IconButton>
             </Stack>
@@ -384,9 +424,9 @@ export default function EmployeeFormEdit({ employee, empRoles, handleResetPage})
                             <FormControl sx={{display: 'block'}}>
                             <FormLabel>Phân Quyền</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox value="1" defaultChecked={empRoles.includes(1) ? true : false} onChange={(e)=>getValue(e, empRoles)} />} label="Quản Trị" />
-                                <FormControlLabel control={<Checkbox value="2" defaultChecked={empRoles.includes(2) ? true : false} onChange={(e)=>getValue(e, empRoles)} />} label="Thu Tiền" />
-                                <FormControlLabel control={<Checkbox value="3" defaultChecked={empRoles.includes(3) ? true : false} onChange={(e)=>getValue(e, empRoles)} />} label="Thống Kê - Báo Cáo" />
+                                <FormControlLabel control={<Checkbox value="1" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(1) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Quản Trị" />
+                                <FormControlLabel control={<Checkbox value="2" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(2) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Thu Tiền" />
+                                <FormControlLabel control={<Checkbox value="3" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(3) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Thống Kê - Báo Cáo" />
                             </FormGroup>
                             </FormControl>
                             <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
