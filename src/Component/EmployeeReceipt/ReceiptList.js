@@ -6,6 +6,7 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptDetailModal from './ReceiptDetailModal';
 import ReceiptAddModal from './ReceiptAddModal';
@@ -21,7 +22,6 @@ import IconButton from '@mui/material/IconButton';
 import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
 import ExportReceiptList from './ExportReceiptList';
-import axios from 'axios';
 function ReceiptList() {
   //style
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -317,23 +317,30 @@ const handleDelete = (id) => {
               <StyledTableCell align="left">{row.TenLoai}</StyledTableCell>
               <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
               <StyledTableCell id="tt" align="left">{change(row.NgayThu)}</StyledTableCell>
+              <StyledTableCell id="tt" align="left">{row.TenKyThu}</StyledTableCell>
               {/* function */}
-                <StyledTableCell align="left" padding='none'>
-                  <Button
-                    sx={{ fontSize: 12, display: "flex", justifyContent: "flex-end" }}
-                    variant="p"
+              <StyledTableCell align="left" padding='none'>
+                <Button
+                    sx={{ fontSize: 11, display: "flex", justifyContent: "flex-end" }}
+                    variant="outline"
                     color="primary"
                     onClick={() => XacNhan(row.IDPhieu ,row.NgayTao, row.MauSoPhieu, cookie)}
                     disabled={row.NgayThu}
                   >
                     {hiddenButtonStatus(row.NgayThu)}
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell align="left" padding='none'>
-                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end", color: "var(--color9)",}} variant="p" color="error" startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
-                </StyledTableCell>
-                <StyledTableCell align="left" padding='none'>
+                </Button> 
+              </StyledTableCell>
+              <StyledTableCell align="left" padding='none'> 
+                <ButtonGroup variant="" aria-label="button group">    
                   <ReceiptDetailModal receipt={row} />
+                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                </ButtonGroup>  
+              </StyledTableCell>
+              <StyledTableCell align="left" padding='none'>
+              </StyledTableCell>
+              <StyledTableCell align="left" padding='none'>
+              </StyledTableCell>
+              <StyledTableCell align="left" padding='none'>
                 </StyledTableCell>
             </StyledTableRow>
           ))
@@ -597,9 +604,9 @@ const handleDelete = (id) => {
             <StyledTableCell align="left">Loại khách hàng</StyledTableCell>
             <StyledTableCell align="left">Nhân viên thu</StyledTableCell>
             <StyledTableCell align="left">Trạng thái</StyledTableCell>
+            <StyledTableCell align="left">Tên kỳ thu</StyledTableCell>
             <StyledTableCell align="left"></StyledTableCell>
-            <StyledTableCell align="left"></StyledTableCell>
-            <StyledTableCell align="left"></StyledTableCell>
+             <StyledTableCell align="left"></StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
