@@ -181,9 +181,11 @@ export default function Employee() {
     
     function filterEmpList(){
         const empList = employees.filter((val) => {
+            /*
             console.log(val.CCCD);
             console.log('SearchTerm')
             console.log(val.CCCD.toString().includes(searchHandle.searchTerm))
+            */
             if (!disabledEmployee){
                 if(getIDQuyenByIDNhanVien(val.IDNhanVien, empRoles, roles).length !== 0){
                     if (searchHandle.searchTerm == '') {

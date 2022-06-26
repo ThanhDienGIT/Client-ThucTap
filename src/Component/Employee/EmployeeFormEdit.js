@@ -176,6 +176,17 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
         }).then(console.log)
         .catch((error) => {console.error('Error:', error)})
     }
+    async function editEmp(idNV, idQuyen) {
+        await fetch('http://localhost:5199/api/phanquyen',{
+            method: 'POST',
+            headers: {"Content-type": "application/json"},
+            body: JSON.stringify({
+                IDNhanVien: idNV,
+                IDQuyen: idQuyen
+            })
+        }).then(data => console.log(data))
+        .catch((error) => {console.error('Error:', error)})
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -283,6 +294,8 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                     );
                     */
                     wait(1);
+                    editEmp(addEmp.idnhanvien, addEmpRoles[i])
+                    /*
                     fetch('http://localhost:5199/api/phanquyen',{
                         method: 'POST',
                         headers: {"Content-type": "application/json"},
@@ -291,6 +304,7 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                             IDQuyen: addEmpRoles[i]
                         })
                     }).then(data => console.log(data));
+                    */
                 }
             }
             setOpen(false);
