@@ -85,8 +85,6 @@ function Client() {
     
   return (
     
-    
-    
     <Box className='Client__app' 
     width="100%" height="969px" display="flex"
     >
@@ -104,7 +102,6 @@ function Client() {
           }
         }
       >
-
             <Box width="33%" height="65%" display="flex"
             sx={{backgroundColor: "white",
              
