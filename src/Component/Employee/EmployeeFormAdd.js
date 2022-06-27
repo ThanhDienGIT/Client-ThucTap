@@ -146,6 +146,7 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
         }
         return result;
     }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -272,13 +273,15 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                             IDQuyen: addEmpRoles[i]
                         })
                     );
-                    
-                    postData('http://localhost:5199/api/phanquyen', {
-                        IDNhanVien: addEmp.idnhanvien,
-                        IDQuyen: addEmpRoles[i]
-                    })
                     */
                     wait(1);
+                    postData('http://localhost:5199/api/phanquyen', {
+                        IDNhanVien: lastEmpID+1,
+                        IDQuyen: addEmpRoles[i]
+                    })
+                    
+                    //wait(1);
+                    /*
                     fetch('http://localhost:5199/api/phanquyen',{
                         method: 'POST',
                         headers: {"Content-type": "application/json"},
@@ -288,7 +291,8 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                         })
                     }).then(data => console.log(data))
                     .catch((error) => {console.error('Error:', error)})
-                    wait(1);
+                    */
+                    
                 }
             }
             setNgaySinh(null);
