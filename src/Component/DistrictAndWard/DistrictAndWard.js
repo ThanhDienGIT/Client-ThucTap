@@ -300,7 +300,7 @@ function DistrictAndWard() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {searchInput !== ""?
+                        {searchInput !== "" ?
                             showDistrictsAndWards(searchDistricts)
                             :
                             showDistrictsAndWards(districts)
