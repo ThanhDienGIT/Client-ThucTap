@@ -600,4 +600,4 @@ function Customer({ collectCustomer }) {
     )
 }
 
-export default Customer
+export default  Customer

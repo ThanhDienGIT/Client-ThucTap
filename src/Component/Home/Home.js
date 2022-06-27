@@ -148,15 +148,9 @@ function Home() {
               .then(res=> setMastership(res)) 
             })
     },[])
-    
-    
-    
-    
-    
-
-    
+ 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' , width: "100%", height:"100%"}}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
        {/* Header */}
@@ -166,7 +160,8 @@ function Home() {
               display : 'flex',
               justifyContent : 'space-between',
               alignItems : 'center',
-              backgroundColor : 'var(--color3)'
+              backgroundColor : 'var(--color3)',
+             
             }
           }
         >
@@ -186,28 +181,24 @@ function Home() {
        <div style={{display:'flex'}}>
 
          
-         
+      
           {/* Avatar nhân viên */}
-       <Avatar alt="Remy Sharp" src="https://hinhnen123.com/wp-content/uploads/2021/06/avatar.jpg" 
-       sx= {
-         {
-           border : "1px outset white"
-         }
-       }
-       />
- {/* Tên nhân viên */}
+      <Avatar alt="Remy Sharp" src="https://hinhnen123.com/wp-content/uploads/2021/06/avatar.jpg" 
+       /> 
+        {/* Tên nhân viên */}
+        
         <Typography variant="p" noWrap component="div" 
         sx = {{
           marginLeft : 2,
           display : "flex",
           justifyContent : 'center',
           alignItems : 'center',
-         
+          textTransform : 'uppercase'
         }}
-      >
+        >
           {infostaff[0].HoTen}
-      </Typography>
-          
+        </Typography>
+        
             <Box 
             sx= {
               {

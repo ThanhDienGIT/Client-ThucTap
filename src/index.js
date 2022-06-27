@@ -5,13 +5,16 @@ import './CSS/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LoginProvider } from './Component/LoginContext/LoginContext';
+import SnackBarProvider from './Component/SnackBar/SnackBarProvider';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <LoginProvider>
-        <App />
+        <SnackBarProvider>
+          <App />
+        </SnackBarProvider>
       </LoginProvider>
     </BrowserRouter>
   </React.StrictMode>

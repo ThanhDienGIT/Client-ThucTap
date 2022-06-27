@@ -30,17 +30,10 @@ const QuyenChung = [
             },
             {
                 title : 'Quản lý tuyến thu',
-                path :''
+                path :'/home/tuyenthu'
             },
-            {
-                title : 'Phân quyền nhân viên',
-                path :''
-            },
-            {
-                title : 'Phân tuyến thu',
-                path :''
-            },
-            
+
+
         ]
     },
     {
@@ -56,7 +49,7 @@ const QuyenChung = [
             },
             {
                 title : 'Danh sách phiếu thu',
-                path :''
+                path :'/home/empreceipt'
             },
         ]
     },
@@ -68,8 +61,8 @@ const QuyenChung = [
         // Chức năng
         child : [
             {
-                title : 'Thống kê',
-                path :''
+                title : 'Doanh thu',
+                path :'/home/turnover'
             }
         ]
     },
