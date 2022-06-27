@@ -75,7 +75,7 @@ function ReceiptList() {
     if (!date) {
       return 'Xác nhận';
     }
-    return 'Đã xác nhận';
+      return 'Đã xác nhận';
   };  
   //get PhieuThu
   React.useEffect(() => {
@@ -154,6 +154,7 @@ const handleDelete = (id) => {
           });
           console.log('delete');
           reRender();
+    
   }
 }
   //setState DiaChi
@@ -333,7 +334,7 @@ const handleDelete = (id) => {
               <StyledTableCell align="left" padding='none'> 
                 <ButtonGroup variant="" aria-label="button group">    
                   <ReceiptDetailModal receipt={row} />
-                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                  <Button disabled={row.NgayThu} onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
                 </ButtonGroup>  
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'>
