@@ -69,18 +69,20 @@ function Client() {
   };
 
 
-  if(cookie.length === 0){
+  if(cookie.length === 0){  
     if(StateLogin === 'Connect'){
       axios.get(`http://localhost:5199/api/Login/${login.Username}`)
         .then(res=>res.data)
         .then(res=>
           {
-            CreateCookie(res)
-            navigate('home')
+            if(document.cookie.length === 0){
+              CreateCookie(res)
+              navigate('home')
+            }
           })
     }
     }else{
-      console.log("Đã có cookie")
+      console.log("Đã có cookie");
     }
     
   return (
@@ -154,7 +156,7 @@ function Client() {
                    
                     width : "50%"
                   }}
-                  floatingLabelText="Receipt Desc"
+                  
                   onChange={(e)=> {setLogin({...login,Password: e.target.value})}}
                   
                   />
