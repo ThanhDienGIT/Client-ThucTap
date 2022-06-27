@@ -28,6 +28,7 @@ import TuyenThuFilter from './TuyenThuFilter';
 import TuyenThuEditModal from './TuyenThuEditModal';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
+import TuyenThuViewModal from './TuyenThuViewModal';
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -219,8 +220,6 @@ export default function TuyenThuMain() {
                 });
     }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong, dispatch])
 
-    console.log("Rerender main TuyenThu")
-
     return (
         <>
             <Typography variant="p"
@@ -291,6 +290,12 @@ export default function TuyenThuMain() {
                                 }
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
+                                        <TuyenThuViewModal 
+                                            idTuyenThu={row.IDTuyenThu}
+                                            tenTuyenThu={row.TenTuyenThu}
+                                            idNhanVien={row.IDNhanVien}
+                                            tenNhanVien={row.HoTen}
+                                        />
                                         <TuyenThuEditModal
                                             idTuyenThu={row.IDTuyenThu}
                                             tenTuyenThu={row.TenTuyenThu}
