@@ -66,7 +66,6 @@ export default function PhieuThuAddModal() {
     })
       .then(res => res.json())
       .then((result) => {
-        console.log(result);
         alert(result);
         handleClose();
       },
@@ -102,9 +101,6 @@ export default function PhieuThuAddModal() {
         });
     }
   }, [idKhachHang])
-
-
-  console.log(diaChiKH);
 
   return (
     <div>
