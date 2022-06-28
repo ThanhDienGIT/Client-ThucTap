@@ -229,7 +229,7 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                 TaiKhoan: taikhoan,
                 MatKhau: matkhau
                 }) );
-            */
+            *//*
             postData('http://localhost:5199/api/nhanvien', {
                 MaNhanVien: newMaNhanVien,
                 HoTen: tennhanvien,
@@ -243,6 +243,7 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                 TaiKhoan: taikhoan,
                 MatKhau: matkhau
             }).then(data => console.log(data));
+            */
             /*
             fetch('http://localhost:5199/api/nhanvien',{
                 method: 'POST',
@@ -264,24 +265,36 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
             */
             if(addEmpRoles) {
                 //console.log(addEmp.idnhanvien);
+                var jsonRoles = '[{"IDNhanVien": '+(lastEmpID+1)+', "IDQuyen": '+addEmpRoles[0]+'}';
                 
-                for(var i=0; i < addEmpRoles.length; i++){
-                    /*
-                    console.log(
-                        JSON.stringify({
-                            IDNhanVien: lastEmpID+1,
-                            IDQuyen: addEmpRoles[i]
-                        })
-                    );
-                    */
-                    wait(1);
-                    postData('http://localhost:5199/api/phanquyen', {
-                        IDNhanVien: lastEmpID+1,
-                        IDQuyen: addEmpRoles[i]
-                    })
-                    
+                for(var i=1; i < addEmpRoles.length; i++){
+                   jsonRoles += ',{"IDNhanVien": '+(lastEmpID+1)+', "IDQuyen": '+addEmpRoles[i]+'}';
+                }
+                jsonRoles += ']';
+
+                wait(1);
+                postData('http://localhost:5199/api/nhanvien', {
+                    MaNhanVien: newMaNhanVien,
+                    HoTen: tennhanvien,
+                    Email: email,
+                    GioiTinh: gioiTinh,
+                    SoDienThoai: sdt,
+                    NgaySinh: ngaysinh,
+                    DiaChi: diachi,
+                    CCCD: cccd,
+                    ProfilePicture: profilePicture,
+                    TaiKhoan: taikhoan,
+                    MatKhau: matkhau
+                }).then(data => console.log(data))
+                .then(() => {
+                    fetch('http://localhost:5199/api/phanquyen',{
+                        method: 'POST',
+                        headers: {"Content-type": "application/json"},
+                        body: jsonRoles
+                    }).then(data => console.log(data))
+                })  
                     //wait(1);
-                    /*
+                    /* OLD
                     fetch('http://localhost:5199/api/phanquyen',{
                         method: 'POST',
                         headers: {"Content-type": "application/json"},
@@ -292,8 +305,20 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                     }).then(data => console.log(data))
                     .catch((error) => {console.error('Error:', error)})
                     */
-                    
-                }
+            }else{
+                postData('http://localhost:5199/api/nhanvien', {
+                    MaNhanVien: newMaNhanVien,
+                    HoTen: tennhanvien,
+                    Email: email,
+                    GioiTinh: gioiTinh,
+                    SoDienThoai: sdt,
+                    NgaySinh: ngaysinh,
+                    DiaChi: diachi,
+                    CCCD: cccd,
+                    ProfilePicture: profilePicture,
+                    TaiKhoan: taikhoan,
+                    MatKhau: matkhau
+                }).then(data => console.log(data))
             }
             setNgaySinh(null);
             setAddEmpRoles([]);

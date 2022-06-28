@@ -176,7 +176,7 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
         }).then(console.log)
         .catch((error) => {console.error('Error:', error)})
     }
-    async function editEmp(idNV, idQuyen) {
+    async function editEmpRoles(idNV, idQuyen) {
         await fetch('http://localhost:5199/api/phanquyen',{
             method: 'POST',
             headers: {"Content-type": "application/json"},
@@ -242,7 +242,6 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
  
         //if(email && tennhanvien && sdt && diachi && cccd && ngaysinh!=null && !(today - ngaysinh.getFullYear() < 18) && validateEmail(email)) {
         if(validCCCD && validDiaChi && validEmail && validHoTen && validNgaySinh && validSDT) {
-            deleteEmp(addEmp.idnhanvien);
             addEmp.ngaysinh = ngaySinh.toLocaleDateString();
             /*
             console.log(JSON.stringify({
@@ -283,19 +282,41 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                 /*
                 console.log('idnhanvien: '+addEmp.idnhanvien);
                 */
+                var jsonRoles = '[{"IDNhanVien": '+(addEmp.idnhanvien)+', "IDQuyen": '+addEmpRoles[0]+'}';
                 
+                for(var i=1; i < addEmpRoles.length; i++){
+                   jsonRoles += ',{"IDNhanVien": '+(addEmp.idnhanvien)+', "IDQuyen": '+addEmpRoles[i]+'}';
+                }
+                jsonRoles += ']';
+                
+                fetch('http://localhost:5199/api/nhanvien/' + addEmp.idnhanvien, {
+                    method: 'DELETE'
+                }).then(data => console.log(data))
+                .then(()=> {
+                    fetch('http://localhost:5199/api/phanquyen',{
+                        method: 'POST',
+                        headers: {"Content-type": "application/json"},
+                        body: jsonRoles
+                    }).then(data => console.log(data))
+                }).then(() => {
+                    setOpen(false);
+                    handleResetPage();
+                })
+
+
+                /* OLD
                 for(var i=0; i < addEmpRoles.length; i++){
-                    /*
+                    
                     console.log(
                         JSON.stringify({
                             IDNhanVien: addEmp.idnhanvien,
                             IDQuyen: addEmpRoles[i]
                         })
                     );
-                    */
+                    
                     wait(1);
-                    editEmp(addEmp.idnhanvien, addEmpRoles[i])
-                    /*
+                    editEmpRoles(addEmp.idnhanvien, addEmpRoles[i])
+                    
                     fetch('http://localhost:5199/api/phanquyen',{
                         method: 'POST',
                         headers: {"Content-type": "application/json"},
@@ -304,11 +325,10 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                             IDQuyen: addEmpRoles[i]
                         })
                     }).then(data => console.log(data));
-                    */
+                    
                 }
+                */
             }
-            setOpen(false);
-            handleResetPage();
         }
                
     };
