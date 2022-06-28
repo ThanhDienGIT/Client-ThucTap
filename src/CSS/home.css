@@ -40,3 +40,9 @@
 
 }
 
+.Private__Link{
+    text-decoration: none;
+    background-color: var(--color3);
+    color: white;
+    border-radius:10px ;
+}

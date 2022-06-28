@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { BreakCookie, GetCookie, cookie } from '../Cookie/CookieFunc';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 function HomeHeader() {
 
   const navigate = useNavigate();
@@ -32,26 +32,30 @@ function HomeHeader() {
         }
       }
     >
-      <Box sx={{
-        display: 'flex', justifyContent: 'left', alignItems: 'center', paddingTop: 1, paddingLeft: 2, paddingBottom: 1,
-        width: "100%", height: "100%",
-        '&:hover': {
-          color: 'var(--color3)',
-          backgroundColor: 'var(--color1)',
-          borderRadius: 2,
-          cursor: 'pointer',
-        },
-      }}>
+    <Link to={"/home/privatestaff"} className="Private__Link">
+    
+    <Box sx={{
+      display: 'flex', justifyContent: 'left', alignItems: 'center', paddingTop: 1, paddingLeft: 2, paddingBottom: 1,
+      width: "100%", height: "100%",
+      '&:hover': {
+        color: 'var(--color3)',
+        backgroundColor: 'var(--color1)',
+        borderRadius: 2,
+        cursor: 'pointer',
+      },
+    }}>
 
-        <AccountCircleIcon
-          sx={{ marginRight: 1 }}
-        />
+      <AccountCircleIcon
+        sx={{ marginRight: 1 }}
+      />
 
-        <Typography>
-          Thông tin cá nhân
-        </Typography>
+      <Typography>
+        Thông tin cá nhân
+      </Typography>
 
-      </Box>
+    </Box>
+    </Link>
+     
       <Box
         onClick={Logout}
         sx={{
@@ -70,7 +74,7 @@ function HomeHeader() {
         />
 
         <Typography
-
+        
         >
           Thoát
         </Typography>

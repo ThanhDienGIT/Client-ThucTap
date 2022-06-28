@@ -68,6 +68,7 @@ function Client() {
     setOpen1(false);
   };
 
+  console.log(StateLogin);
 
   if(cookie.length === 0){  
     if(StateLogin === 'Connect'){
@@ -88,7 +89,7 @@ function Client() {
   return (
     
     <Box className='Client__app' 
-    width="100%" height="969px" display="flex"
+    width="100%" height="100vh" display="flex"
     >
                {/* Hình nền  */}
         <Box width="100%" height="100%" display="flex"
