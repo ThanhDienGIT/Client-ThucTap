@@ -13,6 +13,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import { SettingsApplicationsRounded } from '@mui/icons-material';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 const style = {
     position: 'absolute',
@@ -43,6 +45,8 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
     });
+
+    const [, dispatch] = React.useContext(SnackBarContext)
 
     const [posts, setPosts] = React.useState([]);
 
@@ -273,7 +277,9 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
             })
             .then((response) => {
                 setPosts([response.data, ...posts]);
-                alert(response.data)
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(response.data.message));
+                dispatch(setSeverity(response.data.severity));
             })
             .catch((err) => {
                 if (err.response) {

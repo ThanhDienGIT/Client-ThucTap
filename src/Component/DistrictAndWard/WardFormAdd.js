@@ -10,9 +10,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
-import { FlareSharp } from '@mui/icons-material';
-import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
+
 
 const style = {
     position: 'absolute',
@@ -46,6 +47,8 @@ export default function WardFormAdd({ handleResetPage, districts}) {
     const client = axios.create({
         baseURL: "http://localhost:5199/api/XaPhuong"
     });
+
+    const [, dispatch] = React.useContext(SnackBarContext)
 
     const [Name, setName] = React.useState('');
 
@@ -99,7 +102,9 @@ export default function WardFormAdd({ handleResetPage, districts}) {
             })
             .then((response) => {
                 setPosts([response.data, ...posts]);
-                alert(response.data)
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(response.data.message));
+                dispatch(setSeverity(response.data.severity));
             })
             .catch((err) => {
                 if (err.response) {
@@ -126,7 +131,6 @@ export default function WardFormAdd({ handleResetPage, districts}) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-
                 <Box sx={style}>
                     <Stack direction="row" spacing={2} alignItems="flex-end" justifyContent="space-between" marginBottom={4}>
                         <Typography id="post-request-error-handling" variant="h5">
@@ -165,7 +169,7 @@ export default function WardFormAdd({ handleResetPage, districts}) {
                         </Box>
                     </Box>
                     <Stack direction="column" spacing={2} alignItems="flex-end">
-                        <Button variant="contained" onClick={handleSubmit} sx={{ backgroundColor: 'var(--color7)' }}>Thêm Xã Phường</Button>
+                        <Button variant="contained" onClick={handleSubmit}>Thêm Xã Phường</Button>
                     </Stack>
                 </Box>
             </Modal>

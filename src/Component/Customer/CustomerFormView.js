@@ -68,8 +68,8 @@ export default function CustomerFormView({ customer }) {
             <IconButton onClick={handleOpen} variant="text" color="primary">
                 <Tooltip title="Xem Chi Tiết">
                     <VisibilityIcon
-                    sx={{ color: 'var(--color7)' }}
-                />
+                        sx={{ color: 'var(--color7)' }}
+                    />
                 </Tooltip>
             </IconButton>
             <Modal
@@ -79,13 +79,13 @@ export default function CustomerFormView({ customer }) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Stack direction="column" spacing={2} alignItems="flex-end">
+                    <Stack direction="row" spacing={1} alignItems="flex-end" justifyContent="space-between" marginBottom={5}>
+                        <Typography variant="h4">
+                            Chi Tiết Khách Hàng
+                        </Typography>
                         <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
                     </Stack>
                     <Box sx={Info__style}>
-                        <Typography variant="h4" style={{ width: 1200, paddingBottom: 40}}>
-                            Chi Tiết Khách Hàng
-                        </Typography>
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
                             Họ Tên: <Typography variant="inherit">{customer.HoTenKH}</Typography>
                         </Typography>
@@ -116,7 +116,7 @@ export default function CustomerFormView({ customer }) {
                         </Typography>
                         <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
                             Loại Khách Hàng: <Typography variant="inherit">{customer.TenLoai}</Typography>
-                        </Typography>                       
+                        </Typography>
                     </Box>
                 </Box>
             </Modal>

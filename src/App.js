@@ -4,15 +4,14 @@ import './CSS/App.css';
 import Client from './Component/Client'
 import Home from './Component/Home/Home';
 import Employee from './Component/Employee/Employee'
-import Customer from './Component/Customer/Customer'
 import Turnover from './Component/Statistical/Turnover';
 import DistrictAndWard from './Component/DistrictAndWard/DistrictAndWard';
 import TuyenThuMain from './Component/TuyenThu/TuyenThuMain';
 import  Receipt  from './Component/Receipt/Receipt';
 import KyThuMain from './Component/KyThu/KyThuMain';
 import EmployeeReceipt from './Component/EmployeeReceipt/EmployeeReceipt';
+import Customer from './Component/Customer/Customer';
 function App() {
-
 
   return (
     <div className="App">
@@ -22,7 +21,6 @@ function App() {
 
           <Route path='/home' element={<Home />}>    
             <Route path='turnover' element={<Turnover />} />
-            <Route path='customer' element={<Customer />} />
 
             <Route path='customer' element={<Customer collectCustomer={false} />} />
             <Route path='districtandward' element={<DistrictAndWard />} />

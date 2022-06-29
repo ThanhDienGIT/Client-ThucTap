@@ -13,6 +13,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { FlareSharp } from '@mui/icons-material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 const style = {
     position: 'absolute',
@@ -46,6 +48,8 @@ export default function DistrictFormAdd({ handleResetPage }) {
     const client = axios.create({
         baseURL: "http://localhost:5199/api/QuanHuyen"
     });
+
+    const [, dispatch] = React.useContext(SnackBarContext)
 
     const [Name, setName] = React.useState('');
 
@@ -85,7 +89,9 @@ export default function DistrictFormAdd({ handleResetPage }) {
             })
             .then((response) => {
                 setPosts([response.data, ...posts]);
-                alert(response.data)
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(response.data.message));
+                dispatch(setSeverity(response.data.severity));
             })
             .catch((err) => {
                 if (err.response) {
@@ -105,7 +111,7 @@ export default function DistrictFormAdd({ handleResetPage }) {
     };
     return (
         <div>
-            <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: 'var(--color7)' }}>Thêm Quận Huyện</Button>
+            <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: 'var(--color7)'}}>Thêm Quận Huyện</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -134,7 +140,7 @@ export default function DistrictFormAdd({ handleResetPage }) {
                         </Box>
                     </Box>
                     <Stack direction="column" spacing={2} alignItems="flex-end">
-                        <Button variant="contained" onClick={handleSubmit} sx={{ backgroundColor: 'var(--color7)'}}>Thêm Quận Huyện</Button>
+                        <Button variant="contained" onClick={handleSubmit}>Thêm Quận Huyện</Button>
                     </Stack>
                 </Box>
             </Modal>

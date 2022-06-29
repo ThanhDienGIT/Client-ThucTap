@@ -16,6 +16,7 @@ import { SettingsApplicationsRounded } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 const style = {
     position: 'absolute',
@@ -29,10 +30,10 @@ const style = {
     p: 4,
 };
 
-export default function CustomerFormDelete({ customer, handleResetPage }) {
+export default function CustomerFormRecover({ customer, handleResetPage }) {
 
     const client = axios.create({
-        baseURL: "http://localhost:5199/api/KhachHang/" + customer.IDKhachHang +",0"
+        baseURL: "http://localhost:5199/api/KhachHang/" + customer.IDKhachHang +",1"
     });
 
     const [, dispatch] = React.useContext(SnackBarContext)
@@ -69,17 +70,17 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
                     // Anything else
                 }
             });
-        handleClose();
         handleResetPage();
+        handleClose();
     };
 
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
-                <IconButton variant="text" color="error">
-                    <Tooltip title="Xoá">
-                        <DeleteIcon
-                            sx={{ color: 'var(--color9)' }}
+                <IconButton variant="text">
+                    <Tooltip title="Phục Hồi">
+                        <RestartAltIcon
+                            sx={{ color: 'var(--color2)'}}
                         />
                     </Tooltip>
                 </IconButton>
@@ -92,7 +93,7 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
             >
                 <Box sx={style}>
                     <Typography id="post-request-error-handling" variant="h5" style={{ paddingBottom: 20 }}>
-                        Xác Nhận Xoá Khách hàng
+                        Xác Nhận Phục Hồi Khách Hàng
                     </Typography>
                     <Typography id="post-request-error-handling" variant="h4" style={{ paddingBottom: 40 }}>
                         {customer.HoTenKH}
