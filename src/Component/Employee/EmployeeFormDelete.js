@@ -46,7 +46,7 @@ export default function EmployeeFormDelete({ employee, getIDQuyenByIDNhanVien, e
     }
     const [checkNV, setCheckNV] = React.useState(false);
     const [buttonDisplay, setButtonDisplay] = React.useState('default');
-
+    const currentEmpRole = getIDQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles);
     async function checkTuyenThuNV(){
         await fetch('http://localhost:5199/api/nhanvien/checktuyenthu/' + employee.IDNhanVien)
         .then(response => response.json())
@@ -55,7 +55,6 @@ export default function EmployeeFormDelete({ employee, getIDQuyenByIDNhanVien, e
     }
     
     function handleCheckTuyenThuNV(checkNV){
-        var currentEmpRole = getIDQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles);
         if(!checkNV || currentEmpRole.length === 0){
             setButtonDisplay('hidden');
         }else{
@@ -67,7 +66,7 @@ export default function EmployeeFormDelete({ employee, getIDQuyenByIDNhanVien, e
     
     return (
         <div>
-            <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
+            <Stack direction="column" spacing={2} alignItems="flex-end" onClick={(!checkNV || currentEmpRole.length === 0) ? undefined : handleOpen} marginBottom={1}>
                 <IconButton variant="text" color="error" sx={{visibility: buttonDisplay}}>
                     <Tooltip title="Xoá">
                         <DeleteIcon
