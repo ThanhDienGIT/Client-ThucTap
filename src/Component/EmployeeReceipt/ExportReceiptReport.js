@@ -1,15 +1,17 @@
-import * as React from 'react';
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import React, { useRef } from 'react';
+import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import { useReactToPrint } from 'react-to-print';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import Button from '@mui/material/Button';
-export default function ReceiptDetailModal({receipt,ref}) {
+import IconButton from '@mui/material/IconButton';
+import PrintIcon from '@mui/icons-material/Print';
+
+export default function ExportReceiptReport( {receipt} ) {
     const [open, setOpen] = React.useState(false);
-    const [ngaythu,setNgayThu] = React.useState('');
+        const [ngaythu,setNgayThu] = React.useState('');
     const [ngaytao, setNgayTao] = React.useState('');
     //change tt
      function change(date) {
@@ -32,7 +34,7 @@ export default function ReceiptDetailModal({receipt,ref}) {
     }
     const handleOpen = () => {
         setOpen(true);
-        setNgayTao(getFormattedDate(new Date(receipt.NgayTao)));
+                setNgayTao(getFormattedDate(new Date(receipt.NgayTao)));
         if (receipt.NgayThu != null) {
             setNgayThu(getFormattedDate(new Date(receipt.NgayThu)));
         } else {
@@ -40,6 +42,12 @@ export default function ReceiptDetailModal({receipt,ref}) {
         }
     }
     const handleClose = () => setOpen(false);
+    //
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        copyStyles: true
+    });
 const style = {
 
         position: 'absolute',
@@ -67,24 +75,19 @@ const style = {
         marginLeft: 10
     };
     return (
-        <div>
-           <Stack direction="column" spacing={2} alignItems="flex-end">
-                <Button onClick={handleOpen}
-                    sx={{display: "flex", justifyContent: "flex-end", color: "var(--color7)"}}
-                    startIcon={<VisibilityIcon sx={{ fontSize: "80px" }} />}>
-                </Button>
-            </Stack>
+    <div>
+      <Button onClick={handleOpen}><PrintIcon></PrintIcon></Button>
             <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                               <Box sx={style}>
+                <Box sx={style}>
                     <Stack direction="column" spacing={2} alignItems="flex-end">
                         <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
                     </Stack>
-                    <Box>
+                    <Box ref={componentRef}>
                         <Typography variant="h5" style={{paddingBottom: 20,textAlign:"center",marginTop: 20 }}>
                             <b>Công Ty Môi Trường SHIZEN</b>
                         </Typography>
@@ -127,8 +130,13 @@ const style = {
                             </Typography>
                         </Box>
                     </Box>
+                    <Stack direction="row" alignItems="center" justifyContent="space-evenly" marginTop={3}>
+                        <Button variant="contained" onClick={handlePrint}>In hóa đơn</Button>  
+                        <Button variant="contained" onClick={handleClose}>Huỷ</Button>
+                    </Stack>
                 </Box>
             </Modal>
         </div >
-    );
+    
+  );
 }

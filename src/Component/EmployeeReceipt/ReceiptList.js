@@ -22,6 +22,7 @@ import IconButton from '@mui/material/IconButton';
 import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
 import ExportReceiptList from './ExportReceiptList';
+import ExportReceiptReport from './ExportReceiptReport';
 function ReceiptList() {
   //style
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -75,7 +76,7 @@ function ReceiptList() {
     if (!date) {
       return 'Xác nhận';
     }
-    return 'Đã xác nhận';
+      return 'Đã xác nhận';
   };  
   //get PhieuThu
   React.useEffect(() => {
@@ -115,12 +116,11 @@ function ReceiptList() {
     }, [updateState]);
   //getTuyenThu
       React.useEffect(() => {
-      fetch("http://localhost:5199/api/PhieuThu/tuyenthu")
+      fetch("http://localhost:5199/api/PhieuThu/tuyenthu/" + cookie)
       .then(response => response.json())
       .then(function (tuyenthu) {
         setTuyenThu(tuyenthu);   
       },
-          
         (error) => {
           alert('Failed');
         })
@@ -154,6 +154,7 @@ const handleDelete = (id) => {
           });
           console.log('delete');
           reRender();
+    
   }
 }
   //setState DiaChi
@@ -277,24 +278,22 @@ const handleDelete = (id) => {
             return day + '-' + month + '-' + year;
     }
   // Button XacNhan
-  const XacNhan = (IDPhieu,NgayTao,MauSoPhieu,IDNhanVien) => {
+  const XacNhan = (IDKhachHang,IDPhieu,NgayTao,MauSoPhieu,IDNhanVien) => {
     console.log('idPhieu', IDPhieu);
     console.log('idNhanVien', IDNhanVien);
-    var today = new Date();
-    const  date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    const gDate = getFormattedDate(new Date(date))
+    console.log('idKH', IDKhachHang);
     fetch("http://localhost:5199/api/PhieuThu", {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': "application/json"
       },
       body: JSON.stringify({
+        IDKhachHang: IDKhachHang,
         IDPhieu: IDPhieu,
         NgayTao: NgayTao,
         MauSoPhieu: MauSoPhieu,
         IDNhanVien: IDNhanVien,
-        NgayThu: gDate,
       })
     })
       .then(res => res.json())
@@ -311,29 +310,43 @@ const handleDelete = (id) => {
           Phieu.map((row) => (
             <StyledTableRow key={row.IDPhieu}>
               <StyledTableCell component="th" scope="row">
-                {row.IDPhieu}
+                {row.MaSoPhieu}
               </StyledTableCell>
+              <StyledTableCell align="left">{row.MaKhachHang}</StyledTableCell>
               <StyledTableCell align="left">{row.HoTenKH}</StyledTableCell>
               <StyledTableCell align="left">{row.TenLoai}</StyledTableCell>
-              <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
-              <StyledTableCell id="tt" align="left">{change(row.NgayThu)}</StyledTableCell>
+              {
+                change(row.NgayThu) === 'Đã thu' ?
+                  <StyledTableCell id="tt" align="left" sx={{ color: "var(--color7)" }}>{change(row.NgayThu)}</StyledTableCell>
+                  :
+                  <StyledTableCell id="tt" align="left" sx={{ color: "var(--color9)" }}>{change(row.NgayThu)}</StyledTableCell>
+              }
               <StyledTableCell id="tt" align="left">{row.TenKyThu}</StyledTableCell>
               {/* function */}
               <StyledTableCell align="left" padding='none'>
-                <Button
-                    sx={{ fontSize: 11, display: "flex", justifyContent: "flex-end" }}
-                    variant="outline"
-                    color="primary"
-                    onClick={() => XacNhan(row.IDPhieu ,row.NgayTao, row.MauSoPhieu, cookie)}
-                    disabled={row.NgayThu}
-                  >
-                    {hiddenButtonStatus(row.NgayThu)}
-                </Button> 
+                {
+                  hiddenButtonStatus(row.NgayThu) === "Xác nhận" ?
+                    <Button
+                      sx={{ fontSize: 11, display: "flex", justifyContent: "flex-end" }}
+                      variant="outline"
+                      color="primary"
+                      onClick={() => XacNhan(row.IDKhachHang, row.IDPhieu ,row.NgayTao, row.MauSoPhieu, cookie)}
+                      disabled={row.NgayThu}
+                    >
+                      {hiddenButtonStatus(row.NgayThu)}
+                    </Button> 
+                    :
+                    <Stack direction="row" spacing={0} alignItems="flex-end" marginLeft={1} marginBottom={2} marginTop={2}>
+                      {
+                        <ExportReceiptReport receipt={row}/>
+                      }
+                    </Stack>
+                }
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'> 
-                <ButtonGroup variant="" aria-label="button group">    
+                <ButtonGroup variant="" aria-label="button group"> 
                   <ReceiptDetailModal receipt={row} />
-                  <Button onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                  <Button disabled={row.NgayThu} onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
                 </ButtonGroup>  
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'>
@@ -600,9 +613,9 @@ const handleDelete = (id) => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Mã Phiếu thu</StyledTableCell>
+            <StyledTableCell align="left">Mã khách hàng</StyledTableCell>
             <StyledTableCell align="left">Tên khách hàng</StyledTableCell>
             <StyledTableCell align="left">Loại khách hàng</StyledTableCell>
-            <StyledTableCell align="left">Nhân viên thu</StyledTableCell>
             <StyledTableCell align="left">Trạng thái</StyledTableCell>
             <StyledTableCell align="left">Tên kỳ thu</StyledTableCell>
             <StyledTableCell align="left"></StyledTableCell>
@@ -625,7 +638,9 @@ const handleDelete = (id) => {
               :
             <ExportReceiptList phieuthu={rows} />
           }
-        </Stack>
+      </Stack>
+
+      
     </div>
   )
 }
