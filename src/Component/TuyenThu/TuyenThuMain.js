@@ -115,7 +115,7 @@ export default function TuyenThuMain() {
     }));
 
     const [ , dispatch] = React.useContext(SnackBarContext)
-
+    console.log(React.useContext(SnackBarContext))
 
     const [rows, setRows] = React.useState([]);
     const [page, setPage] = React.useState(0);

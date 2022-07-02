@@ -182,6 +182,30 @@ function Customer({ collectCustomer }) {
         handleChosenCustomer(customers)
     }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage])
 
+    function removeAccents(str) {
+        var AccentsMap = [
+            "aàảãáạăằẳẵắặâầẩẫấậ",
+            "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
+            "dđ", "DĐ",
+            "eèẻẽéẹêềểễếệ",
+            "EÈẺẼÉẸÊỀỂỄẾỆ",
+            "iìỉĩíị",
+            "IÌỈĨÍỊ",
+            "oòỏõóọôồổỗốộơờởỡớợ",
+            "OÒỎÕÓỌÔỒỔỖỐỘƠỜỞỠỚỢ",
+            "uùủũúụưừửữứự",
+            "UÙỦŨÚỤƯỪỬỮỨỰ",
+            "yỳỷỹýỵ",
+            "YỲỶỸÝỴ"
+        ];
+        for (var i = 0; i < AccentsMap.length; i++) {
+            var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+            var char = AccentsMap[i][0];
+            str = str.replace(re, char);
+        }
+        return str;
+    }
+
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -272,7 +296,7 @@ function Customer({ collectCustomer }) {
             switch (searchField) {
                 //Họ Tên
                 case 1: {
-                    if (customer.HoTenKH.toLowerCase().includes(searchInput.toLowerCase())) {
+                    if (removeAccents(customer.HoTenKH.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
                         if (chosenCustomerTypes.includes(customer.TenLoai)) {
                             if (chosenDistrict !== 0) {
                                 if (chosenWard !== 0) {
@@ -302,7 +326,7 @@ function Customer({ collectCustomer }) {
                                 if (chosenWard !== 0) {
                                     return (
                                         customer.IDQuanHuyen === chosenDistrict,
-                                        customer.IDXaPhuong === chosenWard
+                                        customer.IDXaPhuong === chosenWard``
                                     )
                                 } else {
                                     return (
@@ -320,7 +344,7 @@ function Customer({ collectCustomer }) {
                 }
                 //Địa Chỉ
                 case 3: {
-                    if (customer.DiaChi.toLowerCase().includes(searchInput.toLowerCase())) {
+                    if (removeAccents(customer.DiaChi + " " + customer.TenXaPhuong + " " + customer.TenQuanHuyen).toLowerCase().includes(removeAccents(searchInput.toLowerCase()))) {
                         if (chosenCustomerTypes.includes(customer.TenLoai)) {
                             if (chosenDistrict !== 0) {
                                 if (chosenWard !== 0) {
@@ -391,16 +415,16 @@ function Customer({ collectCustomer }) {
     }
     //Hàm Hiển Thị Khách Hàng
     const showCustomer = function (Customers) {
-        var  CustomersPerPage
-        if(rowsPerPage === -1){
+        var CustomersPerPage
+        if (rowsPerPage === -1) {
             CustomersPerPage = Customers.length
-        }else{
+        } else {
             CustomersPerPage = rowsPerPage
         }
-        
+
         if (Customers.length > 0) {
-            return (      
-                    Customers
+            return (
+                Customers
                     .slice(page * CustomersPerPage, page * CustomersPerPage + CustomersPerPage)
                     .map(function (customer) {
                         return (
@@ -477,10 +501,12 @@ function Customer({ collectCustomer }) {
             <Box sx={style}>
                 {/* Truong tim kiem */}
                 <FormControl sx={{ m: 1, minWidth: 170 }}>
+                    <InputLabel htmlFor="outlined-adornment-search">Danh Mục</InputLabel>
                     <Select
                         labelId="demo-simple-select-filled-label"
                         id="demo-simple-select-filled"
                         value={searchField}
+                        label="Danh Mục"
                         onChange={handleChangeSearchField}
                     >
                         <MenuItem value={1}>Họ Tên</MenuItem>

@@ -29,6 +29,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
+import WardFormDelete from './WardFormDelete';
+import DistrictFormDelete from './DistrictFormDelete';
+import Autocomplete from '@mui/material/Autocomplete';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -85,7 +88,7 @@ function DistrictAndWard() {
 
     const [resetPage, setResetPage] = React.useState(true)
 
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const [searchInput, setSearchInput] = React.useState('');
 
@@ -108,7 +111,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20, { value: -1, label: 'Tất Cả' }]}
+                            rowsPerPageOptions={[10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={searchWards.length}
                             rowsPerPage={rowsPerPage}
@@ -121,7 +124,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20, { value: -1, label: 'Tất Cả' }]}
+                            rowsPerPageOptions={[10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={wards.length}
                             rowsPerPage={rowsPerPage}
@@ -136,7 +139,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={searchDistricts.length}
                             rowsPerPage={rowsPerPage}
@@ -149,7 +152,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={districts.length}
                             rowsPerPage={rowsPerPage}
@@ -180,17 +183,38 @@ function DistrictAndWard() {
 
     React.useEffect(() => {
         handleChosenWards(wards)
-    }, [chosenDistrict, searchInput])
-
-    React.useEffect(() => {
         handleChosenDistricts(districts)
-    }, [searchInput])
+    })
 
     const handleChangeChosenField = (event, newField) => {
         if (newField !== null) {
             setChosenField(newField);
         }
     };
+
+    function removeAccents(str) {
+        var AccentsMap = [
+            "aàảãáạăằẳẵắặâầẩẫấậ",
+            "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
+            "dđ", "DĐ",
+            "eèẻẽéẹêềểễếệ",
+            "EÈẺẼÉẸÊỀỂỄẾỆ",
+            "iìỉĩíị",
+            "IÌỈĨÍỊ",
+            "oòỏõóọôồổỗốộơờởỡớợ",
+            "OÒỎÕÓỌÔỒỔỖỐỘƠỜỞỠỚỢ",
+            "uùủũúụưừửữứự",
+            "UÙỦŨÚỤƯỪỬỮỨỰ",
+            "yỳỷỹýỵ",
+            "YỲỶỸÝỴ"
+        ];
+        for (var i = 0; i < AccentsMap.length; i++) {
+            var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+            var char = AccentsMap[i][0];
+            str = str.replace(re, char);
+        }
+        return str;
+    }
 
     const handleChangeSearchInput = (event) => {
         setSearchInput(event.target.value)
@@ -213,7 +237,7 @@ function DistrictAndWard() {
     const handleChosenWards = function (Wards) {
         var filteredWards = Wards.filter(function (Ward) {
             //Tìm kiếm thao trường
-            if (Ward.TenXaPhuong.toLowerCase().includes(searchInput.toLowerCase())) {
+            if (removeAccents(Ward.TenXaPhuong.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
                 if (chosenDistrict !== 0) {
                     return (
                         Ward.IDQuanHuyen === chosenDistrict
@@ -232,7 +256,7 @@ function DistrictAndWard() {
     const handleChosenDistricts = function (Districts) {
         var filteredDistricts = Districts.filter(function (District) {
             //Tìm kiếm thao trường
-            if (District.TenQuanHuyen.toLowerCase().includes(searchInput.toLowerCase())) {
+            if (removeAccents(District.TenQuanHuyen.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
                 return (true)
             }
         })
@@ -240,13 +264,13 @@ function DistrictAndWard() {
     }
 
     const showDistrictsAndWards = function (Rows) {
-        var  ObjectPerPage
-        if(rowsPerPage === -1){
+        var ObjectPerPage
+        if (rowsPerPage === -1) {
             ObjectPerPage = Rows.length
-        }else{
+        } else {
             ObjectPerPage = rowsPerPage
         }
-        
+
         if (chosenField === "xaphuong") {
             if (Rows.length > 0) {
                 return (
@@ -261,6 +285,9 @@ function DistrictAndWard() {
                                 </StyledTableCell>
                                 <StyledTableCell>{row.TenXaPhuong}</StyledTableCell>
                                 <StyledTableCell>{row.TenQuanHuyen}</StyledTableCell>
+                                <StyledTableCell>
+                                    <WardFormDelete ward={row} handleResetPage={handleResetPage} />
+                                </StyledTableCell>
                             </StyledTableRow>
                         ))
                 );
@@ -284,6 +311,9 @@ function DistrictAndWard() {
                                 <StyledTableCell component="th" scope="row">{row.IDQuanHuyen}
                                 </StyledTableCell>
                                 <StyledTableCell>{row.TenQuanHuyen}</StyledTableCell>
+                                <StyledTableCell>
+                                    <DistrictFormDelete district={row} handleResetPage={handleResetPage} />
+                                </StyledTableCell>
                             </StyledTableRow>
                         ))
                 );
@@ -303,8 +333,9 @@ function DistrictAndWard() {
                 <Table>
                     <TableHead color="black">
                         <TableRow>
-                            <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '30%' }}>Mã Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '60%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '10%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -327,8 +358,9 @@ function DistrictAndWard() {
                     <TableHead color="black">
                         <TableRow>
                             <StyledTableCell style={{ width: '10%' }}>Mã Quận Huyện</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Tên Xã Phường</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '30%' }}>Tên Xã Phường</StyledTableCell>
+                            <StyledTableCell style={{ width: '50%' }}>Tên Quận Huyện</StyledTableCell>
+                            <StyledTableCell style={{ width: '10%' }}>Thao Tác</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -343,6 +375,7 @@ function DistrictAndWard() {
             </TableContainer>
         )
     }
+    
     const showSearchWards = function () {
         return (
             <Box sx={style}>
