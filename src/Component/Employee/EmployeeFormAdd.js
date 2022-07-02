@@ -136,10 +136,33 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
         var EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return EMAIL_REGEX.test(email);
     }
+
     function isDuplicateCCCD(cccd){
         var result = false;
         for(var i=0; i < employees.length; i++){
             if(employees[i].CCCD === cccd) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    function isDuplicateSDT(sdt){
+        var result = false;
+        for(var i=0; i < employees.length; i++){
+            if(employees[i].SoDienThoai === sdt) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    function isDuplicateEmail(email){
+        var result = false;
+        for(var i=0; i < employees.length; i++){
+            if(employees[i].Email === email) {
                 result = true;
                 break;
             }
@@ -164,7 +187,7 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
         let validEmail = false;
         let validNgaySinh = false;
 
-        if(email === '' || !validateEmail(email)) {
+        if(email === '' || !validateEmail(email) || isDuplicateEmail(email)) {
             setEmailError(true);
         }else validEmail = true
 
@@ -172,7 +195,7 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
             setTenNhanVienError(true);
         }else validHoTen = true
 
-        if((sdt === '' || isNaN(+sdt) || sdt.length !== 10) ) {
+        if((sdt === '' || isNaN(+sdt) || sdt.length !== 10 || isDuplicateSDT(sdt)) ) {
             setSdtError(true);
         }else validSDT= true
 
@@ -292,6 +315,10 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                         headers: {"Content-type": "application/json"},
                         body: jsonRoles
                     }).then(data => console.log(data))
+                }).then(() => {
+                    setNgaySinh(null);
+                    setAddEmpRoles([]);
+                    handleResetPage();
                 })  
                     //wait(1);
                     /* OLD
@@ -319,10 +346,12 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                     TaiKhoan: taikhoan,
                     MatKhau: matkhau
                 }).then(data => console.log(data))
+                .then(() => {
+                    setNgaySinh(null);
+                    setAddEmpRoles([]);
+                    handleResetPage();
+                })
             }
-            setNgaySinh(null);
-            setAddEmpRoles([]);
-            handleResetPage();
         }        
     }
 

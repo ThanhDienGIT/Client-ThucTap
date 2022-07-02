@@ -23,7 +23,7 @@ const style = {
 
 
 
-export default function EmployeeFormDelete({ employee, handleResetPage }) {
+export default function EmployeeFormDelete({ employee, getIDQuyenByIDNhanVien, empRoles, roles, handleResetPage }) {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -44,11 +44,30 @@ export default function EmployeeFormDelete({ employee, handleResetPage }) {
             handleResetPage();
         })
     }
+    const [checkNV, setCheckNV] = React.useState(false);
+    const [buttonDisplay, setButtonDisplay] = React.useState('default');
+    const currentEmpRole = getIDQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles);
+    async function checkTuyenThuNV(){
+        await fetch('http://localhost:5199/api/nhanvien/checktuyenthu/' + employee.IDNhanVien)
+        .then(response => response.json())
+        .then((data) => setCheckNV(data))
+        .then(() => handleCheckTuyenThuNV(checkNV))
+    }
+    
+    function handleCheckTuyenThuNV(checkNV){
+        if(!checkNV || currentEmpRole.length === 0){
+            setButtonDisplay('hidden');
+        }else{
+            setButtonDisplay('visible');
+        }
+    }
 
+    checkTuyenThuNV()
+    
     return (
         <div>
-            <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
-                <IconButton variant="text" color="error">
+            <Stack direction="column" spacing={2} alignItems="flex-end" onClick={(!checkNV || currentEmpRole.length === 0) ? undefined : handleOpen} marginBottom={1}>
+                <IconButton variant="text" color="error" sx={{visibility: buttonDisplay}}>
                     <Tooltip title="Xoá">
                         <DeleteIcon
                             sx={{ color: 'var(--color9)' }}
