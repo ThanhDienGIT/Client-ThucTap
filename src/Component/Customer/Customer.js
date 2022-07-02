@@ -33,6 +33,8 @@ import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import ExportFileExcel from './ExportFileExcel';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import SnackBarProvider from "../SnackBar/SnackBarProvider";
+import CustomerFormRecover from './CustomerFormRecover';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -82,7 +84,7 @@ function Customer({ collectCustomer }) {
 
     const [page, setPage] = React.useState(0);
 
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
     const [statusCustomer, setStatusCustomer] = React.useState(1);
 
@@ -123,8 +125,6 @@ function Customer({ collectCustomer }) {
 
     }, [resetPage, statusCustomer, collectCustomer])
 
-
-
     React.useEffect(() => {
         if (collectCustomer) {
             axios.get(`http://localhost:5199/api/QuanHuyen/` + cookie)
@@ -133,7 +133,7 @@ function Customer({ collectCustomer }) {
                     setDistricts(districts);
                 })
         } else {
-            axios.get(`http://localhost:5199/api/QuanHuyen`)
+            axios.get(`http://localhost:5199/api/QuanHuyen/AvailableDistricts`)
                 .then(res => {
                     const districts = res.data;
                     setDistricts(districts);
@@ -148,7 +148,7 @@ function Customer({ collectCustomer }) {
                     setWards(wards);
                 })
         } else {
-            axios.get(`http://localhost:5199/api/XaPhuong/`)
+            axios.get(`http://localhost:5199/api/XaPhuong/AvailableWards`)
                 .then(res => {
                     const wards = res.data;
                     setWards(wards);
@@ -174,13 +174,13 @@ function Customer({ collectCustomer }) {
         setSearchInput("")
     }, [collectCustomer])
 
-    React.useEffect(() => {
-        handleChosenCustomer(customers)
-    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer])
-
     const handleResetPage = function () {
         setResetPage(!resetPage)
     }
+
+    React.useEffect(() => {
+        handleChosenCustomer(customers)
+    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage])
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
@@ -196,6 +196,7 @@ function Customer({ collectCustomer }) {
         setChosenCustomerTypes(['Hộ dân', 'Doanh Nghiệp'])
         setChosenDistrict(event.target.value);
         setChosenWard(0);
+        setRowsPerPage(-1);
     };
 
     const handleChangeWard = (event) => {
@@ -226,6 +227,7 @@ function Customer({ collectCustomer }) {
     const handleChangeSearchInput = (event) => {
         setSearchInput(event.target.value)
         setPage(0);
+        setRowsPerPage(-1);
         setChosenCustomerTypes(['Hộ dân', 'Doanh Nghiệp'])
     }
 
@@ -239,7 +241,7 @@ function Customer({ collectCustomer }) {
             if (showTablePagination)
                 return (
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 20]}
+                        rowsPerPageOptions={[10, 50, { value: -1, label: 'Tất Cả' }]}
                         component="div"
                         count={customers.length}
                         rowsPerPage={rowsPerPage}
@@ -251,7 +253,7 @@ function Customer({ collectCustomer }) {
         } else {
             return (
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
+                    rowsPerPageOptions={[10, 50, { value: -1, label: 'Tất Cả' }]}
                     component="div"
                     count={chosenCustomers.length}
                     rowsPerPage={rowsPerPage}
@@ -265,7 +267,6 @@ function Customer({ collectCustomer }) {
 
     //Hàm Lọc Khách Hàng Theo Điều Kiện
     const handleChosenCustomer = function (Customers) {
-        
         var filteredCustomer = Customers.filter(function (customer) {
             //Tìm kiếm thao trường
             switch (searchField) {
@@ -366,15 +367,15 @@ function Customer({ collectCustomer }) {
                     break
                 }
             }
-        })      
-        if (!disableCustomer) {           
-            if (searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0){
+        })
+        if (!disableCustomer) {
+            if (searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0) {
                 var filteredStatusCustomer = filteredCustomer.filter(function (customer) {
                     return (
                         customer.TrangThai === 1
                     )
                 })
-            }else{
+            } else {
                 var filteredStatusCustomer = customers.filter(function (customer) {
                     return (
                         customer.TrangThai === 1
@@ -390,10 +391,17 @@ function Customer({ collectCustomer }) {
     }
     //Hàm Hiển Thị Khách Hàng
     const showCustomer = function (Customers) {
+        var  CustomersPerPage
+        if(rowsPerPage === -1){
+            CustomersPerPage = Customers.length
+        }else{
+            CustomersPerPage = rowsPerPage
+        }
+        
         if (Customers.length > 0) {
-            return (
-                Customers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            return (      
+                    Customers
+                    .slice(page * CustomersPerPage, page * CustomersPerPage + CustomersPerPage)
                     .map(function (customer) {
                         return (
                             <StyledTableRow
@@ -408,15 +416,20 @@ function Customer({ collectCustomer }) {
                                 <StyledTableCell>{customer.CCCD}</StyledTableCell>
                                 <StyledTableCell>{customer.DiaChi}, {customer.TenXaPhuong}, {customer.TenQuanHuyen}</StyledTableCell>
                                 {customer.TrangThai === 1 ?
-                                    <StyledTableCell color='success'>Đang sử dụng</StyledTableCell>
+                                    <StyledTableCell sx={{ color: "var(--color2)" }}>Đang Sử Dụng</StyledTableCell>
                                     :
-                                    <StyledTableCell color='warring'>Tạm dừng sử dụng</StyledTableCell>
+                                    <StyledTableCell style={{ color: "var(--color9)" }}>Tạm Dừng Sử Dụng</StyledTableCell>
                                 }
                                 <StyledTableCell align='center'>
                                     <ButtonGroup variant="text" aria-label="outlined button group">
                                         <CustomerFormView customer={customer}></CustomerFormView>
                                         <CustomerFormEdit customer={customer} handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormEdit>
-                                        <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                                        {customer.TrangThai == 1 ?
+                                            <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                                            :
+                                            <CustomerFormRecover customer={customer} handleResetPage={handleResetPage}></CustomerFormRecover>
+                                        }
+
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>
@@ -482,30 +495,32 @@ function Customer({ collectCustomer }) {
                     <OutlinedInput
                         id="outlined-adornment-search"
                         type="text"
+                        label="Tìm Kiếm"
                         onChange={handleChangeSearchInput}
                         endAdornment={
                             <InputAdornment position="end">
                                 <IconButton
                                     aria-label="button search"
-                                    edge="end"                                  
+                                    edge="end"
                                 >
                                     <SearchIcon />
                                 </IconButton>
                             </InputAdornment>
                         }
-                        label=" Tìm Kiếm "
                     />
                 </FormControl>
                 {/* combobox Quan Huyen */}
                 <FormControl sx={{ m: 1, minWidth: 180 }}>
+                    <InputLabel htmlFor="outlined-adornment-search">Quận Huyện</InputLabel>
                     <Select
                         labelId="demo-simple-select-standard-label"
                         id="select-district"
+                        label="Quận Huyện "
                         value={chosenDistrict}
                         onChange={handleChangeDistrict}
                     >
                         <MenuItem value={0} key={0}>
-                            Chọn Quận Huyện
+                            Tất Cả
                         </MenuItem>
                         {districts
                             .map((district) => (
@@ -517,14 +532,16 @@ function Customer({ collectCustomer }) {
                 </FormControl>
                 {/* combobox XaPhuong */}
                 <FormControl sx={{ m: 1, minWidth: 180 }}>
+                    <InputLabel htmlFor="outlined-adornment-search">Xã Phường</InputLabel>
                     <Select
                         labelId="demo-simple-select-standard-label"
                         id="select-ward"
+                        label="Xã Phường "
                         value={chosenWard}
                         onChange={handleChangeWard}
                     >
                         <MenuItem value={0} key={0}>
-                            Chọn Xã Phường
+                            Tất Cả
                         </MenuItem>
                         {wards
                             .map((ward) => (
@@ -565,7 +582,7 @@ function Customer({ collectCustomer }) {
                 </Stack>
                 <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
                     <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
-                    {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0?
+                    {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
                         <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
                         :
                         <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
@@ -587,7 +604,7 @@ function Customer({ collectCustomer }) {
                     </TableHead>
                     <TableBody>
                         {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
-                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0?
+                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
                             showCustomer(chosenCustomers)
                             :
                             showCustomer(customers)
@@ -600,4 +617,4 @@ function Customer({ collectCustomer }) {
     )
 }
 
-export default  Customer
+export default Customer

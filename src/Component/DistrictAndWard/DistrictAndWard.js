@@ -108,7 +108,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[5, 10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={searchWards.length}
                             rowsPerPage={rowsPerPage}
@@ -121,7 +121,7 @@ function DistrictAndWard() {
                 if (showTablePagination)
                     return (
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 20]}
+                            rowsPerPageOptions={[5, 10, 20, { value: -1, label: 'Tất Cả' }]}
                             component="div"
                             count={wards.length}
                             rowsPerPage={rowsPerPage}
@@ -189,13 +189,13 @@ function DistrictAndWard() {
     const handleChangeChosenField = (event, newField) => {
         if (newField !== null) {
             setChosenField(newField);
-
         }
     };
 
     const handleChangeSearchInput = (event) => {
         setSearchInput(event.target.value)
         setPage(0);
+        setRowsPerPage(-1);
     }
 
     const handleChangeSearchInputDistricts = (event) => {
@@ -206,6 +206,7 @@ function DistrictAndWard() {
     const handleChangeDistrict = (event) => {
         setPage(0);
         setChosenDistrict(event.target.value);
+        setRowsPerPage(-1);
     };
 
     //Hàm Lọc Xã Phường Theo Điều Kiện
@@ -239,11 +240,18 @@ function DistrictAndWard() {
     }
 
     const showDistrictsAndWards = function (Rows) {
+        var  ObjectPerPage
+        if(rowsPerPage === -1){
+            ObjectPerPage = Rows.length
+        }else{
+            ObjectPerPage = rowsPerPage
+        }
+        
         if (chosenField === "xaphuong") {
             if (Rows.length > 0) {
                 return (
                     Rows
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .slice(page * ObjectPerPage, page * ObjectPerPage + ObjectPerPage)
                         .map((row) => (
                             <StyledTableRow
                                 key={row.IDXaPhuong}
@@ -267,7 +275,7 @@ function DistrictAndWard() {
             if (Rows.length > 0) {
                 return (
                     Rows
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .slice(page * ObjectPerPage, page * ObjectPerPage + ObjectPerPage)
                         .map((row) => (
                             <StyledTableRow
                                 key={row.IDQuanHuyen}
@@ -300,7 +308,7 @@ function DistrictAndWard() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {searchInput !== ""?
+                        {searchInput !== "" ?
                             showDistrictsAndWards(searchDistricts)
                             :
                             showDistrictsAndWards(districts)

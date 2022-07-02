@@ -13,7 +13,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { FlareSharp } from '@mui/icons-material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-
+import SnackBarContext from '../SnackBar/SnackBarContext';
+import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
 const style = {
     position: 'absolute',
@@ -44,6 +45,8 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
     const client = axios.create({
         baseURL: "http://localhost:5199/api/KhachHang"
     });
+
+    const [, dispatch] = React.useContext(SnackBarContext)
 
     const [posts, setPosts] = React.useState([]);
 
@@ -254,7 +257,9 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
             })
             .then((response) => {
                 setPosts([response.data, ...posts]);
-                alert(response.data)
+                dispatch(setOpenSnackBar());
+                dispatch(setMessage(response.data.message));
+                dispatch(setSeverity(response.data.severity));
             })
             .catch((err) => {
                 if (err.response) {

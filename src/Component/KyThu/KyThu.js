@@ -6,7 +6,6 @@ export default function KyThu(){
         <SnackBarProvider>
             <KyThuMain />
         </SnackBarProvider>
-
     )
         
 }
