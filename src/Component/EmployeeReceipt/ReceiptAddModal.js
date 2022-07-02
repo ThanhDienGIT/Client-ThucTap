@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import TextField from "@mui/material/TextField";
+import { GetCookie, cookie } from '../Cookie/CookieFunc';
 
 const style = {
   position: 'absolute',
@@ -19,12 +20,7 @@ const style = {
   p: 4,
 };
 
-let yearArray = [];
-
-let curYear = new Date().getFullYear();
-for (let i = curYear - 30; i <= curYear + 10; i++) {
-  yearArray.push(i);
-}
+GetCookie(document.cookie);
 
 export default function PhieuThuAddModal() {
   const [open, setOpen] = React.useState(false);
@@ -66,7 +62,6 @@ export default function PhieuThuAddModal() {
     })
       .then(res => res.json())
       .then((result) => {
-        console.log(result);
         alert(result);
         handleClose();
       },
@@ -77,7 +72,7 @@ export default function PhieuThuAddModal() {
   }
 
   React.useEffect(() => {
-    fetch("http://localhost:5199/api/phieuthu/khachhang")
+    fetch("http://localhost:5199/api/phieuthu/khachhang/nhanvien/" + cookie)
       .then(response => response.json())
       .then(function (customers) {
         setKhachHangList(customers)
