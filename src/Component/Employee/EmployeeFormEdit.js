@@ -15,7 +15,6 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Checkbox from '@mui/material/Checkbox';
-import { wait } from '@testing-library/user-event/dist/utils';
 
 
 const style = {
@@ -57,43 +56,18 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
     const [diachiError, setDiaChiError] = React.useState(false);
     const [cccdError, setCCCDError] = React.useState(false);
 
-    const [addEmpRoles, setAddEmpRoles] = React.useState([getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit)]);
+    const defaultEmpRoles = getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit);
+    const [addEmpRoles, setAddEmpRoles] = React.useState(defaultEmpRoles);
 
-
-    const getValue = (e, empCurrentRoles) =>{
-        let data = addEmpRoles;
-        //console.log(empCurrentRoles);
-        if(addEmpRoles.length == 0 && empCurrentRoles.length > 0){
-            for(var i = 0; i<empCurrentRoles.length; i++){
-                data.push(parseInt(empCurrentRoles[i].toString()));
-                setAddEmpRoles(data);
+    const handleCheck = (id) => {
+        setAddEmpRoles(prev => {
+            const isChecked = addEmpRoles.includes(id)
+            if(isChecked) {
+                return addEmpRoles.filter(item => item !== id)
+            }else{
+                return [...prev, id]
             }
-        }
-        //console.log(data[data.indexOf(e.target.value, data)]);
-        /*
-        console.log("before:");
-        console.log(addEmpRoles);
-        console.log(addEmpRoles.includes(e.target.value));
-        */
-        if(addEmpRoles.includes(parseInt(e.target.value))){
-            addEmpRoles.splice(addEmpRoles.indexOf(parseInt(e.target.value)), 1);
-        }else{
-            data.push(parseInt(e.target.value));
-            setAddEmpRoles(data);
-        }
-        /*
-        if(!addEmpRoles.includes(e.target.value)){
-            data.push(e.target.value);
-            setAddEmpRoles(data);
-        }else{
-            data.pop(e.target.value);
-            setAddEmpRoles(data);
-        }*/
-        //console.log(!addEmpRoles.includes(e.target.value))
-        /*
-        console.log("after:");
-        console.log(addEmpRoles);
-        */
+        })
     }
 
     const [open, setOpen] = React.useState(false);
@@ -160,32 +134,50 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
             }
             if(employeeList[i].CCCD === cccd.toString()) {
                 result = true;
+                /*
                 console.log('loop #' + i + ' id: '+ employeeList[i].IDNhanVien)
                 console.log( cccd.toString());
+                */
                 break;
             }
         }
         return result;
     }
-    
 
-    async function deleteEmp(id) {
-        //console.log('http://localhost:5199/api/nhanvien/' + id);
-        await fetch('http://localhost:5199/api/nhanvien/' + id, {
-            method: 'DELETE'
-        }).then(console.log)
-        .catch((error) => {console.error('Error:', error)})
+    function isDuplicateSDT(idNV, sdt){
+        var result = false;
+        for(var i=0; i < employeeList.length; i++){
+            if(employeeList[i].IDNhanVien === idNV){
+                continue;
+            }
+            if(employeeList[i].SoDienThoai === sdt.toString()) {
+                result = true;
+                /*
+                console.log('loop #' + i + ' id: '+ employeeList[i].IDNhanVien)
+                console.log( sdt.toString());
+                */
+                break;
+            }
+        }
+        return result;
     }
-    async function editEmpRoles(idNV, idQuyen) {
-        await fetch('http://localhost:5199/api/phanquyen',{
-            method: 'POST',
-            headers: {"Content-type": "application/json"},
-            body: JSON.stringify({
-                IDNhanVien: idNV,
-                IDQuyen: idQuyen
-            })
-        }).then(data => console.log(data))
-        .catch((error) => {console.error('Error:', error)})
+
+    function isDuplicateEmail(idNV, email){
+        var result = false;
+        for(var i=0; i < employeeList.length; i++){
+            if(employeeList[i].IDNhanVien === idNV){
+                continue;
+            }
+            if(employeeList[i].Email === email.toString()) {
+                result = true;
+                /*
+                console.log('loop #' + i + ' id: '+ employeeList[i].IDNhanVien)
+                console.log( email.toString());
+                */
+                break;
+            }
+        }
+        return result;
     }
 
     const handleSubmit = (e) => {
@@ -204,7 +196,7 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
         let validEmail = false;
         let validNgaySinh = false;
         
-        if(addEmp.email == '' || !validateEmail(addEmp.email)) {
+        if(addEmp.email == '' || !validateEmail(addEmp.email) || isDuplicateEmail(addEmp.idnhanvien, addEmp.email)) {
             setEmailError(true);
         }else validEmail = true
 
@@ -212,7 +204,7 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
             setTenNhanVienError(true);
         }else validHoTen = true
 
-        if((addEmp.sdt === '' || isNaN(+addEmp.sdt) || addEmp.sdt.length !== 10) ) {
+        if((addEmp.sdt === '' || isNaN(+addEmp.sdt) || addEmp.sdt.length !== 10 || isDuplicateSDT(addEmp.idnhanvien, addEmp.sdt)) ) {
             setSdtError(true);
         }else validSDT= true
 
@@ -333,6 +325,24 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                
     };
 
+    const [checkNV, setCheckNV] = React.useState(false);
+    const [buttonDisplay, setButtonDisplay] = React.useState(false);
+
+    async function checkTuyenThuNV(){
+        await fetch('http://localhost:5199/api/nhanvien/checktuyenthu/' + employee.IDNhanVien)
+        .then(response => response.json())
+        .then((data) => setCheckNV(data))
+        .then(() => handleCheckTuyenThuNV(checkNV))
+    }
+    
+    function handleCheckTuyenThuNV(checkNV){
+        if(!checkNV){
+            setButtonDisplay(true);
+        }else{
+            setButtonDisplay(false);
+        }
+    }
+    checkTuyenThuNV()
     return (
         <div>
             <Stack direction="column" spacing={2} alignItems="flex-end" onClick={handleOpen} marginBottom={1}>
@@ -458,9 +468,9 @@ export default function EmployeeFormEdit({ employee, employeeList, empRolesEdit,
                             <FormControl sx={{display: 'block'}}>
                             <FormLabel>Phân Quyền</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox value="1" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(1) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Quản Trị" />
-                                <FormControlLabel control={<Checkbox value="2" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(2) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Thu Tiền" />
-                                <FormControlLabel control={<Checkbox value="3" defaultChecked={getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit).includes(3) ? true : false} onChange={(e)=>getValue(e, getIDQuyenByIDNhanVien(employee.IDNhanVien, empRolesEdit, rolesEdit))} />} label="Thống Kê - Báo Cáo" />
+                                <FormControlLabel control={<Checkbox value="1" checked={addEmpRoles.includes(1)} onChange={() => handleCheck(1)} />} label="Quản Trị" />
+                                <FormControlLabel control={<Checkbox value="2" checked={addEmpRoles.includes(2)} onChange={() => handleCheck(2)} disabled={buttonDisplay} />} label="Thu Tiền" />
+                                <FormControlLabel control={<Checkbox value="3" checked={addEmpRoles.includes(3)} onChange={() => handleCheck(3)} />} label="Thống Kê - Báo Cáo" />                             
                             </FormGroup>
                             </FormControl>
                             <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>

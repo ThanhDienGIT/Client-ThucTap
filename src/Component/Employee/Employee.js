@@ -259,6 +259,13 @@ export default function Employee() {
         }
         return tenQuyenNV;
     }
+    const [valueCheckNV, setValueCheckNV] = React.useState();
+    function checkTuyenThuNV(idNV){
+        fetch('http://localhost:5199/api/nhanvien/checktuyenthu/' + idNV)
+            .then(response => response.json())
+            .then((data) => setValueCheckNV(data))
+    }
+    //console.log(getIDQuyenByIDNhanVien(11, empRoles, roles))
     //console.log(roles);
     /*
     let x = getIDQuyenByIDNhanVien(1, empRoles, roles);
@@ -365,7 +372,7 @@ export default function Employee() {
                                     <ButtonGroup variant="text" color="primary" aria-label="">
                                         <EmployeeFormView employee={employee} empRoles={getQuyenByIDNhanVien(employee.IDNhanVien, empRoles, roles)} ></EmployeeFormView>
                                         <EmployeeFormEdit employee={employee} employeeList={employees} getIDQuyenByIDNhanVien={getIDQuyenByIDNhanVien} empRolesEdit={empRoles} rolesEdit={roles} handleResetPage={handleResetPage}></EmployeeFormEdit>
-                                        <EmployeeFormDelete employee={employee} handleResetPage={handleResetPage}></EmployeeFormDelete>
+                                        <EmployeeFormDelete employee={employee} getIDQuyenByIDNhanVien={getIDQuyenByIDNhanVien} empRoles={empRoles} roles={roles} handleResetPage={handleResetPage}></EmployeeFormDelete>
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>   
