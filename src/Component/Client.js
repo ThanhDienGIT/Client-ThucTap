@@ -34,7 +34,6 @@ function Client() {
               if(res === 'Username Not Valid'){
                 handleClick()
               }
-             
             })
     } else {
       handleClick1();
@@ -64,7 +63,6 @@ function Client() {
     if (reason === "clickaway") {
       return;
     }
-
     setOpen1(false);
   };
 
@@ -105,7 +103,7 @@ function Client() {
           }
         }
       >
-            <Box width="33%" height="65%" display="flex"
+            <Box width="33%" height="75%" display="flex"
             sx={{backgroundColor: "white",
              
               opacity : 0.9,
@@ -182,7 +180,7 @@ function Client() {
                   
                 >Đăng nhập</Button>
                 <Button variant="text" size="large" color="error" 
-                sx={{ width : '30%',marginTop:2 ,textDecoration : "underline"}} 
+                sx={{ width : '100%',marginTop:2 ,textDecoration : "underline"}} 
                 >Hủy bỏ</Button>
                 
                 </Box>

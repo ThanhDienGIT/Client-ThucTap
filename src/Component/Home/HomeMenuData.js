@@ -63,8 +63,13 @@ const QuyenChung = [
             {
                 title : 'Doanh thu',
                 path :'/home/turnover'
-            }
+            },
+            {
+                title : 'Thống kê khách hàng',
+                path :'/home/statistical'
+            },
         ]
+        
     },
     
 

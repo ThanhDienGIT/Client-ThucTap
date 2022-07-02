@@ -24,10 +24,15 @@ import { Link, Outlet } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import HomeHeader from './HomeHeader';
 import { GetCookie , cookie , BreakCookie} from '../Cookie/CookieFunc';
-
+import { LoginContext } from '../LoginContext/LoginContext';
 import axios from 'axios';
 function Home() {
  
+
+  const globaltext = React.useContext(LoginContext)
+  
+  
+  
   // Chiều dài của menu
   const drawerWidth = 260;
   // đặt lại nội dung sau khi mở
@@ -143,12 +148,21 @@ function Home() {
           .then(res=>
             {
               setInfostaff(res);
+              globaltext.setInfostaff(res);
               axios.get(`http://localhost:5199/api/Login/getmastership/${cookie}`) 
               .then(res=>res.data)
-              .then(res=> setMastership(res)) 
+              .then(res=> 
+                {
+                  setMastership(res)
+                  axios.get(`http://localhost:5199/api/Login/getquyen/${cookie}`) 
+                  .then(res=>res.data)
+                  .then(res=> globaltext.setQuyen(res))
+                }
+                
+                ) 
             })
     },[])
- 
+  
   return (
     <Box sx={{ display: 'flex' , width: "100%", height:"100%"}}>
       <CssBaseline />
@@ -181,22 +195,24 @@ function Home() {
        <div style={{display:'flex'}}>
 
          
-      
+          
           {/* Avatar nhân viên */}
       <Avatar alt="Remy Sharp" src="https://hinhnen123.com/wp-content/uploads/2021/06/avatar.jpg" 
        /> 
         {/* Tên nhân viên */}
         
-        <Typography variant="p" noWrap component="div" 
+        <Typography variant="h6" noWrap component="div" 
         sx = {{
           marginLeft : 2,
           display : "flex",
           justifyContent : 'center',
           alignItems : 'center',
-          textTransform : 'uppercase'
+          textTransform : 'uppercase',
+          fontWeight : 100,
+          fontSize : 17
         }}
         >
-          {infostaff[0].HoTen}
+          { infostaff[0].HoTen }
         </Typography>
         
             <Box 

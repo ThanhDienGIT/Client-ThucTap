@@ -12,6 +12,7 @@ import  Receipt  from './Component/Receipt/Receipt';
 import KyThuMain from './Component/KyThu/KyThuMain';
 import EmployeeReceipt from './Component/EmployeeReceipt/EmployeeReceipt';
 import HomePrivateStaff from './Component/Home/HomePrivateStaff';
+import Statiscical from './Component/Statistical/Statiscical';
 function App() {
 
 
@@ -21,13 +22,13 @@ function App() {
         <Routes>
           <Route path='/' element={<Client />} />
 
-          <Route path='/home' element={<Home />}>    
+          <Route   path='/home' element={<Home />}>    
             <Route path='turnover' element={<Turnover />} />
             <Route path='customer' element={<Customer />} />
             <Route path='privatestaff' element={<HomePrivateStaff />} />
             <Route path='customer' element={<Customer collectCustomer={false} />} />
             <Route path='districtandward' element={<DistrictAndWard />} />
-
+            <Route path='statistical' element={<Statiscical/>}/>            
             <Route path='receipt' element={<Receipt />} />
             <Route path='empreceipt' element={<EmployeeReceipt />} />
             <Route path='employee' element={<Employee />} />

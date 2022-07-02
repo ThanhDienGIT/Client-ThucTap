@@ -133,7 +133,7 @@ function Turnover() {
       <Box width={"100%"} height={"60px"} display = "flex" 
       sx={{alignItems:"center" , justifyContent:"space-between",marginBottom:2}}
       >
-      <Typography variant='p' color={"var(--color2)"} fontSize="24px">
+      <Typography variant='h6' sx={{color : "var(--color2)" , fontSize : 25}}>
       THỐNG KÊ DOANH THU
       </Typography>
 

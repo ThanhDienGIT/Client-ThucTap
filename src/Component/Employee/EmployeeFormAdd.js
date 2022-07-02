@@ -242,14 +242,8 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                 ProfilePicture: profilePicture,
                 TaiKhoan: taikhoan,
                 MatKhau: matkhau
-<<<<<<< HEAD
-            }).then(data => 
-                console.log(data)
-            );
-=======
             }).then(data => console.log(data));
             */
->>>>>>> PBMinh
             /*
             fetch('http://localhost:5199/api/nhanvien',{
                 method: 'POST',

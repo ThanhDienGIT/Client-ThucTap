@@ -121,7 +121,7 @@ export default function Employee() {
     const [employees, setEmployees] = React.useState([]);
     const [empRoles, setEmpRoles] = React.useState([]);
     const [roles, setRoles] = React.useState([]);
-
+   
     const [disabledEmployee, setDisabledEmployee] = React.useState(false);
     /*
     const [handleError, setHandleError] = React.useState({
@@ -368,7 +368,7 @@ export default function Employee() {
                                         <EmployeeFormDelete employee={employee} handleResetPage={handleResetPage}></EmployeeFormDelete>
                                     </ButtonGroup>
                                 </StyledTableCell>
-                            </StyledTableRow>
+                            </StyledTableRow>   
                         ))}
                     </TableBody>
                     <TableFooter>
