@@ -22,6 +22,151 @@ import { Box , Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, T
 import axios from 'axios'
 function CustomerStatistical() {
    
+  useEffect(()=> {
+    axios.get('http://localhost:5199/api/ThongKe/GetCustomer')
+          .then(res => res.data)
+          .then(res => SetDatatemporary(res));
+    axios.get('http://localhost:5199/api/ThongKe/GetKyThu')
+          .then(res => res.data)
+          .then(res => setKythu(res));
+    axios.get('http://localhost:5199/api/ThongKe/GetQuanHuyen')
+          .then(res => res.data)
+          .then(res => setQuanHuyen(res));
+    axios.get('http://localhost:5199/api/ThongKe/GetTuyenThu')
+          .then(res => res.data)
+          .then(res => setTuyenThu(res));
+  },[])
+  
+
+  
+ 
+
+  // giữ tạm thời để lọc
+  const [datatemporary , SetDatatemporary] = useState([{
+    DiaChi: "",
+    HoTenKH: "",
+    MaKhachHang: "",
+    Nam: 0,
+    NgayThu: "",
+    TenKyThu: "",
+    TenQuanHuyen: "",
+    TenTuyenThu: "",
+    TenXaPhuong: "",
+    Thang: 0,
+    TrangThai: 0,
+  }])
+
+
+  function getFormattedDate(date) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return year + '-' + month + '-' + day;
+    }
+  
+    const Today = new Date();
+
+    const NgayMacDinh = getFormattedDate(Today);
+
+ 
+// Các useState giữ dữ liệu để render ra
+  const [QuanHuyen, setQuanHuyen] = React.useState([{
+    IDQuanHuyen : 0,
+    TenQuanHuyen : ''
+  }]);
+  const [XaPhuong, setXaPhuong] = React.useState([{
+    IDXaPhuong : 0,
+    TenXaPhuong : '',
+    IDQuanHuyen :0,
+    TenQuanHuyen : ''
+  }]);
+  const [KyThu,setKythu] = React.useState([{
+    IDKyThu: 0,
+    Nam: 0,
+    TenKyThu: "",
+    Thang: 0,
+  }]);
+  const [TuyenThu,setTuyenThu] = React.useState([{
+    IDTuyenThu: 0,
+    MaTuyenThu: "",
+    TenTuyenThu: ""
+  }]);
+  const [NgaySearch , setNgaySearch] = useState({
+    NgayBatDau : NgayMacDinh,
+    NgayKetThuc : NgayMacDinh
+  })
+  // UseState nắm giữ giá trị trong mảng usestate giữ dữ liệu ở trên
+  const[QuanHuyenNumber,setQuanHuyenNumber] = useState('');
+  const[XaPhuongNumber,setXaPhuongnNumber] = useState('');
+  const[KyThuNumber,setKyThuNumber] = useState('');
+  const[TuyenThuNumber,setTuyenThuNumber] = useState('');
+  
+  
+  
+
+  useEffect(()=> {
+    if(QuanHuyenNumber.length > 0 ){
+      axios.get(`http://localhost:5199/api/ThongKe/getXaPhuongTheoQuanHuyen/${QuanHuyenNumber}`)
+      .then(res => res.data)
+      .then(res => setXaPhuong(res));
+    }else{
+      setXaPhuong([{
+        IDXaPhuong : 0,
+        TenXaPhuong : '',
+        IDQuanHuyen :0,
+        TenQuanHuyen : ''
+      }])
+      setXaPhuongnNumber('')
+    }
+   
+  },[QuanHuyenNumber])
+
+
+
+
+  var rows = []
+  if(QuanHuyenNumber.length === 0 && XaPhuongNumber.length ===0 && KyThuNumber.length ===0 && TuyenThuNumber.length===0) 
+  {
+    datatemporary.map(element => {
+      if(element.NgayThu === null){
+        element.NgayThu = 'Chưa thu'
+      }
+      if(element.NgayThu.length >0 && element.NgayThu !== 'Chưa thu'){
+        element.NgayThu = 'Đã thu'
+      }
+      rows.push(element);
+    })
+  }
+
+  
+  
+
+  const [value, setValue] = React.useState(0);
+  var Labelname = '';
+  const listlabelname = 
+  [
+      'Nhập tên khách hàng cần tìm ...' , 
+      'Nhập tên xã phường cần tìm ...' , 
+      'Nhập tên tuyến thu cần tìm ...' ,
+      'Nhập tên nhân viên cần tìm'
+
+  ]
+  const [chooseTypeSearch , setChooseTypeSearch] = useState(0);
+  Labelname = listlabelname[chooseTypeSearch];
+ 
+
+
+
+
+
+
+
+
     function TablePaginationActions(props) {
         const theme = useTheme();
         const { count, page, rowsPerPage, onPageChange } = props;
@@ -75,7 +220,6 @@ function CustomerStatistical() {
           </Box>
         );
       }
-        
       TablePaginationActions.propTypes = {
         count: PropTypes.number.isRequired,
         onPageChange: PropTypes.func.isRequired,
@@ -83,27 +227,7 @@ function CustomerStatistical() {
         rowsPerPage: PropTypes.number.isRequired,
       };
 
-      function createData(name, calories, fat) {
-        return { name, calories, fat };
-      }
 
-      
-
-      const rows = [
-        createData("Cupcake", 305, 3.7),
-        createData("Donut", 452, 25.0),
-        createData("Eclair", 262, 16.0),
-        createData("Frozen yoghurt", 159, 6.0),
-        createData("Gingerbread", 356, 16.0),
-        createData("Honeycomb", 408, 3.2),
-        createData("Ice cream sandwich", 237, 9.0),
-        createData("Jelly Bean", 375, 0.0),
-        createData("KitKat", 518, 26.0),
-        createData("Lollipop", 392, 0.2),
-        createData("Marshmallow", 318, 0),
-        createData("Nougat", 360, 19.0),
-        createData("Oreo", 437, 18.0)
-      ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
     //   Số trang
     const [page, setPage] = React.useState(0);
     //   Hiển thị số hàng trong 1 trang
@@ -121,7 +245,7 @@ function CustomerStatistical() {
         setPage(0);
     };
 
-    
+    // style head table
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
         backgroundColor: 'var(--color3)',
@@ -134,9 +258,7 @@ function CustomerStatistical() {
     }));
     
 
-
-
-    const [value, setValue] = React.useState(0);
+    
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -148,58 +270,8 @@ function CustomerStatistical() {
         };
     }
 
-   
-
-    const [ListCustomer , setListCustomer] = useState([{}])
-
-
-    var Labelname = '';
-    const listlabelname = 
-    [
-        'Nhập tên khách hàng cần tìm ...' , 
-        'Nhập tên xã phường cần tìm ...' , 
-        'Nhập tên tuyến thu cần tìm ...' ,
-        'Nhập tên nhân viên cần tìm'
-
-    ]
-    const [chooseTypeSearch , setChooseTypeSearch] = useState(0);
-    Labelname = listlabelname[chooseTypeSearch];
-    
-    const [Listrender , setListrender] = useState([{
-        IDKhachHang : 0,
-        TenKhachHang : '',
-
-
-    }])
-
-
-    // Tìm kiếm theo ngày - ngày
-
-    const [NgaySearch , setNgaySearch] = useState({
-      NgayBatDau : '',
-      NgayKetThuc : ''
-    })
-    // Tìm kiếm theo quận huyện xã phường
-    const [QuanHuyen, setQuanHuyen] = React.useState('');
-    const [XaPhuong, setXaPhuong] = React.useState('');
-    const [Kythu,setKythu] = React.useState('');
-    const [TuyenThu,setTuyenThu] = React.useState('');
-    // call api
-    useEffect(()=> {
-
-      axios.get('http://localhost:5199/api/KhachHang')
-            .then(res => res.data)
-            .then(res => console.log(res)); 
-      
-            
-
-    },[])
-
-
-    
-
-
   
+
     return (
     <div>
     <Box display={'flex'} width={'100%'} height={'220px'} boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' marginTop={'30px'}
@@ -207,12 +279,12 @@ function CustomerStatistical() {
     >
         <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'}> 
                 <FormControl sx={{height: '100%', width: '30%'}}>
-                <InputLabel id="demo-simple-select-label" sx={{height:'100%'}}>Age</InputLabel>
+                <InputLabel id="demo-simple-select-label" sx={{height:'100%'}}>Tìm theo</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={chooseTypeSearch}
-                    label="Age"
+                    label="Tìm theo b"
                     onChange={(e)=> {setChooseTypeSearch(e.target.value)}}
                 >
                     <MenuItem value={0}>Tên khách hàng</MenuItem>                   
@@ -232,65 +304,92 @@ function CustomerStatistical() {
             <Box width={'100%'} display = 'flex'>
                 
               <Box display = {'flex'} alignItems='center' >
-                <TextField type={'date'}  label="Bắt đầu" sx={{marginRight:'12px'}}/> 
+                <TextField type={'date'} value={NgaySearch.NgayBatDau} 
+                onChange={(e)=> {setNgaySearch({...NgaySearch,NgayBatDau : e.target.value})}}
+                label="Bắt đầu" sx={{marginRight:'12px'}}
+
+                // Chỗ này thiếu MIN day
+
+                InputProps={{inputProps: {   max: NgayMacDinh} }}
+                /> 
                    <ArrowRightAltIcon/>
-                <TextField type={'date'} label="Kết thúc" sx={{marginLeft:'12px'}} />
+                <TextField type={'date'} value={NgaySearch.NgayKetThuc}
+                onChange={(e)=> {setNgaySearch({...NgaySearch,NgayKetThuc : e.target.value})}}
+                label="Kết thúc" sx={{marginLeft:'12px'}}
+                InputProps={{inputProps: { min : NgaySearch.NgayBatDau , max: NgayMacDinh} }}
+                />
+               
+   
               </Box>
                 {/* Quận huyện */}
-                  <FormControl sx={{ m: 1, minWidth: 130 ,marginLeft: 2}}>
+                  <FormControl sx={{ m: 1, minWidth: 140 ,marginLeft: 2}}>
                   <InputLabel id="demo-simple-select-autowidth-label">Quận huyện</InputLabel>
                   <Select
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    value={QuanHuyen}
-                    onChange={(e)=>{setQuanHuyen(e.target.value)}}
+                    value={QuanHuyenNumber}
+                    onChange={(e)=>{setQuanHuyenNumber(e.target.value)}}
                     autoWidth
                     label="Quận huyện b"
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Twenty</MenuItem>
-                    <MenuItem value={21}>Twenty one</MenuItem>
-                    <MenuItem value={22}>Twenty one and a half</MenuItem>
+
+                   <MenuItem value={''}>
+                     <em>None</em>
+                   </MenuItem>
+
+                   {QuanHuyen.map(element=> {
+                      return(
+                        <MenuItem key={element.IDQuanHuyen} value={element.TenQuanHuyen}> {element.TenQuanHuyen} </MenuItem>
+                      )
+                   })}
+                    
                   </Select>
                   </FormControl>
-                    {/* Xã phường */}
-                  <FormControl sx={{ m: 1, minWidth: 130 }}>
+                
+                  {/* Xã phường */}
+
+                  {QuanHuyenNumber.length > 0 ?  <FormControl sx={{ m: 1, minWidth: 130 }}>
                   <InputLabel id="demo-simple-select-autowidth-label">Xã phường</InputLabel>
                   <Select
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    value={XaPhuong}
-                    onChange={(e)=>{setXaPhuong(e.target.value)}}
+                    value={XaPhuongNumber}
+                    onChange={(e)=>{setXaPhuongnNumber(e.target.value)}}
                     autoWidth
                     label="Xã phường b"
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Twenty</MenuItem>
-                    <MenuItem value={21}>Twenty one</MenuItem>
-                    <MenuItem value={22}>Twenty one and a half</MenuItem>
+                    
+                  <MenuItem value={''}>
+                  <em>None</em>
+                </MenuItem>
+                {XaPhuong.map(element=> {
+                   return(
+                     <MenuItem key={element.IDXaPhuong} value={element.TenXaPhuong}> {element.TenXaPhuong} </MenuItem>
+                   )
+                })}
                   </Select>
-                  </FormControl>
+                  </FormControl> :''}
+                  
                     {/* Kỳ thu */}
                   <FormControl sx={{ m: 1, minWidth: 130 }}>
                   <InputLabel id="demo-simple-select-autowidth-label">Kỳ Thu</InputLabel>
                   <Select
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    value={Kythu}
-                    onChange={(e)=>{setKythu(e.target.value)}}
+                    value={KyThuNumber}
+                    onChange={(e)=>{setKyThuNumber(e.target.value)}}
                     autoWidth
                     label="Kỳ thu b"
                   >
-                    <MenuItem value="">
+                    <MenuItem value={''}>
                       <em>None</em>
                     </MenuItem>
-                    <MenuItem value={10}>Twenty</MenuItem>
-                    <MenuItem value={21}>Twenty one</MenuItem>
-                    <MenuItem value={22}>Twenty one and a half</MenuItem>
+
+                    {KyThu.map(element => {
+                      return(
+                        <MenuItem key={element.IDKyThu} value={element.TenKyThu}> {element.TenKyThu} </MenuItem>
+                      )
+                    })}
                   </Select>
                   </FormControl>
 
@@ -300,17 +399,20 @@ function CustomerStatistical() {
                   <Select
                     labelId="demo-simple-select-autowidth-label"
                     id="demo-simple-select-autowidth"
-                    value={TuyenThu}
-                    onChange={(e)=>{setTuyenThu(e.target.value)}}
+                    value={TuyenThuNumber}
+                    onChange={(e)=>{setTuyenThuNumber(e.target.value)}}
                     autoWidth
                     label="tuyến thu b"
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Twenty</MenuItem>
-                    <MenuItem value={21}>Twenty one</MenuItem>
-                    <MenuItem value={22}>Twenty one and a half</MenuItem>
+                  <MenuItem value={''}>
+                  <em>None</em>
+                  </MenuItem>
+
+                    {TuyenThu.map(element => {
+                      return(
+                        <MenuItem key={element.IDTuyenThu} value={element.TenTuyenThu}> {element.TenTuyenThu} </MenuItem>
+                      )
+                    })}
                   </Select>
                   </FormControl>
 
@@ -356,10 +458,12 @@ function CustomerStatistical() {
     <Table sx={{ maxWidth:'100%' }} aria-label="customized table">
     <TableHead>
         <TableRow>
-        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
-        <StyledTableCell align="right">Calories</StyledTableCell>
-        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
-  
+        <StyledTableCell>MSKH</StyledTableCell>
+        <StyledTableCell >Họ tên</StyledTableCell>
+        <StyledTableCell >Quận huyện</StyledTableCell>
+        <StyledTableCell >Tên tuyến thu</StyledTableCell>
+        <StyledTableCell >Tên kỳ thu</StyledTableCell>
+        <StyledTableCell >Trạng thái</StyledTableCell>
         </TableRow>
     </TableHead>
     
@@ -371,14 +475,25 @@ function CustomerStatistical() {
   ).map((row) => (
     <TableRow key={row.name}>
       <TableCell component="th" scope="row">
-        {row.name}
+        {row.MaKhachHang}
       </TableCell>
-      <TableCell style={{ width: 160 }} align="right">
-        {row.calories}
+      <TableCell  >
+        {row.HoTenKH}
       </TableCell>
-      <TableCell style={{ width: 160 }} align="right">
-        {row.fat}
+      <TableCell  >
+        {row.TenQuanHuyen}
+     
       </TableCell>
+      <TableCell component="th" scope="row" >
+        {row.TenTuyenThu}
+      </TableCell>
+      <TableCell component="th" scope="row" >
+        {row.TenKyThu}
+      </TableCell>
+      <TableCell  >
+        {row.NgayThu}
+      </TableCell>
+    
      
     </TableRow>
   ))}

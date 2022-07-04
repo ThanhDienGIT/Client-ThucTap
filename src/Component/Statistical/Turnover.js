@@ -9,7 +9,7 @@ import axios from 'axios';
 import Chartjs from './Chartjs';
 import ChartRound from './ChartRound';
 import Chartjs2 from './Chartjs2';
-import { cookie, GetCookie } from '../Cookie/CookieFunc';
+
 function Turnover() {
   
   const [kythu, setKythu] = React.useState([{
@@ -125,8 +125,6 @@ function Turnover() {
   },[])
 
   const [mountchart, setMountchart] = useState(0);
-  console.log(NumberKythu)
-  console.log(kythu);
   return (
     <Box  width ="100%" height="100%">
 
