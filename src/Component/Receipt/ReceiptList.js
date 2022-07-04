@@ -270,12 +270,17 @@ const handleDelete = (id) => {
           Phieu.map((row) => (
             <StyledTableRow key={row.IDPhieu}>
               <StyledTableCell component="th" scope="row">
-                {row.IDPhieu}
+                {row.MaSoPhieu}
               </StyledTableCell>
+              <StyledTableCell align="left">{row.MaKhachHang}</StyledTableCell>
               <StyledTableCell align="left">{row.HoTenKH}</StyledTableCell>
               <StyledTableCell align="left">{row.TenLoai}</StyledTableCell>
-              <StyledTableCell align="left">{row.HoTen}</StyledTableCell>
-              <StyledTableCell id="tt" align="left">{change(row.NgayThu)}</StyledTableCell>
+               {
+                change(row.NgayThu) === 'Đã thu' ?
+                  <StyledTableCell id="tt" align="left" sx={{ color: "var(--color7)" }}>{change(row.NgayThu)}</StyledTableCell>
+                  :
+                  <StyledTableCell id="tt" align="left" sx={{ color: "var(--color9)" }}>{change(row.NgayThu)}</StyledTableCell>
+              }
               <StyledTableCell align="left">{row.TenKyThu}</StyledTableCell>
               {/* function */}
               <StyledTableCell align="left" padding='none'>
@@ -591,13 +596,13 @@ const handleDelete = (id) => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Mã Phiếu thu</StyledTableCell>
+            <StyledTableCell align="left">Mã khách hàng</StyledTableCell>
             <StyledTableCell align="left">Tên khách hàng</StyledTableCell>
             <StyledTableCell align="left">Loại khách hàng</StyledTableCell>
-            <StyledTableCell align="left">Nhân viên thu</StyledTableCell>
             <StyledTableCell align="left">Trạng thái</StyledTableCell>
             <StyledTableCell align="left">Tên kỳ thu</StyledTableCell>
             <StyledTableCell align="left"></StyledTableCell>
-            <StyledTableCell align="left"></StyledTableCell>
+             <StyledTableCell align="left"></StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
