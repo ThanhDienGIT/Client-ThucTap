@@ -180,7 +180,7 @@ function Customer({ collectCustomer }) {
 
     React.useEffect(() => {
         handleChosenCustomer(customers)
-    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage])
+    },)
 
     function removeAccents(str) {
         var AccentsMap = [
@@ -291,12 +291,13 @@ function Customer({ collectCustomer }) {
 
     //Hàm Lọc Khách Hàng Theo Điều Kiện
     const handleChosenCustomer = function (Customers) {
+        var handedSearchInput = removeAccents(searchInput.toLowerCase())
         var filteredCustomer = Customers.filter(function (customer) {
             //Tìm kiếm thao trường
             switch (searchField) {
                 //Họ Tên
                 case 1: {
-                    if (removeAccents(customer.HoTenKH.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
+                    if (removeAccents(customer.HoTenKH.toLowerCase()).includes(handedSearchInput)) {
                         if (chosenCustomerTypes.includes(customer.TenLoai)) {
                             if (chosenDistrict !== 0) {
                                 if (chosenWard !== 0) {
@@ -320,7 +321,7 @@ function Customer({ collectCustomer }) {
                 }
                 //Mã Khách Hàng
                 case 2: {
-                    if (customer.MaKhachHang.toLowerCase().includes(searchInput.toLowerCase())) {
+                    if (customer.MaKhachHang.toLowerCase().includes(handedSearchInput)) {
                         if (chosenCustomerTypes.includes(customer.TenLoai)) {
                             if (chosenDistrict !== 0) {
                                 if (chosenWard !== 0) {
@@ -344,7 +345,7 @@ function Customer({ collectCustomer }) {
                 }
                 //Địa Chỉ
                 case 3: {
-                    if (removeAccents(customer.DiaChi + " " + customer.TenXaPhuong + " " + customer.TenQuanHuyen).toLowerCase().includes(removeAccents(searchInput.toLowerCase()))) {
+                    if (removeAccents(customer.DiaChi + " " + customer.TenXaPhuong + " " + customer.TenQuanHuyen).toLowerCase().includes(handedSearchInput)) {
                         if (chosenCustomerTypes.includes(customer.TenLoai)) {
                             if (chosenDistrict !== 0) {
                                 if (chosenWard !== 0) {

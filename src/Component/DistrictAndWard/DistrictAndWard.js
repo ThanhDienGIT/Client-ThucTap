@@ -235,9 +235,10 @@ function DistrictAndWard() {
 
     //Hàm Lọc Xã Phường Theo Điều Kiện
     const handleChosenWards = function (Wards) {
+        var handledSearchInput = removeAccents(searchInput.toLowerCase())
         var filteredWards = Wards.filter(function (Ward) {
             //Tìm kiếm thao trường
-            if (removeAccents(Ward.TenXaPhuong.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
+            if (removeAccents(Ward.TenXaPhuong.toLowerCase()).includes(handledSearchInput)) {
                 if (chosenDistrict !== 0) {
                     return (
                         Ward.IDQuanHuyen === chosenDistrict
@@ -254,9 +255,10 @@ function DistrictAndWard() {
 
     //Hàm Lọc Quận Huyện Theo Điều Kiện
     const handleChosenDistricts = function (Districts) {
+        var handledSearchInput = removeAccents(searchInput.toLowerCase())
         var filteredDistricts = Districts.filter(function (District) {
             //Tìm kiếm thao trường
-            if (removeAccents(District.TenQuanHuyen.toLowerCase()).includes(removeAccents(searchInput.toLowerCase()))) {
+            if (removeAccents(District.TenQuanHuyen.toLowerCase()).includes(handledSearchInput)) {
                 return (true)
             }
         })
