@@ -217,6 +217,7 @@ export default function KyThuMain() {
                             <StyledTableCell>Tên Kỳ thu</StyledTableCell>
                             <StyledTableCell align="center">Tháng</StyledTableCell>
                             <StyledTableCell align="center">Năm</StyledTableCell>
+                            <StyledTableCell align="center">Ngày Tạo</StyledTableCell>
                             <StyledTableCell align="center">Thao tác</StyledTableCell>
                         </StyledTableRow>
                     </TableHead>
@@ -234,6 +235,7 @@ export default function KyThuMain() {
                                 </StyledTableCell>
                                 <StyledTableCell align="center">{row.Thang}</StyledTableCell>
                                 <StyledTableCell align="center">{row.Nam}</StyledTableCell>
+                                <StyledTableCell align="center">{row.NgayTao}</StyledTableCell>
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
                                         <KyThuEditModal idKyThu={row.IDKyThu} thang={row.Thang} nam={row.Nam} reRenderKyThuMain={reRender} />
