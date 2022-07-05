@@ -20,8 +20,11 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { Box , Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, Tab, Tabs, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import axios from 'axios'
+import { set } from 'date-fns';
 function CustomerStatistical() {
    
+
+
   useEffect(()=> {
     axios.get('http://localhost:5199/api/ThongKe/GetCustomer')
           .then(res => res.data)
@@ -35,12 +38,17 @@ function CustomerStatistical() {
     axios.get('http://localhost:5199/api/ThongKe/GetTuyenThu')
           .then(res => res.data)
           .then(res => setTuyenThu(res));
+
+        
   },[])
   
-
   
- 
 
+ 
+  
+
+   
+   
   // giữ tạm thời để lọc
   const [datatemporary , SetDatatemporary] = useState([{
     DiaChi: "",
@@ -48,6 +56,7 @@ function CustomerStatistical() {
     MaKhachHang: "",
     Nam: 0,
     NgayThu: "",
+    NgayTao : "",
     TenKyThu: "",
     TenQuanHuyen: "",
     TenTuyenThu: "",
@@ -55,8 +64,11 @@ function CustomerStatistical() {
     Thang: 0,
     TrangThai: 0,
   }])
+  const minday = new Date(datatemporary[0].NgayTao)
+  const NgayNhoNhat = getFormattedDate(minday);
+  
 
-
+  
   function getFormattedDate(date) {
     var year = date.getFullYear();
 
@@ -67,13 +79,16 @@ function CustomerStatistical() {
     day = day.length > 1 ? day : '0' + day;
 
     return year + '-' + month + '-' + day;
-    }
+  }
   
+   
+   
     const Today = new Date();
 
     const NgayMacDinh = getFormattedDate(Today);
-
  
+   
+  
 // Các useState giữ dữ liệu để render ra
   const [QuanHuyen, setQuanHuyen] = React.useState([{
     IDQuanHuyen : 0,
@@ -97,18 +112,17 @@ function CustomerStatistical() {
     TenTuyenThu: ""
   }]);
   const [NgaySearch , setNgaySearch] = useState({
-    NgayBatDau : NgayMacDinh,
+    NgayBatDau : '',
     NgayKetThuc : NgayMacDinh
   })
+ 
+ 
   // UseState nắm giữ giá trị trong mảng usestate giữ dữ liệu ở trên
   const[QuanHuyenNumber,setQuanHuyenNumber] = useState('');
   const[XaPhuongNumber,setXaPhuongnNumber] = useState('');
   const[KyThuNumber,setKyThuNumber] = useState('');
   const[TuyenThuNumber,setTuyenThuNumber] = useState('');
   
-  
-  
-
   useEffect(()=> {
     if(QuanHuyenNumber.length > 0 ){
       axios.get(`http://localhost:5199/api/ThongKe/getXaPhuongTheoQuanHuyen/${QuanHuyenNumber}`)
@@ -126,46 +140,57 @@ function CustomerStatistical() {
    
   },[QuanHuyenNumber])
 
-
-
-
-  var rows = []
-  if(QuanHuyenNumber.length === 0 && XaPhuongNumber.length ===0 && KyThuNumber.length ===0 && TuyenThuNumber.length===0) 
-  {
-    datatemporary.map(element => {
-      if(element.NgayThu === null){
-        element.NgayThu = 'Chưa thu'
-      }
-      if(element.NgayThu.length >0 && element.NgayThu !== 'Chưa thu'){
-        element.NgayThu = 'Đã thu'
-      }
-      rows.push(element);
-    })
-  }
-
+  const [searchText , setSearchText] = useState('');
   
-  
-
-  const [value, setValue] = React.useState(0);
   var Labelname = '';
   const listlabelname = 
   [
       'Nhập tên khách hàng cần tìm ...' , 
-      'Nhập tên xã phường cần tìm ...' , 
-      'Nhập tên tuyến thu cần tìm ...' ,
-      'Nhập tên nhân viên cần tìm'
-
   ]
   const [chooseTypeSearch , setChooseTypeSearch] = useState(0);
   Labelname = listlabelname[chooseTypeSearch];
  
 
+  const [value, setValue] = React.useState(2);
+  var rows = []
+  if(QuanHuyenNumber.length === 0 && XaPhuongNumber.length ===0 && KyThuNumber.length ===0 && TuyenThuNumber.length===0) 
+  {
+    datatemporary.map(element => {
+         
+      if(element.NgayThu === null)
+      {
+        element.NgayThu = 'Chưa thu'
+      } 
+      if(element.NgayThu.length > 0 && element.NgayThu !== 'Chưa thu')
+      {
+        element.NgayThu = 'Đã thu'
+      }
+
+      if(value === 2) {
+        if(searchText === '') {
+          rows.push(element); 
+        }
+        if(searchText.length > 0 && chooseTypeSearch === 0  && element.HoTenKH.includes(searchText) === true) {
+          rows.push(element); 
+        }
+        
+        
+      }
+      if(value === 1 && element.NgayThu === 'Chưa thu') {
+        rows.push(element);
+      }
+      if(value === 0 && element.NgayThu === 'Đã thu'){
+        rows.push(element);
+      }
+      
+    })
+  }
 
 
 
+  console.log(rows);
 
-
-
+ 
 
     function TablePaginationActions(props) {
         const theme = useTheme();
@@ -231,7 +256,7 @@ function CustomerStatistical() {
     //   Số trang
     const [page, setPage] = React.useState(0);
     //   Hiển thị số hàng trong 1 trang
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // Số dòng hàng cuối
     const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -270,14 +295,22 @@ function CustomerStatistical() {
         };
     }
 
-  
+    useEffect(()=> {
+      if(NgaySearch.NgayBatDau === 'NaN-NaN-NaN' || NgaySearch.NgayBatDau === '') {
+        setNgaySearch({...NgaySearch,NgayBatDau : NgayNhoNhat})
+      }
+    })
+    
+   
+    
+    
 
     return (
     <div>
     <Box display={'flex'} width={'100%'} height={'220px'} boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' marginTop={'30px'}
     borderRadius={'10px'} padding={'20px'} flexDirection='column'
     >
-        <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'}> 
+        <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'} > 
                 <FormControl sx={{height: '100%', width: '30%'}}>
                 <InputLabel id="demo-simple-select-label" sx={{height:'100%'}}>Tìm theo</InputLabel>
                 <Select
@@ -287,14 +320,13 @@ function CustomerStatistical() {
                     label="Tìm theo b"
                     onChange={(e)=> {setChooseTypeSearch(e.target.value)}}
                 >
-                    <MenuItem value={0}>Tên khách hàng</MenuItem>                   
-                    <MenuItem value={1}>Tên xã phường</MenuItem>
-                    <MenuItem value={2}>Tên tuyến thu</MenuItem>
-                    <MenuItem value={3}>Tên nhân viên</MenuItem>
+                    <MenuItem value={0}>Tên khách hàng</MenuItem>
                 </Select>
                 </FormControl>
 
-                <TextField sx ={{height:'100%',width:'65%'}} id="outlined-basic" label={Labelname}/>
+                <TextField sx ={{height:'100%',width:'65%'}} id="outlined-basic" label={Labelname}
+                onChange={(e)=> {setSearchText(e.target.value)}}
+                />
 
         </Box>            
 
@@ -304,13 +336,11 @@ function CustomerStatistical() {
             <Box width={'100%'} display = 'flex'>
                 
               <Box display = {'flex'} alignItems='center' >
-                <TextField type={'date'} value={NgaySearch.NgayBatDau} 
+                <TextField type={'date'} value={NgaySearch.NgayBatDau}
                 onChange={(e)=> {setNgaySearch({...NgaySearch,NgayBatDau : e.target.value})}}
                 label="Bắt đầu" sx={{marginRight:'12px'}}
 
-                // Chỗ này thiếu MIN day
-
-                InputProps={{inputProps: {   max: NgayMacDinh} }}
+                InputProps={{inputProps: { min: NgayNhoNhat ,   max: NgaySearch.NgayKetThuc} }}
                 /> 
                    <ArrowRightAltIcon/>
                 <TextField type={'date'} value={NgaySearch.NgayKetThuc}
@@ -453,7 +483,10 @@ function CustomerStatistical() {
         alignItems : 'center'
     }}>DANH SÁCH KHÁCH HÀNG</Typography>
 
-    <TableContainer component={Paper}  sx = {{width:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
+
+    <Box witdh = {'100%'} height= {800}>
+
+    <TableContainer component={Paper}  sx = {{width:'100%',display:'flex',justifyContent:'center',alignItems:'flex-start'}}>
 
     <Table sx={{ maxWidth:'100%' }} aria-label="customized table">
     <TableHead>
@@ -463,7 +496,7 @@ function CustomerStatistical() {
         <StyledTableCell >Quận huyện</StyledTableCell>
         <StyledTableCell >Tên tuyến thu</StyledTableCell>
         <StyledTableCell >Tên kỳ thu</StyledTableCell>
-        <StyledTableCell >Trạng thái</StyledTableCell>
+        <StyledTableCell >Ngày Thu</StyledTableCell>
         </TableRow>
     </TableHead>
     
@@ -506,11 +539,11 @@ function CustomerStatistical() {
     </TableRow>
   )}
 </TableBody>
-<TableFooter>
+<TableFooter >
   <TableRow>
-    <TablePagination
-      rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-      colSpan={3}
+    <TablePagination 
+      rowsPerPageOptions={[10, 15, 20, { label: "All", value: -1 }]}
+      colSpan={5}
       count={rows.length}
       rowsPerPage={rowsPerPage}
       page={page}
@@ -524,12 +557,12 @@ function CustomerStatistical() {
       onRowsPerPageChange={handleChangeRowsPerPage}
       ActionsComponent={TablePaginationActions}
     />
-  </TableRow>
-</TableFooter>
-</Table>
-</TableContainer>  
+            </TableRow>
+        </TableFooter>
+      </Table>
+    </TableContainer>  
     
-    
+    </Box> 
     
     </div>
   )
