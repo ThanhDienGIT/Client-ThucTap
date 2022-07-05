@@ -173,7 +173,11 @@ function CustomerStatistical() {
         if(searchText.length > 0 && chooseTypeSearch === 0  && element.HoTenKH.includes(searchText) === true) {
           rows.push(element); 
         }
-        
+        if(searchText.length > 0 && chooseTypeSearch === 0  && element.HoTenKH.includes(searchText) === true &&
+            QuanHuyenNumber.length > 0 && element.TenQuanHuyen === QuanHuyenNumber
+        ) {
+          rows.push(element); 
+        }
         
       }
       if(value === 1 && element.NgayThu === 'Chưa thu') {
@@ -181,12 +185,13 @@ function CustomerStatistical() {
       }
       if(value === 0 && element.NgayThu === 'Đã thu'){
         rows.push(element);
+        
       }
       
     })
   }
 
-
+  rows.reverse();
 
   console.log(rows);
 
@@ -496,7 +501,7 @@ function CustomerStatistical() {
         <StyledTableCell >Quận huyện</StyledTableCell>
         <StyledTableCell >Tên tuyến thu</StyledTableCell>
         <StyledTableCell >Tên kỳ thu</StyledTableCell>
-        <StyledTableCell >Ngày Thu</StyledTableCell>
+        <StyledTableCell >Trạng thái</StyledTableCell>
         </TableRow>
     </TableHead>
     
