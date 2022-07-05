@@ -35,6 +35,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import SnackBarProvider from "../SnackBar/SnackBarProvider";
 import CustomerFormRecover from './CustomerFormRecover';
+import CustomerNoRoute from './CustomerNoRoute';
+
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -98,6 +100,8 @@ function Customer({ collectCustomer }) {
 
     const [wards, setWards] = React.useState([]);
 
+    const [searchWards, setSearchWards] = React.useState([]);
+
     const [districts, setDistricts] = React.useState([]);
 
     const [customerTypes, setCustomerTypes] = React.useState([]);
@@ -153,6 +157,27 @@ function Customer({ collectCustomer }) {
                     const wards = res.data;
                     setWards(wards);
                 })
+            axios.get(`http://localhost:5199/api/XaPhuong`)
+                .then(res => {
+                    const searchwards = res.data;
+                    setSearchWards(searchwards);
+                })
+        }
+    }, [collectCustomer])
+
+    React.useEffect(() => {
+        if (collectCustomer) {
+            axios.get(`http://localhost:5199/api/XaPhuong/getbyidemp/` + cookie)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
+        } else {
+            axios.get(`http://localhost:5199/api/XaPhuong/AvailableWards`)
+                .then(res => {
+                    const wards = res.data;
+                    setWards(wards);
+                })
         }
     }, [collectCustomer])
 
@@ -180,7 +205,7 @@ function Customer({ collectCustomer }) {
 
     React.useEffect(() => {
         handleChosenCustomer(customers)
-    },)
+    },[chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage])
 
     function removeAccents(str) {
         var AccentsMap = [
@@ -570,13 +595,21 @@ function Customer({ collectCustomer }) {
                         <MenuItem value={0} key={0}>
                             Tất Cả
                         </MenuItem>
-                        {wards
+                        {searchWards
                             .map((ward) => (
                                 handleShowWard(ward)
                             ))}
                     </Select>
                 </FormControl>
             </Box>
+            <Stack direction="row-reverse" spacing={2} alignItems="flex-end" marginTop={2}>
+                <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
+                {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
+                    <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
+                    :
+                    <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
+                }
+            </Stack>
             <Box sx={actionAreaStyle}>
                 {/* Toggle CustomerType */}
                 <Stack direction="row" spacing={2} alignItems="flex-end">
@@ -608,14 +641,10 @@ function Customer({ collectCustomer }) {
                     <FormControlLabel control={<Checkbox defaultChecked onClick={handleSelectionDisableCustomer} />} label="Hiển Thị Thêm Khách Hàng Ngừng Sử Dụng" />
                 </Stack>
                 <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
-                    <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
-                    {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
-                        <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
-                        :
-                        <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
-                    }
+                    <CustomerNoRoute handleResetPage={handleResetPage}/>
                 </Stack>
             </Box>
+            
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">

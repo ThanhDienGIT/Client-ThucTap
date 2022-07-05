@@ -112,7 +112,7 @@ export default function CustomerFormView({ customer }) {
                             Ngày Cấp CCCD: <Typography variant="inherit">{getFormattedDate(NgayCap)}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
-                            Địa Chỉ: <Typography variant="inherit">{customer.DiaChi}, {customer.TenQuanHuyen}, {customer.TenXaPhuong}</Typography>
+                            Địa Chỉ: <Typography variant="inherit">{customer.DiaChi}, {customer.TenXaPhuong} , {customer.TenQuanHuyen}</Typography>
                         </Typography>
                         <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
                             Loại Khách Hàng: <Typography variant="inherit">{customer.TenLoai}</Typography>
