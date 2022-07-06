@@ -18,45 +18,37 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import { Box , Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, Tab, Tabs, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, Tab, Tabs, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import axios from 'axios'
-import { set } from 'date-fns';
+import SearchIcon from '@mui/icons-material/Search';
+import ReplayIcon from '@mui/icons-material/Replay';
 function CustomerStatistical() {
-   
 
+  useEffect(() => {
 
-  useEffect(()=> {
     axios.get('http://localhost:5199/api/ThongKe/GetCustomer')
-          .then(res => res.data)
-          .then(res => SetDatatemporary(res));
+      .then(res => res.data)
+      .then(res => SetDatatemporary(res));
     axios.get('http://localhost:5199/api/ThongKe/GetKyThu')
-          .then(res => res.data)
-          .then(res => setKythu(res));
+      .then(res => res.data)
+      .then(res => setKythu(res));
     axios.get('http://localhost:5199/api/ThongKe/GetQuanHuyen')
-          .then(res => res.data)
-          .then(res => setQuanHuyen(res));
+      .then(res => res.data)
+      .then(res => setQuanHuyen(res));
     axios.get('http://localhost:5199/api/ThongKe/GetTuyenThu')
-          .then(res => res.data)
-          .then(res => setTuyenThu(res));
+      .then(res => res.data)
+      .then(res => setTuyenThu(res));
 
-        
-  },[])
-  
-  
+  }, [])
 
- 
-  
-
-   
-   
   // giữ tạm thời để lọc
-  const [datatemporary , SetDatatemporary] = useState([{
+  const [datatemporary, SetDatatemporary] = useState([{
     DiaChi: "",
     HoTenKH: "",
     MaKhachHang: "",
     Nam: 0,
     NgayThu: "",
-    NgayTao : "",
+    NgayTao: "",
     TenKyThu: "",
     TenQuanHuyen: "",
     TenTuyenThu: "",
@@ -64,11 +56,48 @@ function CustomerStatistical() {
     Thang: 0,
     TrangThai: 0,
   }])
+  // Các useState giữ dữ liệu để làm điều kiện render ra
+  const [QuanHuyen, setQuanHuyen] = React.useState([{
+    IDQuanHuyen: 0,
+    TenQuanHuyen: ''
+  }]);
+  const [XaPhuong, setXaPhuong] = React.useState([{
+    IDXaPhuong: 0,
+    TenXaPhuong: '',
+    IDQuanHuyen: 0,
+    TenQuanHuyen: ''
+  }]);
+  const [KyThu, setKythu] = React.useState([{
+    IDKyThu: 0,
+    Nam: 0,
+    TenKyThu: "",
+    Thang: 0,
+  }]);
+  const [TuyenThu, setTuyenThu] = React.useState([{
+    IDTuyenThu: 0,
+    MaTuyenThu: "",
+    TenTuyenThu: ""
+  }]);
+
+
   const minday = new Date(datatemporary[0].NgayTao)
   const NgayNhoNhat = getFormattedDate(minday);
-  
+  const Today = new Date();
+  const NgayMacDinh = getFormattedDate(Today);
 
-  
+
+  const [datasearch, setDatasearch] = useState({
+    QuanHuyenNumber: 'noquanhuyen',
+    XaPhuongNumber: 'noxaphuong',
+    KyThuNumber: 'nokythu',
+    TuyenThuNumber: 'notuyenthu',
+    NgayBatDau: '',
+    NgayKetThuc: NgayMacDinh
+  })
+
+
+
+  // format date
   function getFormattedDate(date) {
     var year = date.getFullYear();
 
@@ -80,495 +109,637 @@ function CustomerStatistical() {
 
     return year + '-' + month + '-' + day;
   }
-  
-   
-   
-    const Today = new Date();
-
-    const NgayMacDinh = getFormattedDate(Today);
- 
-   
-  
-// Các useState giữ dữ liệu để render ra
-  const [QuanHuyen, setQuanHuyen] = React.useState([{
-    IDQuanHuyen : 0,
-    TenQuanHuyen : ''
-  }]);
-  const [XaPhuong, setXaPhuong] = React.useState([{
-    IDXaPhuong : 0,
-    TenXaPhuong : '',
-    IDQuanHuyen :0,
-    TenQuanHuyen : ''
-  }]);
-  const [KyThu,setKythu] = React.useState([{
-    IDKyThu: 0,
-    Nam: 0,
-    TenKyThu: "",
-    Thang: 0,
-  }]);
-  const [TuyenThu,setTuyenThu] = React.useState([{
-    IDTuyenThu: 0,
-    MaTuyenThu: "",
-    TenTuyenThu: ""
-  }]);
-  const [NgaySearch , setNgaySearch] = useState({
-    NgayBatDau : '',
-    NgayKetThuc : NgayMacDinh
-  })
- 
- 
-  // UseState nắm giữ giá trị trong mảng usestate giữ dữ liệu ở trên
-  const[QuanHuyenNumber,setQuanHuyenNumber] = useState('');
-  const[XaPhuongNumber,setXaPhuongnNumber] = useState('');
-  const[KyThuNumber,setKyThuNumber] = useState('');
-  const[TuyenThuNumber,setTuyenThuNumber] = useState('');
-  
-  useEffect(()=> {
-    if(QuanHuyenNumber.length > 0 ){
-      axios.get(`http://localhost:5199/api/ThongKe/getXaPhuongTheoQuanHuyen/${QuanHuyenNumber}`)
-      .then(res => res.data)
-      .then(res => setXaPhuong(res));
-    }else{
-      setXaPhuong([{
-        IDXaPhuong : 0,
-        TenXaPhuong : '',
-        IDQuanHuyen :0,
-        TenQuanHuyen : ''
-      }])
-      setXaPhuongnNumber('')
+  // Loại bỏ dấu tiếng việt
+  function removeAccents(str) {
+    var AccentsMap = [
+      "aàảãáạăằẳẵắặâầẩẫấậ",
+      "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
+      "dđ", "DĐ",
+      "eèẻẽéẹêềểễếệ",
+      "EÈẺẼÉẸÊỀỂỄẾỆ",
+      "iìỉĩíị",
+      "IÌỈĨÍỊ",
+      "oòỏõóọôồổỗốộơờởỡớợ",
+      "OÒỎÕÓỌÔỒỔỖỐỘƠỜỞỠỚỢ",
+      "uùủũúụưừửữứự",
+      "UÙỦŨÚỤƯỪỬỮỨỰ",
+      "yỳỷỹýỵ",
+      "YỲỶỸÝỴ"
+    ];
+    for (var i = 0; i < AccentsMap.length; i++) {
+      var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+      var char = AccentsMap[i][0];
+      str = str.replace(re, char);
     }
-   
-  },[QuanHuyenNumber])
+    return str;
+  }
 
-  const [searchText , setSearchText] = useState('');
-  
+  // UseState nắm giữ giá trị trong mảng usestate giữ dữ liệu ở trên
+
+  const [Rendernumber, setRendernumber] = useState(true);
+
+  // Mảng lưu giữ giá trị mới
+  const [rendersearch, setRendersearch] = useState([{
+    DiaChi: "",
+    HoTenKH: "",
+    MaKhachHang: "",
+    Nam: 0,
+    NgayTao: "",
+    NgayThu: "",
+    TenKyThu: "2",
+    TenQuanHuyen: "",
+    TenTuyenThu: "",
+    TenXaPhuong: "",
+    Thang: 0,
+    TrangThai: 0,
+  }])
+
   var Labelname = '';
-  const listlabelname = 
-  [
-      'Nhập tên khách hàng cần tìm ...' , 
-  ]
-  const [chooseTypeSearch , setChooseTypeSearch] = useState(0);
+  const listlabelname =
+    [
+      'Nhập tên khách hàng cần tìm ...',
+    ]
+  const [chooseTypeSearch, setChooseTypeSearch] = useState(0);
   Labelname = listlabelname[chooseTypeSearch];
- 
-
+  const [searchNameCustomer, setSearchNameCustomer] = useState('');
+  const [valuesearch, setValuesearch] = useState(2);
   const [value, setValue] = React.useState(2);
-  var rows = []
-  if(QuanHuyenNumber.length === 0 && XaPhuongNumber.length ===0 && KyThuNumber.length ===0 && TuyenThuNumber.length===0) 
-  {
+  var rows = [];
+  // render cai mang nao ra man hinh gom 2 loai chua loc va da loc
+  if (Rendernumber === true) {
     datatemporary.map(element => {
-         
-      if(element.NgayThu === null)
-      {
-        element.NgayThu = 'Chưa thu'
-      } 
-      if(element.NgayThu.length > 0 && element.NgayThu !== 'Chưa thu')
-      {
-        element.NgayThu = 'Đã thu'
+
+      if (element.NgayThu !== null) {
+        const getDate = new Date(element.NgayThu)
+        element.NgayThu = getFormattedDate(getDate);
+      }
+      const chuoikhongdau = removeAccents(element.HoTenKH)
+
+      if (searchNameCustomer.length === 0) {
+        if (value === 2) {
+          rows.push(element);
+        }
+        if (value === 1 && element.NgayThu === null) {
+          rows.push(element);
+        }
+        if (value === 0 && element.NgayThu !== null) {
+          rows.push(element);
+        }
+      }
+      if (searchNameCustomer.length !== 0) {
+        if (value === 2 && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
+        if (value === 1 && element.NgayThu === null && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
+        if (value === 0 && element.NgayThu !== null && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
+      }
+    })
+  }
+  if (Rendernumber === false) {
+    rendersearch.map(element => {
+
+      if (element.NgayThu !== null) {
+        const getDate = new Date(element.NgayThu)
+        element.NgayThu = getFormattedDate(getDate);
       }
 
-      if(value === 2) {
-        if(searchText === '') {
-          rows.push(element); 
+      const chuoikhongdau = removeAccents(element.HoTenKH)
+
+      if (searchNameCustomer.length === 0) {
+        if (value === 2) {
+          rows.push(element);
         }
-        if(searchText.length > 0 && chooseTypeSearch === 0  && element.HoTenKH.includes(searchText) === true) {
-          rows.push(element); 
+        if (value === 1 && element.NgayThu === null) {
+          rows.push(element);
         }
-        if(searchText.length > 0 && chooseTypeSearch === 0  && element.HoTenKH.includes(searchText) === true &&
-            QuanHuyenNumber.length > 0 && element.TenQuanHuyen === QuanHuyenNumber
-        ) {
-          rows.push(element); 
+        if (value === 0 && element.NgayThu !== null) {
+          rows.push(element);
         }
-        
       }
-      if(value === 1 && element.NgayThu === 'Chưa thu') {
-        rows.push(element);
+      if (searchNameCustomer.length !== 0) {
+        if (value === 2 && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
+        if (value === 1 && element.NgayThu === null && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
+        if (value === 0 && element.NgayThu !== null && chuoikhongdau.toLocaleLowerCase().includes(searchNameCustomer)) {
+          rows.push(element);
+        }
       }
-      if(value === 0 && element.NgayThu === 'Đã thu'){
-        rows.push(element);
-        
-      }
-      
+
     })
   }
 
   rows.reverse();
 
-  console.log(rows);
+  function TablePaginationActions(props) {
+    const theme = useTheme();
+    const { count, page, rowsPerPage, onPageChange } = props;
 
- 
-
-    function TablePaginationActions(props) {
-        const theme = useTheme();
-        const { count, page, rowsPerPage, onPageChange } = props;
-      
-        const handleFirstPageButtonClick = (event) => {
-          onPageChange(event, 0);
-        };
-      
-        const handleBackButtonClick = (event) => {
-          onPageChange(event, page - 1);
-        };
-      
-        const handleNextButtonClick = (event) => {
-          onPageChange(event, page + 1);
-        };
-      
-        const handleLastPageButtonClick = (event) => {
-          onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-        };
-      
-        return (
-          <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-            <IconButton
-              onClick={handleFirstPageButtonClick}
-              disabled={page === 0}
-              aria-label="first page"
-            >
-              {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-            </IconButton>
-            <IconButton
-              onClick={handleBackButtonClick}
-              disabled={page === 0}
-              aria-label="previous page"
-            >
-              {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            </IconButton>
-            <IconButton
-              onClick={handleNextButtonClick}
-              disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-              aria-label="next page"
-            >
-              {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-            </IconButton>
-            <IconButton
-              onClick={handleLastPageButtonClick}
-              disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-              aria-label="last page"
-            >
-              {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-            </IconButton>
-          </Box>
-        );
-      }
-      TablePaginationActions.propTypes = {
-        count: PropTypes.number.isRequired,
-        onPageChange: PropTypes.func.isRequired,
-        page: PropTypes.number.isRequired,
-        rowsPerPage: PropTypes.number.isRequired,
-      };
-
-
-    //   Số trang
-    const [page, setPage] = React.useState(0);
-    //   Hiển thị số hàng trong 1 trang
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    // Số dòng hàng cuối
-    const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-    //   SEt lại số trang để chuyển trang
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-    // chưa rõ
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+    const handleFirstPageButtonClick = (event) => {
+      onPageChange(event, 0);
     };
 
-    // style head table
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-        backgroundColor: 'var(--color3)',
-        color: theme.palette.common.white,
-        height: 65
-        },
-        [`&.${tableCellClasses.body}`]: {
-        fontSize: 20,
-        },
-    }));
-    
-
-    
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
+    const handleBackButtonClick = (event) => {
+      onPageChange(event, page - 1);
     };
-    function a11yProps(index) {
-        return {
-          id: `simple-tab-${index}`,
-          'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
 
-    useEffect(()=> {
-      if(NgaySearch.NgayBatDau === 'NaN-NaN-NaN' || NgaySearch.NgayBatDau === '') {
-        setNgaySearch({...NgaySearch,NgayBatDau : NgayNhoNhat})
-      }
-    })
-    
-   
-    
-    
+    const handleNextButtonClick = (event) => {
+      onPageChange(event, page + 1);
+    };
+
+    const handleLastPageButtonClick = (event) => {
+      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    };
 
     return (
+      <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+        <IconButton
+          onClick={handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="first page"
+        >
+          {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+        </IconButton>
+        <IconButton
+          onClick={handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="previous page"
+        >
+          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+        </IconButton>
+        <IconButton
+          onClick={handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="next page"
+        >
+          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+        </IconButton>
+        <IconButton
+          onClick={handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="last page"
+        >
+          {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+        </IconButton>
+      </Box>
+    );
+  }
+  TablePaginationActions.propTypes = {
+    count: PropTypes.number.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+  };
+
+  //   Số trang
+  const [page, setPage] = React.useState(0);
+  //   Hiển thị số hàng trong 1 trang
+  const [rowsPerPage, setRowsPerPage] = React.useState(50);
+  // Số dòng hàng cuối
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  //   SEt lại số trang để chuyển trang
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  // chưa rõ
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // style head table
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: 'var(--color3)',
+      color: theme.palette.common.white,
+      height: 65
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 20,
+    },
+  }));
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
+
+  useEffect(() => {
+    if (datasearch.NgayBatDau === 'NaN-NaN-NaN' || datasearch.NgayBatDau === '') {
+      setDatasearch({ ...datasearch, NgayBatDau: NgayNhoNhat })
+    }
+  })
+
+  useEffect(() => {
+    if (datasearch.QuanHuyenNumber !== 'noquanhuyen') {
+      axios.get(`http://localhost:5199/api/ThongKe/getXaPhuongTheoQuanHuyen/${datasearch.QuanHuyenNumber}`)
+        .then(res => res.data)
+        .then(res => {
+          setXaPhuong(res)
+          setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
+        });
+
+      axios.get(`http://localhost:5199/api/ThongKe/getTuyenThuTheoQuanHuyen/${datasearch.QuanHuyenNumber}`)
+        .then(res => res.data)
+        .then(res => {
+          setTuyenThu(res)
+          setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+        }
+        );
+    } else {
+      setXaPhuong([{
+        IDXaPhuong: 0,
+        TenXaPhuong: '',
+        IDQuanHuyen: 0,
+        TenQuanHuyen: ''
+      }])
+      setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
+
+      axios.get('http://localhost:5199/api/ThongKe/GetTuyenThu')
+        .then(res => res.data)
+        .then(res => setTuyenThu(res));
+    }
+    setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+
+  }, [datasearch.QuanHuyenNumber])
+
+  const Search = () => {
+
+    if (valuesearch === 2) {
+      axios.get(`http://localhost:5199/api/ThongKe/GetCustomerall/${datasearch.NgayBatDau}/${datasearch.NgayKetThuc}/${datasearch.QuanHuyenNumber}/${datasearch.XaPhuongNumber}/${datasearch.KyThuNumber}/${datasearch.TuyenThuNumber}`)
+        .then(res => res.data)
+        .then(res => setRendersearch(res))
+      setRendernumber(false)
+    }
+    if (valuesearch === 1) {
+      axios.get(`http://localhost:5199/api/ThongKe/GetCustomerChuaThu/${datasearch.NgayBatDau}/${datasearch.NgayKetThuc}/${datasearch.QuanHuyenNumber}/${datasearch.XaPhuongNumber}/${datasearch.KyThuNumber}/${datasearch.TuyenThuNumber}`)
+        .then(res => res.data)
+        .then(res => setRendersearch(res))
+      setRendernumber(false)
+    }
+    if (valuesearch === 0) {
+      axios.get(`http://localhost:5199/api/ThongKe/GetCustomerDaThu/${datasearch.NgayBatDau}/${datasearch.NgayKetThuc}/${datasearch.QuanHuyenNumber}/${datasearch.XaPhuongNumber}/${datasearch.KyThuNumber}/${datasearch.TuyenThuNumber}`)
+        .then(res => res.data)
+        .then(res => setRendersearch(res))
+      setRendernumber(false)
+    }
+
+    setPage(0)
+
+  }
+
+  const resetSearch = () => {
+    setValuesearch(2);
+    setRendernumber(true)
+    datasearch.QuanHuyenNumber = 'noquanhuyen'
+    datasearch.KyThuNumber = 'nokythu'
+    datasearch.TuyenThuNumber = 'notuyenthu'
+    datasearch.XaPhuongNumber = 'noxaphuong'
+    if (datasearch.NgayBatDau === 'NaN-NaN-NaN' || datasearch.NgayBatDau === '' || datasearch.NgayBatDau !== NgayNhoNhat) {
+      setDatasearch({ ...datasearch, NgayBatDau: NgayNhoNhat })
+    }
+    datasearch.NgayKetThuc = NgayMacDinh
+    setRendersearch([])
+
+  }
+
+  if (value !== 2 && valuesearch !== 2) {
+    setValue(2);
+  }
+  useEffect(() => {
+    if (value !== 2 && valuesearch !== 2) {
+      Search()
+    }
+
+  }, [valuesearch])
+
+
+
+
+  return (
     <div>
-    <Box display={'flex'} width={'100%'} height={'220px'} boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' marginTop={'30px'}
-    borderRadius={'10px'} padding={'20px'} flexDirection='column'
-    >
-        <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'} > 
-                <FormControl sx={{height: '100%', width: '30%'}}>
-                <InputLabel id="demo-simple-select-label" sx={{height:'100%'}}>Tìm theo</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={chooseTypeSearch}
-                    label="Tìm theo b"
-                    onChange={(e)=> {setChooseTypeSearch(e.target.value)}}
-                >
-                    <MenuItem value={0}>Tên khách hàng</MenuItem>
-                </Select>
-                </FormControl>
-
-                <TextField sx ={{height:'100%',width:'65%'}} id="outlined-basic" label={Labelname}
-                onChange={(e)=> {setSearchText(e.target.value)}}
-                />
-
-        </Box>            
-
-        <Box display={'flex'} width='100%' height={'100%'} flexDirection={'column'} marginTop={2} justifyContent={'space-around'}>
-            
-        
-            <Box width={'100%'} display = 'flex'>
-                
-              <Box display = {'flex'} alignItems='center' >
-                <TextField type={'date'} value={NgaySearch.NgayBatDau}
-                onChange={(e)=> {setNgaySearch({...NgaySearch,NgayBatDau : e.target.value})}}
-                label="Bắt đầu" sx={{marginRight:'12px'}}
-
-                InputProps={{inputProps: { min: NgayNhoNhat ,   max: NgaySearch.NgayKetThuc} }}
-                /> 
-                   <ArrowRightAltIcon/>
-                <TextField type={'date'} value={NgaySearch.NgayKetThuc}
-                onChange={(e)=> {setNgaySearch({...NgaySearch,NgayKetThuc : e.target.value})}}
-                label="Kết thúc" sx={{marginLeft:'12px'}}
-                InputProps={{inputProps: { min : NgaySearch.NgayBatDau , max: NgayMacDinh} }}
-                />
-               
-   
-              </Box>
-                {/* Quận huyện */}
-                  <FormControl sx={{ m: 1, minWidth: 140 ,marginLeft: 2}}>
-                  <InputLabel id="demo-simple-select-autowidth-label">Quận huyện</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
-                    value={QuanHuyenNumber}
-                    onChange={(e)=>{setQuanHuyenNumber(e.target.value)}}
-                    autoWidth
-                    label="Quận huyện b"
-                  >
-
-                   <MenuItem value={''}>
-                     <em>None</em>
-                   </MenuItem>
-
-                   {QuanHuyen.map(element=> {
-                      return(
-                        <MenuItem key={element.IDQuanHuyen} value={element.TenQuanHuyen}> {element.TenQuanHuyen} </MenuItem>
-                      )
-                   })}
-                    
-                  </Select>
-                  </FormControl>
-                
-                  {/* Xã phường */}
-
-                  {QuanHuyenNumber.length > 0 ?  <FormControl sx={{ m: 1, minWidth: 130 }}>
-                  <InputLabel id="demo-simple-select-autowidth-label">Xã phường</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
-                    value={XaPhuongNumber}
-                    onChange={(e)=>{setXaPhuongnNumber(e.target.value)}}
-                    autoWidth
-                    label="Xã phường b"
-                  >
-                    
-                  <MenuItem value={''}>
-                  <em>None</em>
-                </MenuItem>
-                {XaPhuong.map(element=> {
-                   return(
-                     <MenuItem key={element.IDXaPhuong} value={element.TenXaPhuong}> {element.TenXaPhuong} </MenuItem>
-                   )
-                })}
-                  </Select>
-                  </FormControl> :''}
-                  
-                    {/* Kỳ thu */}
-                  <FormControl sx={{ m: 1, minWidth: 130 }}>
-                  <InputLabel id="demo-simple-select-autowidth-label">Kỳ Thu</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
-                    value={KyThuNumber}
-                    onChange={(e)=>{setKyThuNumber(e.target.value)}}
-                    autoWidth
-                    label="Kỳ thu b"
-                  >
-                    <MenuItem value={''}>
-                      <em>None</em>
-                    </MenuItem>
-
-                    {KyThu.map(element => {
-                      return(
-                        <MenuItem key={element.IDKyThu} value={element.TenKyThu}> {element.TenKyThu} </MenuItem>
-                      )
-                    })}
-                  </Select>
-                  </FormControl>
-
-                    {/* Tuyến thu */}
-                  <FormControl sx={{ m: 1, minWidth: 130 }}>
-                  <InputLabel id="demo-simple-select-autowidth-label">Tuyến thu</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-autowidth-label"
-                    id="demo-simple-select-autowidth"
-                    value={TuyenThuNumber}
-                    onChange={(e)=>{setTuyenThuNumber(e.target.value)}}
-                    autoWidth
-                    label="tuyến thu b"
-                  >
-                  <MenuItem value={''}>
-                  <em>None</em>
-                  </MenuItem>
-
-                    {TuyenThu.map(element => {
-                      return(
-                        <MenuItem key={element.IDTuyenThu} value={element.TenTuyenThu}> {element.TenTuyenThu} </MenuItem>
-                      )
-                    })}
-                  </Select>
-                  </FormControl>
-
-
-             </Box>
-
-             <Box width={'100%'} display='flex' justifyContent={'space-between'}>
-             
-                <Box>
-                    <Box display='flex' alignItems={'center'} height={'100%'}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Đã thu" {...a11yProps(0)} />
-                            <Tab label="Chưa thu" {...a11yProps(1)} />
-                            <Tab label="Tất cả" {...a11yProps(2)} />
-                        </Tabs>
-                    </Box>
-                </Box>
-                
-                <Button variant='outlined' color='success'> Xuất file excel </Button>
-                 
-             </Box>
+      <Box display={'flex'} width={'100%'} height={'220px'} boxShadow='rgba(99, 99, 99, 0.2) 0px 2px 8px 0px' marginTop={'30px'}
+        borderRadius={'10px'} padding={'20px'} flexDirection='column'
+      >
+        <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'} >
+          <FormControl sx={{ height: '100%', width: '30%' }}>
+            <InputLabel id="demo-simple-select-label" sx={{ height: '100%' }}>Tìm theo</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={chooseTypeSearch}
+              label="Tìm theo b"
+              onChange={(e) => { setChooseTypeSearch(e.target.value) }}
+            >
+              <MenuItem value={0}>Tên khách hàng</MenuItem>
+            </Select>
+          </FormControl>
+          {/* search text */}
+          <TextField sx={{ height: '100%', width: '65%' }} id="outlined-basic" label={Labelname}
+            onChange={(e) => { setSearchNameCustomer(removeAccents(e.target.value.toLowerCase())) }}
+          />
 
         </Box>
-        
 
-    
-
-    </Box>
-
-    <Typography variant='h5' 
-    sx=
-    {{
-        width:'100%',height:70,
-        boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
-        color : 'var(--color3)',
-        display : 'flex',
-        paddingLeft: 3,
-        alignItems : 'center'
-    }}>DANH SÁCH KHÁCH HÀNG</Typography>
+        <Box display={'flex'} width='100%' height={'100%'} flexDirection={'column'} marginTop={2} justifyContent={'space-around'}>
 
 
-    <Box witdh = {'100%'} height= {800}>
+          <Box width={'100%'} display='flex' alignItems={'center'}>
 
-    <TableContainer component={Paper}  sx = {{width:'100%',display:'flex',justifyContent:'center',alignItems:'flex-start'}}>
+            <Box display={'flex'} alignItems='center' >
+              <TextField type={'date'} value={datasearch.NgayBatDau}
+                onChange={(e) => { setDatasearch({ ...datasearch, NgayBatDau: e.target.value }) }}
+                label="Bắt đầu" sx={{ marginRight: '12px' }}
 
-    <Table sx={{ maxWidth:'100%' }} aria-label="customized table">
-    <TableHead>
-        <TableRow>
-        <StyledTableCell>MSKH</StyledTableCell>
-        <StyledTableCell >Họ tên</StyledTableCell>
-        <StyledTableCell >Quận huyện</StyledTableCell>
-        <StyledTableCell >Tên tuyến thu</StyledTableCell>
-        <StyledTableCell >Tên kỳ thu</StyledTableCell>
-        <StyledTableCell >Trạng thái</StyledTableCell>
-        </TableRow>
-    </TableHead>
-    
+                InputProps={{ inputProps: { min: NgayNhoNhat, max: datasearch.NgayKetThuc } }}
+              />
+              <ArrowRightAltIcon />
+              <TextField type={'date'} value={datasearch.NgayKetThuc}
+                onChange={(e) => { setDatasearch({ ...datasearch, NgayKetThuc: e.target.value }) }}
+                label="Kết thúc" sx={{ marginLeft: '12px' }}
+                InputProps={{ inputProps: { min: datasearch.NgayBatDau, max: NgayMacDinh } }}
+              />
 
-<TableBody>
-  {(rowsPerPage > 0
-    ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    : rows
-  ).map((row) => (
-    <TableRow key={row.name}>
-      <TableCell component="th" scope="row">
-        {row.MaKhachHang}
-      </TableCell>
-      <TableCell  >
-        {row.HoTenKH}
-      </TableCell>
-      <TableCell  >
-        {row.TenQuanHuyen}
-     
-      </TableCell>
-      <TableCell component="th" scope="row" >
-        {row.TenTuyenThu}
-      </TableCell>
-      <TableCell component="th" scope="row" >
-        {row.TenKyThu}
-      </TableCell>
-      <TableCell  >
-        {row.NgayThu}
-      </TableCell>
-    
-     
-    </TableRow>
-  ))}
-    
-    
 
-  {emptyRows > 0 && (
-    <TableRow style={{ height: 53 * emptyRows }}>
-      <TableCell colSpan={6} />
-    </TableRow>
-  )}
-</TableBody>
-<TableFooter >
-  <TableRow>
-    <TablePagination 
-      rowsPerPageOptions={[10, 15, 20, { label: "All", value: -1 }]}
-      colSpan={5}
-      count={rows.length}
-      rowsPerPage={rowsPerPage}
-      page={page}
-      SelectProps={{
-        inputProps: {
-          "aria-label": "rows per page"
-        },
-        native: true
-      }}
-      onPageChange={handleChangePage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-      ActionsComponent={TablePaginationActions}
-    />
-            </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>  
-    
-    </Box> 
-    
+            </Box>
+            {/* Quận huyện */}
+            <FormControl sx={{ m: 1, minWidth: 140, marginLeft: 2 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Quận huyện</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={datasearch.QuanHuyenNumber}
+                onChange={(e) => { setDatasearch({ ...datasearch, QuanHuyenNumber: e.target.value }) }}
+                autoWidth
+                label="Quận huyện b"
+              >
+
+                <MenuItem value={'noquanhuyen'}>
+                  <em>Chọn quận huyện</em>
+                </MenuItem>
+
+                {QuanHuyen.map(element => {
+                  return (
+                    <MenuItem key={element.IDQuanHuyen} value={element.TenQuanHuyen}> {element.TenQuanHuyen} </MenuItem>
+                  )
+                })}
+
+              </Select>
+            </FormControl>
+
+            {/* Xã phường */}
+
+            {datasearch.QuanHuyenNumber !== 'noquanhuyen' ? 
+            <FormControl sx={{ m: 1, minWidth: 130 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Xã phường</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={datasearch.XaPhuongNumber}
+                onChange={(e) => { setDatasearch({ ...datasearch, XaPhuongNumber: e.target.value }) }}
+                autoWidth
+                label="Xã phường b"
+              >
+
+                <MenuItem value={'noxaphuong'}>
+                  <em>Chọn xã phường</em>
+                </MenuItem>
+                {XaPhuong.map(element => {
+                  return (
+                    <MenuItem key={element.IDXaPhuong} value={element.TenXaPhuong}> {element.TenXaPhuong} </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl> : ''}
+
+            {/* Kỳ thu */}
+            <FormControl sx={{ m: 1, minWidth: 130 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Kỳ Thu</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={datasearch.KyThuNumber}
+                onChange={(e) => { setDatasearch({ ...datasearch, KyThuNumber: e.target.value }) }}
+                autoWidth
+                label="Kỳ thu b"
+              >
+                <MenuItem value={'nokythu'}>
+                  <em>Chọn kỳ thu</em>
+                </MenuItem>
+
+                {KyThu.map(element => {
+                  return (
+                    <MenuItem key={element.IDKyThu} value={element.TenKyThu}> {element.TenKyThu} </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+
+            {/* Tuyến thu */}
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Tuyến thu</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={datasearch.TuyenThuNumber}
+                onChange={(e) => { setDatasearch({ ...datasearch, TuyenThuNumber: e.target.value }) }}
+                autoWidth
+                label="tuyến thu b"
+              >
+                <MenuItem value={'notuyenthu'}>
+                  <em>Chọn tuyến thu</em>
+                </MenuItem>
+
+                {TuyenThu.map(element => {
+                  return (
+                    <MenuItem key={element.IDTuyenThu} value={element.TenTuyenThu}> {element.TenTuyenThu} </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+
+
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+              <InputLabel id="demo-simple-select-autowidth-label">Trạng thái phiếu</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                value={valuesearch}
+                onChange={(e) => { setValuesearch(e.target.value) }}
+                autoWidth
+                label="Trạng thái phiếu b"
+              >
+
+                <MenuItem value={2}> Tất cả </MenuItem>
+                <MenuItem value={1}> Chưa thu </MenuItem>
+                <MenuItem value={0}> Đã thu </MenuItem>
+              </Select>
+            </FormControl>
+
+            <IconButton onClick={resetSearch}>
+              <ReplayIcon />
+            </IconButton>
+
+
+
+
+          </Box>
+
+          <Box width={'100%'} display='flex' justifyContent={'space-between'}>
+
+            <Box >
+
+              {valuesearch === 2
+                ?
+                <Box display='flex' alignItems={'center'} height={'100%'}>
+                  <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="Đã thu" {...a11yProps(0)} />
+                    <Tab label="Chưa thu" {...a11yProps(1)} />
+                    <Tab label="Tất cả" {...a11yProps(2)} />
+                  </Tabs>
+                </Box>
+                :
+                <Box display='flex' alignItems={'center'} height={'100%'}>
+                </Box>
+              }
+
+
+            </Box>
+            <Box height={"100%"} width={350} display={'flex'} justifyContent='space-around' alignItems={'center'}>
+
+              <Button variant="outlined" color='success' endIcon={<SearchIcon />} sx={{ height: '100%', marginLeft: 2 }}
+                onClick={Search}
+              >
+                Tìm kiếm
+              </Button>
+              <Button variant='outlined' color='success'> Xuất file excel </Button>
+            </Box>
+
+
+          </Box>
+
+        </Box>
+
+
+
+
+      </Box>
+
+      <Typography variant='h5'
+        sx=
+        {{
+          width: '100%', height: 70,
+          boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
+          color: 'var(--color3)',
+          display: 'flex',
+          paddingLeft: 3,
+          alignItems: 'center'
+        }}>DANH SÁCH KHÁCH HÀNG</Typography>
+
+
+      <Box witdh={'100%'} height={800}>
+
+        <TableContainer component={Paper} sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+
+          <Table sx={{ maxWidth: '100%' }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>MSKH</StyledTableCell>
+                <StyledTableCell >Họ tên</StyledTableCell>
+                <StyledTableCell >Quận huyện</StyledTableCell>
+                <StyledTableCell >Xã phường</StyledTableCell>
+                <StyledTableCell >Tên tuyến thu</StyledTableCell>
+                <StyledTableCell >Tên kỳ thu</StyledTableCell>
+                <StyledTableCell >Ngày thu</StyledTableCell>
+                <StyledTableCell >Trạng thái</StyledTableCell>
+              </TableRow>
+            </TableHead>
+
+
+            <TableBody>
+              {(rowsPerPage > 0
+                ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : rows
+              ).map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell component="th" scope="row">
+                    {row.MaKhachHang}
+                  </TableCell>
+                  <TableCell  >
+                    {row.HoTenKH}
+                  </TableCell>
+                  <TableCell  >
+                    {row.TenQuanHuyen}
+
+                  </TableCell>
+                  <TableCell  >
+                    {row.TenXaPhuong}
+
+                  </TableCell>
+                  <TableCell component="th" scope="row" >
+                    {row.TenTuyenThu}
+                  </TableCell>
+                  <TableCell component="th" scope="row" >
+                    {row.TenKyThu}
+                  </TableCell>
+
+                  <TableCell sx={{ color: 'var(--color7)' }} >
+                    {row.NgayThu}
+                  </TableCell>
+                  {row.NgayThu === null ? <TableCell sx={{ color: 'var(--color9)' }} > Chưa thu </TableCell> :
+                    <TableCell sx={{ color: 'var(--color7)' }} >
+                      Đã thu
+                    </TableCell>
+                  }
+
+                </TableRow>
+              ))}
+
+
+
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter >
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[10, 50, 100, 200, { label: "All", value: -1 }]}
+                  colSpan={5}
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page"
+                    },
+                    native: true
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+
+      </Box>
+
     </div>
   )
 }

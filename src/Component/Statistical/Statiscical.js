@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 
 import '../../CSS/statistical.css'
 import CustomerStatistical from './CustomerStatistical';
+import TurnoverStatistical from './TurnoverStatistical';
 
 
 
@@ -15,9 +16,6 @@ function Statiscical() {
 
   const [CustomeTurnover,setCustomeTurnover] = useState('1')
  
-    
-  
-  
   
     return (
     <Box display={'flex'} flexDirection={'column'}>
@@ -36,7 +34,7 @@ function Statiscical() {
         
             </ToggleButtonGroup>
 
-            {CustomeTurnover === '1' ? <CustomerStatistical/> : 'chưa có'}
+            {CustomeTurnover === '1' ? <CustomerStatistical/> : <TurnoverStatistical/>}
            
     </Box>
   )
