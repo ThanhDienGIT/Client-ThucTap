@@ -24,11 +24,11 @@ const style = {
 
 export default function TuyenThuViewModal({ idTuyenThu, tenTuyenThu, idNhanVien }) {
 
-    const [open, setOpen] = React.useState(false);
-    const [allEmp, setAllEmp] = React.useState("");
+    const [open, setOpen] = React.useState(false)
+    const [allEmp, setAllEmp] = React.useState("")
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpen = () => setOpen(true)
+    const handleClose = () => setOpen(false)
 
     React.useEffect(() => {
         fetch("http://localhost:5199/api/tuyenthu/allemp/" + idTuyenThu + "/" + idNhanVien)
@@ -37,8 +37,6 @@ export default function TuyenThuViewModal({ idTuyenThu, tenTuyenThu, idNhanVien 
                 setAllEmp(empList);
             });
     }, [idTuyenThu, idNhanVien])
-
-    console.log(allEmp);
 
     return (
         <div>
