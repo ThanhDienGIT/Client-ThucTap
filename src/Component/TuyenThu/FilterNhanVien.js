@@ -14,10 +14,10 @@ export default function FilterNhanVien({ nhanVienOptions, changeNhanVien }) {
                 }}
                 defaultValue={{
                     id: -1,
-                    label: "All"
+                    label: "Tất cả"
                 }}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
-                sx={{ width: 420 }}
+                sx={{ width: 250 }}
                 renderInput={(params) => <TextField {...params} label="Tên nhân viên" />}
             />
         </div>

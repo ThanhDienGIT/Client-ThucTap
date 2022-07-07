@@ -31,11 +31,16 @@ export default function TuyenThuViewModal({ idTuyenThu, tenTuyenThu, idNhanVien 
     const handleClose = () => setOpen(false)
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/tuyenthu/allemp/" + idTuyenThu + "/" + idNhanVien)
-            .then(response => response.json())
-            .then(function (empList) {
-                setAllEmp(empList);
-            });
+        if (idNhanVien !== null) {
+            fetch("http://localhost:5199/api/tuyenthu/allemp/" + idTuyenThu + "/" + idNhanVien)
+                .then(response => response.json())
+                .then(function (empList) {
+                    setAllEmp(empList);
+                })
+        }
+        else{
+            setAllEmp("Tuyến thu này chưa có nhân viên tiếp nhận")
+        }
     }, [idTuyenThu, idNhanVien])
 
     return (
@@ -57,6 +62,14 @@ export default function TuyenThuViewModal({ idTuyenThu, tenTuyenThu, idNhanVien 
                     <Typography variant="h5" style={{ paddingBottom: 40 }}>
                         Thông tin chi tiết tuyến thu
                     </Typography>
+                    <TextField
+                        label="ID Tuyến Thu"
+                        value={idTuyenThu}
+                        style={{ paddingBottom: 20, width: 500 }}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />
                     <TextField
                         label="Tên tuyến thu "
                         value={tenTuyenThu}

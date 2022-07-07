@@ -115,13 +115,14 @@ export default function TuyenThuMain() {
         },
     }));
 
-    const [ , dispatch] = React.useContext(SnackBarContext)
-    console.log(React.useContext(SnackBarContext))
+    const [, dispatch] = React.useContext(SnackBarContext)
+
 
     const [rows, setRows] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [updateState, setUpdateState] = React.useState(true);
+    const [searchTrangThai, setSearchTrangThai] = React.useState(0);
     const [searchNhanVien, setSearchNhanVien] = React.useState(-1);
     const [searchQuanHuyen, setSearchQuanHuyen] = React.useState(-1);
     const [searchXaPhuong, setSearchXaPhuong] = React.useState(-1);
@@ -163,17 +164,26 @@ export default function TuyenThuMain() {
         }
     }
 
+    const handleChangeTrangThai = (trangThai) => {
+        setSearchTrangThai(trangThai)
+        setPage(0)
+        if(trangThai === -1) setSearchNhanVien(-1)
+    }
+
     const handleChangeNhanVien = (nhanVien) => {
-        setSearchNhanVien(nhanVien);
-    };
+        setSearchNhanVien(nhanVien)
+        setPage(0)
+    }
 
     const handleChangeQuanHuyen = (quanHuyen) => {
-        setSearchQuanHuyen(quanHuyen);
-    };
+        setSearchQuanHuyen(quanHuyen)
+        setPage(0)
+    }
 
     const handleChangeXaPhuong = (xaPhuong) => {
-        setSearchXaPhuong(xaPhuong);
-    };
+        setSearchXaPhuong(xaPhuong)
+        setPage(0)
+    }
 
     React.useEffect(() => {
         fetch("http://localhost:5199/api/quanhuyen/")
@@ -208,17 +218,31 @@ export default function TuyenThuMain() {
     }, [searchQuanHuyen])
 
     React.useEffect(() => {
-        fetch("http://localhost:5199/api/tuyenthu/" + searchNhanVien + "/" + searchQuanHuyen + "/" + searchXaPhuong)
-            .then(response => response.json())
-            .then(function (tuyenThu) {
-                setRows(tuyenThu);
-            },
-                (error) => {
-                    dispatch(setOpenSnackBar())
-                    dispatch(setMessage("Failed"))
-                    dispatch(setSeverity("error"))
-                });
-    }, [updateState, searchNhanVien, searchQuanHuyen, searchXaPhuong, dispatch])
+        if (searchTrangThai !== -1) {
+            fetch("http://localhost:5199/api/tuyenthu/" + searchTrangThai + "/" + searchNhanVien + "/" + searchQuanHuyen + "/" + searchXaPhuong)
+                .then(response => response.json())
+                .then(function (tuyenThu) {
+                    setRows(tuyenThu);
+                },
+                    (error) => {
+                        dispatch(setOpenSnackBar())
+                        dispatch(setMessage("Failed"))
+                        dispatch(setSeverity("error"))
+                    })
+        }
+        else{
+            fetch("http://localhost:5199/api/tuyenthu/-1/-1/" + searchQuanHuyen + "/" + searchXaPhuong)
+                .then(response => response.json())
+                .then(function (tuyenThu) {
+                    setRows(tuyenThu);
+                },
+                    (error) => {
+                        dispatch(setOpenSnackBar())
+                        dispatch(setMessage("Failed"))
+                        dispatch(setSeverity("error"))
+                    })
+        }
+    }, [updateState, searchTrangThai, searchNhanVien, searchQuanHuyen, searchXaPhuong, dispatch])
 
     return (
         <>
@@ -237,12 +261,14 @@ export default function TuyenThuMain() {
             <TuyenThuAddModal reRenderKyThuMain={reRender} />
             <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} >
                 <TuyenThuFilter
+                    trangThai={searchTrangThai}
                     nhanVien={searchNhanVien}
                     quanHuyen={searchQuanHuyen}
                     xaPhuong={searchXaPhuong}
                     nhanVienList={nhanVienList}
                     quanHuyenList={quanHuyenList}
                     xaPhuongList={xaPhuongList}
+                    changeTrangThai={handleChangeTrangThai}
                     changeNhanVien={handleChangeNhanVien}
                     changeQuanHuyen={handleChangeQuanHuyen}
                     changeXaPhuong={handleChangeXaPhuong}
@@ -290,7 +316,7 @@ export default function TuyenThuMain() {
                                 }
                                 <StyledTableCell align="center">
                                     <ButtonGroup>
-                                        <TuyenThuViewModal 
+                                        <TuyenThuViewModal
                                             idTuyenThu={row.IDTuyenThu}
                                             tenTuyenThu={row.TenTuyenThu}
                                             idNhanVien={row.IDNhanVien}
