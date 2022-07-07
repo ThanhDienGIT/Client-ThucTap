@@ -4,9 +4,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 
@@ -37,10 +34,6 @@ const exportToCSV = (apiData, fileName) => {
 export default function ExportFileExcel({ customers, handleResetPage }) {
 
     const [open, setOpen] = React.useState(false);
-
-    const [disableCustomer, setDisableCustomer] = React.useState(false);
-
-    const [enableCustomer, setEnableCustomer] = React.useState(true);
 
     const handleOpen = () => {
         setOpen(true);
@@ -88,6 +81,7 @@ export default function ExportFileExcel({ customers, handleResetPage }) {
                         "Mã Khách Hàng": customer.MaKhachHang,
                         "Họ Tên Khách Hàng": customer.HoTenKH,
                         "Căn Cước Công Dân": customer.CCCD,
+                        "Loại Khách Hàng" : customer.TenLoai,
                         "Ngày Cấp CCCD": getFormattedDate(new Date(customer.NgayCap)),
                         "Địa Chỉ": customer.DiaChi,
                         "Xã Phường": customer.TenXaPhuong,
@@ -101,14 +95,6 @@ export default function ExportFileExcel({ customers, handleResetPage }) {
                 )
         }
         return (chosenExportCustomers)
-    }
-
-    const handleSelectionDisableCustomer = () => {       
-        setDisableCustomer(!disableCustomer)
-    }
-
-    const handleSelectionEnableCustomer = () => {
-        setEnableCustomer(!enableCustomer)
     }
 
     return (

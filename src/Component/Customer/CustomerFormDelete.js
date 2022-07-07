@@ -4,15 +4,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, TextField } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import Modal from '@mui/material/Modal'
 import axios from 'axios';
-import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
-import EditIcon from '@mui/icons-material/Edit';
-import { SettingsApplicationsRounded } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
@@ -68,10 +62,9 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
                 } else {
                     // Anything else
                 }
-            });
+            });       
         handleResetPage();
         handleClose();
-        
     };
 
     return (

@@ -5,14 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, TextField } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import { TextField } from '@mui/material';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
-import { FlareSharp } from '@mui/icons-material';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 

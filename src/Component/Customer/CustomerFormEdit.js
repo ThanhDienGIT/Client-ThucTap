@@ -5,14 +5,13 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
-import { SettingsApplicationsRounded } from '@mui/icons-material';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
@@ -149,7 +148,7 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
         const current = new Date();
         const date = getFormattedDate(current);
 
-        let thongbao = "Hãy thêm thông tin cho :";
+        let thongbao = "Hãy thêm thông tin đúng dạng cho :";
         let validName = false;
         let validCCCD = false;
         let validNumberCCCD = false;
@@ -163,6 +162,7 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
         if (Name === "" || Name.search(/[0-9]/) >= 0) {
             thongbao = thongbao + "\nHọ và Tên"
         } else validName = true
+
 
         if (CCCD === "") {
             thongbao = thongbao + "\nCăn Cước Công Dân"
@@ -197,70 +197,10 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
         } else validNumberDayGrant = true
 
         if (validName && validCCCD && validNumberCCCD && validDayGrant && validAddress && validChosenDistrict && validChosenWard && validChosenCustomerType && validNumberDayGrant) {
-
-            const article = {
-                "hoTenKH": Name,
-                "DiaChi": Address,
-                "cccd": CCCD,
-                "ngayCap": DayGrant,
-                "idXaPhuong": chosenWard,
-                "idLoaiKhachHang": chosenCustomerType,
-                "maKhachHang": customer.MaKhachHang,
-                "ngayChinhSua": date,
-                "idKhachHang": customer.IDKhachHang
-            };
-            console.log(article)
             addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
         } else {
             alert(thongbao);
         }
-        // if (Name === "") {
-        //     alert('Hãy Điền Họ và Tên')
-        // } else {
-        //     if (CCCD === "") {
-        //         alert('Hãy Điền Căn Cước Công Dân')
-        //     } else {
-        //         if (CCCD.length != 12 ) {
-        //             alert('Hãy Điền Căn Cước Công Dân Đủ 12 ký tự');
-        //         } else {
-        //             if (DayGrant === "") {
-        //                 alert('Hãy Điền Ngày Cấp CCCD')
-        //             } else {
-        //                 if (Address === "") {
-        //                     alert('Hãy Điền Địa Chỉ')
-        //                 } else {
-        //                     if (chosenDistrict === 0) {
-        //                         alert('Hãy Điền Quận Huyện')
-        //                     } else {
-        //                         if (chosenWard === 0) {
-        //                             alert('Hãy Điền Xã Phường')
-        //                         } else {
-        //                             if (chosenCustomerType === 0) {
-        //                                 alert('Hãy Điền Loại Khách Hàng')
-        //                             } else {
-        //                                 const current = new Date();
-        //                                 const date = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
-        //                                 const article = {
-        //                                     "hoTenKH": Name,
-        //                                     "DiaChi": Address,
-        //                                     "cccd": CCCD,
-        //                                     "ngayCap": DayGrant,
-        //                                     "idXaPhuong": chosenWard,
-        //                                     "idLoaiKhachHang": chosenCustomerType,
-        //                                     "maKhachHang": customer.MaKhachHang,
-        //                                     "ngayChinhSua": date,
-        //                                     "idKhachHang": customer.IDKhachHang
-        //                                 };
-        //                                 console.log(article)
-        //                                 addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     };
     const addPosts = (Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date) => {
         client
