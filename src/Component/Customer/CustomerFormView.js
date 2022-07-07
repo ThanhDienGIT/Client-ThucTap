@@ -1,18 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Switch from '@mui/material/Switch';
-import { FormLabel, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -20,8 +7,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import Grid from '@mui/material/Grid';
-import { fontSize } from '@mui/system';
 
 const style = {
 
@@ -95,7 +80,7 @@ export default function CustomerFormView({ customer }) {
                         <Typography variant="h6" style={{ width: 700, paddingBottom: 40, paddingRight: 40 }}>
                             Ngày Tạo: <Typography variant="inherit">{getFormattedDate(NgayTao)}</Typography>
                         </Typography>
-                        {getFormattedDate(NgayChinhSua) != '01/01/1970' ?
+                        {getFormattedDate(NgayChinhSua) !== '01/01/1970' ?
                             <Typography variant="h6" style={{ width: 300, paddingBottom: 40, paddingRight: 40 }}>
                                 Chỉnh Sửa Lần Cuối: <Typography variant="inherit">{getFormattedDate(NgayChinhSua)}</Typography>
                             </Typography>

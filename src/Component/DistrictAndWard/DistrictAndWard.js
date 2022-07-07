@@ -10,15 +10,12 @@ import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import { tableCellClasses } from '@mui/material/TableCell';
 import Stack from '@mui/material/Stack';
-import { autocompleteClasses, Box, TextField } from '@mui/material';
+import {Box} from '@mui/material';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tab from '@mui/material/Tab';
 import DistrictFormAdd from './DistrictFormAdd';
 import WardFormAdd from './WardFormAdd';
 import FormControl from '@mui/material/FormControl';
@@ -31,7 +28,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import WardFormDelete from './WardFormDelete';
 import DistrictFormDelete from './DistrictFormDelete';
-import Autocomplete from '@mui/material/Autocomplete';
 
 // Table Style
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -72,7 +68,7 @@ function DistrictAndWard() {
 
     const [chosenField, setChosenField] = React.useState('xaphuong');
 
-    const [showTablePagination, setShowTablePagination] = React.useState(true);
+    const showTablePagination = true;
 
     const [wards, setWards] = React.useState([]);
 
@@ -220,11 +216,6 @@ function DistrictAndWard() {
         setSearchInput(event.target.value)
         setPage(0);
         setRowsPerPage(-1);
-    }
-
-    const handleChangeSearchInputDistricts = (event) => {
-        setSearchInput(event.target.value)
-        setPage(0);
     }
 
     const handleChangeDistrict = (event) => {

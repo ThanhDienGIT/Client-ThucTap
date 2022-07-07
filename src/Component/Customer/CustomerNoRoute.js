@@ -2,9 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
-import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
@@ -63,19 +61,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-function getFormattedDate(date) {
-    var year = date.getFullYear();
-
-    var month = (1 + date.getMonth()).toString();
-    month = month.length > 1 ? month : '0' + month;
-
-    var day = date.getDate().toString();
-    day = day.length > 1 ? day : '0' + day;
-
-    return day + '/' + month + '/' + year;
-}
-
-
 export default function CustomerNoRoute({ handleResetPage }) {
     const [open, setOpen] = React.useState(false);
 
@@ -128,8 +113,8 @@ export default function CustomerNoRoute({ handleResetPage }) {
                     // Anything else
                 }
             });
-        handleClose();
         handleResetPage();
+        handleClose();
     };
 
     const [customersNoRoute, setCustomersNoRoute] = React.useState([])
