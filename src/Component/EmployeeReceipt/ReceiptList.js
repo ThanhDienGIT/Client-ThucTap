@@ -21,6 +21,9 @@ import IconButton from '@mui/material/IconButton';
 import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
 import ExportReceiptReport from './ExportReceiptReport';
+import Paper from '@mui/material/Paper';
+import TablePagination from '@mui/material/TablePagination';
+import TableContainer from '@mui/material/TableContainer';
 function ReceiptList() {
   //style
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -147,6 +150,8 @@ const handleDelete = (id) => {
     // handle QuanHuyen
   const handleQuanHuyen = (event) => {
     setChosenQuanHuyen(event.target.value);
+                setPage(0);
+        setRowsPerPage(-1);
   }
   React.useEffect(() => {
     QuanHuyen(rows);
@@ -166,7 +171,9 @@ const handleDelete = (id) => {
   }
   // handle XaPhuong
     const handleXaPhuong = (event) => {
-    setChosenXaPhuong(event.target.value);
+      setChosenXaPhuong(event.target.value);
+                  setPage(0);
+        setRowsPerPage(-1);
     }
   
     React.useEffect(() => {
@@ -190,6 +197,8 @@ const handleDelete = (id) => {
     //handle TuyenThu
     const handleTuyenThu = (event) => {
       setChosenTuyenThu(event.target.value);
+                  setPage(0);
+        setRowsPerPage(-1);
     }
   
     React.useEffect(() => {
@@ -211,7 +220,9 @@ const handleDelete = (id) => {
   //handle TrangThai
   const handleTrangThai = (event) => {
     setChosenTrangThai(event.target.value);
-    console.log('tt',event.target.value);
+    console.log('tt', event.target.value);
+                setPage(0);
+        setRowsPerPage(-1);
   }
   React.useEffect(() => {
     TrangThai(rows);
@@ -237,6 +248,8 @@ const handleDelete = (id) => {
   const handleLoaiKhachHang = (event) => {
     console.log('value', event.target.value);
     setChosenLoaiKhachHang(event.target.value);
+                setPage(0);
+        setRowsPerPage(-1);
   }
 
   React.useEffect(() => {
@@ -291,9 +304,17 @@ const handleDelete = (id) => {
   }
   //show phieu thu
   const showPhieuThu = function (Phieu) {
+        var PhieusPerPage
+        if (rowsPerPage === -1) {
+          PhieusPerPage = Phieu.length;
+        } else {
+          PhieusPerPage = rowsPerPage;
+        }
     if (Phieu.length > 0) {
       return (
-          Phieu.map((row) => (
+        Phieu
+          .slice(page * PhieusPerPage, page * PhieusPerPage + PhieusPerPage)
+          .map((row) => (
             <StyledTableRow key={row.IDPhieu}>
               <StyledTableCell component="th" scope="row">
                 {row.MaSoPhieu}
@@ -403,6 +424,8 @@ const handleDelete = (id) => {
   //handleSearchInput
   const handleChangeSearchInputKH = (event) => {
     setChosenTenKhachHang(event.target.value);
+                setPage(0);
+        setRowsPerPage(-1);
     console.log(event.target.value);
   }
   React.useEffect(() => {
@@ -540,6 +563,46 @@ const handleDelete = (id) => {
     }
     
   }
+
+    //page
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [showTablePagination, setShowTablePagination] = React.useState(true);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+  const handleShowTablePagination = function () {
+        if (chosenQuanHuyen === 0 && chosenXaPhuong === 0 && chosenLoaiKhachHang === 0 && chosenTuyenThu === 0 && chosenTrangThai ===0 && chosenTenKhachHang === '') {
+            if (showTablePagination)
+                return (
+                    <TablePagination
+                        rowsPerPageOptions={[10, 50, { value: -1, label: 'Tất Cả' }]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                );
+        } else {
+            return (
+                <TablePagination
+                    rowsPerPageOptions={[10, 50, { value: -1, label: 'Tất Cả' }]}
+                    component="div"
+                    count={changeshow.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            );
+        }
+    }
   return (
     <div>
       <FormControl sx={{ m: 1, minWidth: 170,textAlign:'center' }}>
@@ -575,6 +638,8 @@ const handleDelete = (id) => {
       <br></br>
       {/* list */}
       <div><h2>Danh sách phiếu thu</h2></div>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -596,7 +661,10 @@ const handleDelete = (id) => {
               showPhieuThu(rows)
           }
         </TableBody>
-      </Table>
+          </Table>
+        </TableContainer>
+      {handleShowTablePagination()}
+    </Paper>
     </div>
   )
 }
