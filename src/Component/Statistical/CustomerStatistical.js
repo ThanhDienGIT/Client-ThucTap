@@ -22,6 +22,8 @@ import { Box, Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, Ta
 import axios from 'axios'
 import SearchIcon from '@mui/icons-material/Search';
 import ReplayIcon from '@mui/icons-material/Replay';
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 function CustomerStatistical() {
 
   useEffect(() => {
@@ -95,7 +97,9 @@ function CustomerStatistical() {
     NgayKetThuc: NgayMacDinh
   })
 
-
+  if(datasearch.QuanHuyenNumber === 'noquanhuyen'){
+    datasearch.XaPhuongNumber = 'noxaphuong'
+  }
 
   // format date
   function getFormattedDate(date) {
@@ -135,7 +139,6 @@ function CustomerStatistical() {
   }
 
   // UseState nắm giữ giá trị trong mảng usestate giữ dữ liệu ở trên
-
   const [Rendernumber, setRendernumber] = useState(true);
 
   // Mảng lưu giữ giá trị mới
@@ -165,6 +168,7 @@ function CustomerStatistical() {
   const [valuesearch, setValuesearch] = useState(2);
   const [value, setValue] = React.useState(2);
   var rows = [];
+  var rowsexport = []
   // render cai mang nao ra man hinh gom 2 loai chua loc va da loc
   if (Rendernumber === true) {
     datatemporary.map(element => {
@@ -348,16 +352,17 @@ function CustomerStatistical() {
         .then(res => res.data)
         .then(res => {
           setXaPhuong(res)
-          setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
         });
 
       axios.get(`http://localhost:5199/api/ThongKe/getTuyenThuTheoQuanHuyen/${datasearch.QuanHuyenNumber}`)
         .then(res => res.data)
         .then(res => {
-          setTuyenThu(res)
-          setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+          setTuyenThu(res)  
         }
         );
+
+        setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+        setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
     } else {
       setXaPhuong([{
         IDXaPhuong: 0,
@@ -370,8 +375,10 @@ function CustomerStatistical() {
       axios.get('http://localhost:5199/api/ThongKe/GetTuyenThu')
         .then(res => res.data)
         .then(res => setTuyenThu(res));
-    }
-    setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+
+        setDatasearch({ ...datasearch, TuyenThuNumber: 'notuyenthu' })
+      }
+   
 
   }, [datasearch.QuanHuyenNumber])
 
@@ -425,8 +432,13 @@ function CustomerStatistical() {
 
   }, [valuesearch])
 
-
-
+ 
+  const ExportExcel = () => {
+    var wb = XLSX.utils.book_new(),
+    ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb,ws, "Thống kê tất cả khách hàng");
+    XLSX.writeFile(wb,"Myexcel.xlsx")
+  }
 
   return (
     <div>
@@ -434,6 +446,7 @@ function CustomerStatistical() {
         borderRadius={'10px'} padding={'20px'} flexDirection='column'
       >
         <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'} >
+         
           <FormControl sx={{ height: '100%', width: '30%' }}>
             <InputLabel id="demo-simple-select-label" sx={{ height: '100%' }}>Tìm theo</InputLabel>
             <Select
@@ -624,7 +637,9 @@ function CustomerStatistical() {
               >
                 Tìm kiếm
               </Button>
-              <Button variant='outlined' color='success'> Xuất file excel </Button>
+              <Button variant='outlined' color='success'
+              onClick={ExportExcel}
+              > Xuất file excel </Button>
             </Box>
 
 

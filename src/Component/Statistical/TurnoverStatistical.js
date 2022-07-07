@@ -25,9 +25,243 @@ import ReplayIcon from '@mui/icons-material/Replay';
 
 function TurnoverStatistical() {
   
+    useEffect(()=> {
+        axios.get('http://localhost:5199/api/ThongKe/GetTurnover')
+            .then(res=>res.data)
+            .then(res=> SetDatatemporary(res))
+        axios.get('http://localhost:5199/api/ThongKe/GetQuanHuyen')
+          .then(res => res.data)
+          .then(res => setQuanHuyen(res));
+          axios.get('http://localhost:5199/api/ThongKe/GetNVTHU')
+          .then(res => res.data)
+          .then(res => setNhanVien(res));
+    },[])
+
+   
+    
+  
+    
+    
+    // useSTate chứa dữ liệu tạm thời để lọc
+    const [datatemporary, SetDatatemporary] = useState([{
+        HoTen: "",
+        IDLoaiKhachHang: 0,
+        MaNhanVien: "",
+        MaTuyenThu: "",
+        NgayTao : "",
+        TenQuanHuyen: "",
+        TenTuyenThu: "",
+        TenXaPhuong: "",
+    }])
+  
+    const minday = new Date(datatemporary[0].NgayTao)
+    const NgayNhoNhat = getFormattedDate(minday);
+    const Today = new Date();
+    const NgayMacDinh = getFormattedDate(Today);
+ 
+    const [datasearch, setDatasearch] = useState({
+      QuanHuyenNumber: 'noquanhuyen',
+      XaPhuongNumber: 'noxaphuong',
+      NhanVienNumber : 'nonhanvien',
+      NgayBatDau: '',
+      NgayKetThuc: NgayMacDinh
+    })
+    
+    function getFormattedDate(date) {
+      var year = date.getFullYear();
+  
+      var month = (1 + date.getMonth()).toString();
+      month = month.length > 1 ? month : '0' + month;
+  
+      var day = date.getDate().toString();
+      day = day.length > 1 ? day : '0' + day;
+  
+      return year + '-' + month + '-' + day;
+    }
+    // Loại bỏ dấu tiếng việt
+    function removeAccents(str) {
+      var AccentsMap = [
+        "aàảãáạăằẳẵắặâầẩẫấậ",
+        "AÀẢÃÁẠĂẰẲẴẮẶÂẦẨẪẤẬ",
+        "dđ", "DĐ",
+        "eèẻẽéẹêềểễếệ",
+        "EÈẺẼÉẸÊỀỂỄẾỆ",
+        "iìỉĩíị",
+        "IÌỈĨÍỊ",
+        "oòỏõóọôồổỗốộơờởỡớợ",
+        "OÒỎÕÓỌÔỒỔỖỐỘƠỜỞỠỚỢ",
+        "uùủũúụưừửữứự",
+        "UÙỦŨÚỤƯỪỬỮỨỰ",
+        "yỳỷỹýỵ",
+        "YỲỶỸÝỴ"
+      ];
+      for (var i = 0; i < AccentsMap.length; i++) {
+        var re = new RegExp('[' + AccentsMap[i].substr(1) + ']', 'g');
+        var char = AccentsMap[i][0];
+        str = str.replace(re, char);
+      }
+      return str;
+    }
+    var Labelname = '';
+    const listlabelname =
+      [
+        'Nhập tên nhân viên cần tìm ...',
+        'Nhập tên tuyến thu cần tìm ...',
+      ]
+    const [chooseTypeSearch, setChooseTypeSearch] = useState(0);
+    Labelname = listlabelname[chooseTypeSearch];
+    const [searchNamestaff, setSearchNamestaff] = useState('');
+     
+    // các usestate chứa dữ liệu 
+    const [QuanHuyen, setQuanHuyen] = React.useState([{
+      IDQuanHuyen: 0,
+      TenQuanHuyen: ''
+    }]);
+    const [XaPhuong, setXaPhuong] = React.useState([{
+      IDXaPhuong: 0,
+      TenXaPhuong: '',
+      IDQuanHuyen: 0,
+      TenQuanHuyen: ''
+    }]);
+    const [NhanVien, setNhanVien] = React.useState([{
+      HoTen: 0,
+      TenNhanVien: '',
+    }]);
     var rows = []
+    var TongTien  = 0;
+    
+    const [numberrender , setNumberrender] = useState(true)
+    const [renderarray , setRenderarray] = useState([{
+      HoTen: "",
+      IDLoaiKhachHang: 0,
+      MaNhanVien: "",
+      MaTuyenThu: "",
+      NgayTao : "",
+      TenQuanHuyen: "",
+      TenTuyenThu: "",
+      TenXaPhuong: "",
+    }])
+    
+  
+    if(numberrender === true) {
+      
+      datatemporary.map(element => {
+       
+        const chuoinhanvien = removeAccents(element.HoTen)
+        const chuoituyenthu = removeAccents(element.TenTuyenThu)
+        if(element.IDLoaiKhachHang === 1 ) {
+          const money = 50000;
+          TongTien+= money
+        }
+        if(element.IDLoaiKhachHang === 2) {
+          const money = 100000;
+          TongTien+=money
+        }
+        
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===0 &&  chuoinhanvien.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===1 &&  chuoituyenthu.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
+        
+        if(searchNamestaff.length === 0) {
+          rows.push(element);
+        }
 
+      })
+    }else{
+      
+      renderarray.map(element => {
+        const chuoinhanvien = removeAccents(element.HoTen)
+        const chuoituyenthu = removeAccents(element.TenTuyenThu)
+        if(element.IDLoaiKhachHang === 1 ) {
+          const money = 50000;
+          TongTien+= money
+        }
+        if(element.IDLoaiKhachHang === 2) {
+          const money = 100000;
+          TongTien+=money
+        }
+        
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===0 &&  chuoinhanvien.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===1 &&  chuoituyenthu.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
+        if(searchNamestaff.length === 0) {
+          rows.push(element);
+        }
+      })
+    }
+    
+    console.log(datatemporary)
+    console.log(renderarray)
+    console.log(rows)
 
+    useEffect(() => {
+      if (datasearch.QuanHuyenNumber !== 'noquanhuyen') {
+        axios.get(`http://localhost:5199/api/ThongKe/getXaPhuongTheoQuanHuyen/${datasearch.QuanHuyenNumber}`)
+          .then(res => res.data)
+          .then(res => {
+            setXaPhuong(res)
+            
+          });
+  
+        axios.get(`http://localhost:5199/api/ThongKe/Getstaffqh/${datasearch.QuanHuyenNumber}`)
+          .then(res => res.data)
+          .then(res => {
+            setNhanVien(res)
+           
+          }
+          );
+  
+          setDatasearch({ ...datasearch, NhanVien: 'nonhanvien' })
+          setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
+      } else {
+        setXaPhuong([{
+          IDXaPhuong: 0,
+          TenXaPhuong: '',
+          IDQuanHuyen: 0,
+          TenQuanHuyen: ''
+        }])
+        
+  
+        axios.get(`http://localhost:5199/api/ThongKe/Getstaffqh/${datasearch.QuanHuyenNumber}`)
+          .then(res => res.data)
+          .then(res => {
+            setNhanVien(res)
+          }
+          );
+          setDatasearch({ ...datasearch, XaPhuongNumber: 'noxaphuong' })
+          setDatasearch({ ...datasearch, NhanVienNumber: 'nonhanvien' })
+        }
+     
+  
+    }, [datasearch.QuanHuyenNumber])
+  
+
+      const search = () => {
+          axios.get(`http://localhost:5199/api/ThongKe/getTurnover/${datasearch.NgayBatDau}/${datasearch.NgayKetThuc}/${datasearch.QuanHuyenNumber}/${datasearch.XaPhuongNumber}/${datasearch.NhanVienNumber}/`)
+          .then(res=>res.data)
+          .then(res => setRenderarray(res))
+
+          setNumberrender(false);
+      }
+
+      
+      const resetSearch = () => {
+        datasearch.QuanHuyenNumber = 'noquanhuyen'
+        datasearch.NhanVienNumber = 'nonhanvien'
+        datasearch.XaPhuongNumber = 'noxaphuong'
+        if (datasearch.NgayBatDau === 'NaN-NaN-NaN' || datasearch.NgayBatDau === '' || datasearch.NgayBatDau !== NgayNhoNhat) {
+          setDatasearch({ ...datasearch, NgayBatDau: NgayNhoNhat })
+        }
+        setRenderarray([]);
+       setNumberrender(true);
+      }
+    
     const [value, setValue] = React.useState(2);
    //   Số trang
    const [page, setPage] = React.useState(0);
@@ -87,6 +321,52 @@ function TurnoverStatistical() {
       onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
     };
 
+    useEffect(() => {
+      if (datasearch.NgayBatDau === 'NaN-NaN-NaN' || datasearch.NgayBatDau === '') {
+        setDatasearch({ ...datasearch, NgayBatDau: NgayNhoNhat })
+      }
+    })
+
+
+
+    useEffect(()=> {
+      
+      if(searchNamestaff.length !== 0) {
+        TongTien = 0
+        if(numberrender === true ) {
+          datatemporary.map(element => {
+            if(element.IDLoaiKhachHang === 1 ) {
+              const money = 50000;
+              TongTien+= money
+            }
+            if(element.IDLoaiKhachHang === 2) {
+              const money = 100000;
+              TongTien+=money
+            }
+          })
+        }else{
+            renderarray.map(element => {           
+                if(element.IDLoaiKhachHang === 1 ) {
+                  const money = 50000;
+                  TongTien+= money
+                }
+                if(element.IDLoaiKhachHang === 2) {
+                  const money = 100000;
+                  TongTien+=money
+                }
+              
+            })
+        }
+          
+          
+      }
+    },[searchNamestaff])
+
+
+
+
+
+
     return (
       <Box sx={{ flexShrink: 0, ml: 2.5 }}>
         <IconButton
@@ -127,10 +407,16 @@ function TurnoverStatistical() {
     rowsPerPage: PropTypes.number.isRequired,
   };
   
-  
-  
-  
-  
+
+  useEffect(()=> {
+    if (datasearch.NgayBatDau === 'NaN-NaN-NaN' || datasearch.NgayBatDau === '') {
+      setDatasearch({ ...datasearch, NgayBatDau: NgayNhoNhat })
+    }
+  })
+ 
+      
+   
+
   return (
     <div>
           {/* Box tổng */}
@@ -139,14 +425,24 @@ function TurnoverStatistical() {
             {/* Thanh Tìm text */}
           <Box display={'flex'} width={'600px'} height={'58px'} justifyContent={'space-between'}>
 
+                <FormControl sx={{ height: '100%', width: '30%' }}>
+                <InputLabel id="demo-simple-select-label" sx={{ height: '100%' }}>Tìm theo</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={chooseTypeSearch}
+                  label="Tìm theo b"
+                  onChange={(e) => { setChooseTypeSearch(e.target.value) }}
+                >
+                  <MenuItem value={0}>Tên nhân viên</MenuItem>
+                  <MenuItem value={1}>Tên tuyến thu</MenuItem>
+                </Select>
+              </FormControl>
+              {/* search text */}
+              <TextField sx={{ height: '100%', width: '65%' }} id="outlined-basic" label={Labelname}
+                onChange={(e) => { setSearchNamestaff(removeAccents(e.target.value.toLowerCase())) }}
+              />
 
-
-
-
-
-
-
-              
           </Box>  
             {/* Các lựa chọn lọc theo ngày đến ngày xã phường quận huyện ... */}
             <Box display={'flex'} width='100%' height={'100%'} flexDirection={'column'} marginTop={2} justifyContent={'space-around'}>
@@ -155,10 +451,103 @@ function TurnoverStatistical() {
                           {/* Từ ngày đến ngày */}
                         <Box width={'100%'} display='flex' alignItems={'center'}>
                         
-                        
+
+                        <Box display={'flex'} alignItems='center' >
+                        <TextField type={'date'} value={datasearch.NgayBatDau}
+                          onChange={(e) => { setDatasearch({ ...datasearch, NgayBatDau: e.target.value }) }}
+                          label="Bắt đầu" sx={{ marginRight: '12px' }}
+          
+                          InputProps={{ inputProps: { min: NgayNhoNhat, max: datasearch.NgayKetThuc } }}
+                        />
+                        <ArrowRightAltIcon />
+                        <TextField type={'date'} value={datasearch.NgayKetThuc}
+                          onChange={(e) => { setDatasearch({ ...datasearch, NgayKetThuc: e.target.value }) }}
+                          label="Kết thúc" sx={{ marginLeft: '12px' }}
+                          InputProps={{ inputProps: { min: datasearch.NgayBatDau, max: NgayMacDinh } }}
+                        />
+          
+          
+                      </Box>
+
+                        <FormControl sx={{ m: 1, minWidth: 140, marginLeft: 2 }}>
+                        <InputLabel id="demo-simple-select-autowidth-label">Quận huyện</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={datasearch.QuanHuyenNumber}
+                          onChange={(e) => { setDatasearch({ ...datasearch, QuanHuyenNumber: e.target.value }) }}
+                          autoWidth
+                          label="Quận huyện b"
+                        >
+
+                          <MenuItem value={'noquanhuyen'}>
+                            <em>Chọn quận huyện</em>
+                          </MenuItem>
+
+                          {QuanHuyen.map(element => {
+                            return (
+                              <MenuItem key={element.IDQuanHuyen} value={element.TenQuanHuyen}> {element.TenQuanHuyen} </MenuItem>
+                            )
+                          })}
+
+                        </Select>
+                      </FormControl>
+
+                      {datasearch.QuanHuyenNumber !== 'noquanhuyen' ? 
+                      <FormControl sx={{ m: 1, minWidth: 130 }}>
+                        <InputLabel id="demo-simple-select-autowidth-label">Xã phường</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-autowidth-label"
+                          id="demo-simple-select-autowidth"
+                          value={datasearch.XaPhuongNumber}
+                          onChange={(e) => { setDatasearch({ ...datasearch, XaPhuongNumber: e.target.value }) }}
+                          autoWidth
+                          label="Xã phường b"
+                        >
+          
+                          <MenuItem value={'noxaphuong'}>
+                            <em>Chọn xã phường</em>
+                          </MenuItem>
+                          {XaPhuong.map(element => {
+                            return (
+                              <MenuItem key={element.IDXaPhuong} value={element.TenXaPhuong}> {element.TenXaPhuong} </MenuItem>
+                            )
+                          })}
+                        </Select>
+                      </FormControl> : ''}
+
+
+                      <FormControl sx={{ m: 1, minWidth: 130 }}>
+                      <InputLabel id="demo-simple-select-autowidth-label">Nhân Viên</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-autowidth-label"
+                        id="demo-simple-select-autowidth"
+                        value={datasearch.NhanVienNumber}
+                        onChange={(e) => { setDatasearch({ ...datasearch, NhanVienNumber: e.target.value }) }}
+                        autoWidth
+                        label="Nhân viên b"
+                      >
+        
+                        <MenuItem value={'nonhanvien'}>
+                          <em>Chọn nhân viên</em>
+                        </MenuItem>
+                        {NhanVien.map((element,index) => {
+                          return (
+                            <MenuItem key={index} value={element.HoTen}> {element.HoTen} </MenuItem>
+                          )
+                        })}
+                      </Select>
+                    </FormControl>
+
+                        <IconButton onClick={resetSearch}>
+                        <ReplayIcon />
+                      </IconButton>
+                            
                         </Box>
-                        {/* các select khác */}
-                  
+                   
+
+
+                        
                   
                   </Box>   
                   <Box width={'100%'} display='flex' justifyContent={'space-between'}>
@@ -168,7 +557,7 @@ function TurnoverStatistical() {
                       <Box height={"100%"} width={350} display={'flex'} justifyContent='space-around' alignItems={'center'}>
 
                       <Button variant="outlined" color='success' endIcon={<SearchIcon />} sx={{ height: '100%', marginLeft: 2 }}
-                        
+                        onClick={search}
                       >
                         Tìm kiếm
                       </Button>
@@ -199,11 +588,12 @@ function TurnoverStatistical() {
           <Table sx={{ maxWidth: '100%' }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>MSTT</StyledTableCell>
+                <StyledTableCell>ID Tuyến Thu</StyledTableCell>
                 <StyledTableCell >Tên tuyến thu</StyledTableCell>
-                <StyledTableCell >MSNV</StyledTableCell>
+                <StyledTableCell >Mã số NV </StyledTableCell>
                 <StyledTableCell >Tên nhân viên</StyledTableCell>
-                <StyledTableCell >Kỳ thu</StyledTableCell>
+                <StyledTableCell >Quận Huyện</StyledTableCell>
+                <StyledTableCell >Xã phường</StyledTableCell>
                 <StyledTableCell >Doanh Thu</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -213,38 +603,50 @@ function TurnoverStatistical() {
               {(rowsPerPage > 0
                 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 : rows
-              ).map((row) => (
-                <TableRow key={row.name}>
+              ).map((row,index) => (
+                <TableRow key={index}>
                   <TableCell component="th" scope="row">
-                  MaKhachang
+                      {row.MaTuyenThu}
                   </TableCell>
                   <TableCell  >
-                  HoTenKH
+                  {row.TenTuyenThu}
                   </TableCell>
                   <TableCell  >
-                  TenQuanuyen
-
+                  {row.MaNhanVien}
                   </TableCell>
                   <TableCell  >
-                  TenXaPhong
+                  {row.HoTen}
 
                   </TableCell>
                   <TableCell component="th" scope="row" >
-                  TenTuyeThu
+                  {row.TenQuanHuyen}
                   </TableCell>
                   <TableCell component="th" scope="row" >
-                  TenKyTh
+                  {row.TenXaPhuong}
                   </TableCell>
 
-                  <TableCell sx={{ color: 'var(--color7)' }} >
-                  NgayThu
+                  <TableCell sx={{ color: 'var(--color7)' }} align={'center'} style={{ width: '8%' }} >
+                    {row.IDLoaiKhachHang === 1 ? '50.000 ₫' : '100.000 ₫'}
                   </TableCell>
              
                     
 
                 </TableRow>
               ))}
-
+                <TableRow >
+                <TableCell colSpan={5}>
+                </TableCell>
+                
+                <TableCell sx={{ color:'var(--color7)'}}>
+                TỔNG DOANH THU :
+                </TableCell>
+                <TableCell sx={{ color: 'var(--color7)' }}  colSpan={6} >
+                  {(TongTien).toLocaleString('vi-VI', {
+                  style: 'currency',
+                  currency: 'VND',
+                })}
+                </TableCell>
+                </TableRow>
 
 
               {emptyRows > 0 && (

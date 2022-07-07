@@ -4,6 +4,7 @@ import { LoginContext } from '../LoginContext/LoginContext';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import axios from 'axios';
+import md5 from 'md5'
 function HomePrivateEdit(props) {
     
     const globaltext = React.useContext(LoginContext);
@@ -203,7 +204,7 @@ function HomePrivateEdit(props) {
                              />
                              <TextField  label="Mật khẩu" variant="outlined" type={'password'} defaultValue={infostaff.MatKhau}
                              onChange={(e)=>{
-                                setInfostaff({...infostaff, MatKhau : e.target.value})
+                                setInfostaff({...infostaff, MatKhau : md5(e.target.value)})
                                 }}
                              />  
 

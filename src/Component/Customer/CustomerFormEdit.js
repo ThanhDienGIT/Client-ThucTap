@@ -160,7 +160,7 @@ export default function CustomerFormEdit({ customer, handleResetPage, importdist
         let validChosenWard = false;
         let validChosenCustomerType = false;
 
-        if (Name === "") {
+        if (Name === "" || Name.search(/[0-9]/) >= 0) {
             thongbao = thongbao + "\nHọ và Tên"
         } else validName = true
 

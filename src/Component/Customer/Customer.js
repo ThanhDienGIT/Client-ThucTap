@@ -13,7 +13,7 @@ import CustomerFormAdd from './CustomerFormAdd';
 import CustomerFormView from './CustomerFormView';
 import CustomerFormEdit from './CustomerFormEdit';
 import CustomerFormDelete from './CustomerFormDelete';
-import { autocompleteClasses, Box, TextField } from '@mui/material';
+import { Box } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -33,7 +33,6 @@ import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import ExportFileExcel from './ExportFileExcel';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import SnackBarProvider from "../SnackBar/SnackBarProvider";
 import CustomerFormRecover from './CustomerFormRecover';
 import CustomerNoRoute from './CustomerNoRoute';
 
@@ -82,13 +81,11 @@ function Customer({ collectCustomer }) {
 
     const [searchInput, setSearchInput] = React.useState('');
 
-    const [showTablePagination, setShowTablePagination] = React.useState(true);
+    const showTablePagination = true;
 
     const [page, setPage] = React.useState(0);
 
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-    const [statusCustomer, setStatusCustomer] = React.useState(1);
 
     const [customers, setCustomer] = React.useState([])
 
@@ -127,7 +124,7 @@ function Customer({ collectCustomer }) {
                 })
         }
 
-    }, [resetPage, statusCustomer, collectCustomer])
+    }, [resetPage, collectCustomer])
 
     React.useEffect(() => {
         if (collectCustomer) {
@@ -150,6 +147,7 @@ function Customer({ collectCustomer }) {
                 .then(res => {
                     const wards = res.data;
                     setWards(wards);
+                    setSearchWards(wards);
                 })
         } else {
             axios.get(`http://localhost:5199/api/XaPhuong/AvailableWards`)
@@ -205,7 +203,7 @@ function Customer({ collectCustomer }) {
 
     React.useEffect(() => {
         handleChosenCustomer(customers)
-    },[chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage])
+    }, [chosenDistrict, chosenWard, searchInput, searchField, chosenCustomerTypes, disableCustomer, resetPage, customers])
 
     function removeAccents(str) {
         var AccentsMap = [
@@ -416,17 +414,21 @@ function Customer({ collectCustomer }) {
                     }
                     break
                 }
+                default: {
+                    return true;
+                }
             }
         })
         if (!disableCustomer) {
+            var filteredStatusCustomer
             if (searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0) {
-                var filteredStatusCustomer = filteredCustomer.filter(function (customer) {
+                filteredStatusCustomer = filteredCustomer.filter(function (customer) {
                     return (
                         customer.TrangThai === 1
                     )
                 })
             } else {
-                var filteredStatusCustomer = customers.filter(function (customer) {
+                filteredStatusCustomer = customers.filter(function (customer) {
                     return (
                         customer.TrangThai === 1
                     )
@@ -439,6 +441,49 @@ function Customer({ collectCustomer }) {
             setChosenCustomer(filteredStatusCustomer)
         }
     }
+
+    const showFunctionCustomer = function (customer) {
+        if (!collectCustomer) {
+            if (customer.TrangThai === 1) {
+                return (
+                    <ButtonGroup variant="text" aria-label="outlined button group">
+                        <CustomerFormView customer={customer}></CustomerFormView>
+                        <CustomerFormEdit customer={customer} handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormEdit>
+                        <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
+                    </ButtonGroup>
+                )
+            } else {
+                return (
+                    <ButtonGroup variant="text" aria-label="outlined button group">
+                        <CustomerFormView customer={customer}></CustomerFormView>
+                        <CustomerFormEdit customer={customer} handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormEdit>
+                        <CustomerFormRecover customer={customer} handleResetPage={handleResetPage}></CustomerFormRecover>
+                    </ButtonGroup>
+                )
+            }
+        }
+    }
+
+    const handleShowAddAndExport = function () {
+        if (!collectCustomer) {
+            if (searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer) {
+                return (
+                    <Stack direction="row-reverse" spacing={2} alignItems="flex-end" marginTop={2}>
+                        <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
+                        <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
+                    </Stack>
+                )
+            } else {
+                return (
+                    <Stack direction="row-reverse" spacing={2} alignItems="flex-end" marginTop={2}>
+                        <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
+                        <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
+                    </Stack>
+                )
+            }
+        }
+    }
+
     //Hàm Hiển Thị Khách Hàng
     const showCustomer = function (Customers) {
         var CustomersPerPage
@@ -472,14 +517,7 @@ function Customer({ collectCustomer }) {
                                 }
                                 <StyledTableCell align='center'>
                                     <ButtonGroup variant="text" aria-label="outlined button group">
-                                        <CustomerFormView customer={customer}></CustomerFormView>
-                                        <CustomerFormEdit customer={customer} handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormEdit>
-                                        {customer.TrangThai == 1 ?
-                                            <CustomerFormDelete customer={customer} handleResetPage={handleResetPage}></CustomerFormDelete>
-                                            :
-                                            <CustomerFormRecover customer={customer} handleResetPage={handleResetPage}></CustomerFormRecover>
-                                        }
-
+                                        {showFunctionCustomer(customer)}
                                     </ButtonGroup>
                                 </StyledTableCell>
                             </StyledTableRow>
@@ -602,14 +640,7 @@ function Customer({ collectCustomer }) {
                     </Select>
                 </FormControl>
             </Box>
-            <Stack direction="row-reverse" spacing={2} alignItems="flex-end" marginTop={2}>
-                <CustomerFormAdd handleResetPage={handleResetPage} importdistricts={districts} importwards={wards}></CustomerFormAdd>
-                {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
-                    <ExportFileExcel customers={chosenCustomers} handleResetPage={handleResetPage} />
-                    :
-                    <ExportFileExcel customers={customers} handleResetPage={handleResetPage} />
-                }
-            </Stack>
+            {handleShowAddAndExport()}
             <Box sx={actionAreaStyle}>
                 {/* Toggle CustomerType */}
                 <Stack direction="row" spacing={2} alignItems="flex-end">
@@ -638,13 +669,23 @@ function Customer({ collectCustomer }) {
                                 </ToggleButton>
                             ))}
                     </ToggleButtonGroup>
-                    <FormControlLabel control={<Checkbox defaultChecked onClick={handleSelectionDisableCustomer} />} label="Hiển Thị Thêm Khách Hàng Ngừng Sử Dụng" />
+                    {!collectCustomer ?
+                        <FormControlLabel control={<Checkbox defaultChecked onClick={handleSelectionDisableCustomer} />} label="Hiển Thị Thêm Khách Hàng Ngừng Sử Dụng" />
+                        :
+                        <div></div>
+                    }
+
                 </Stack>
-                <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
-                    <CustomerNoRoute handleResetPage={handleResetPage}/>
-                </Stack>
+                {!collectCustomer ?
+                    <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
+                        <CustomerNoRoute handleResetPage={handleResetPage} />
+                    </Stack>
+                    :
+                    <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
+                    </Stack>
+                }
             </Box>
-            
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead color="black">
@@ -655,12 +696,16 @@ function Customer({ collectCustomer }) {
                             <StyledTableCell style={{ width: '11%' }}>CCCD</StyledTableCell>
                             <StyledTableCell style={{ width: '30%' }}>Địa Chỉ</StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }}>Trạng Thái</StyledTableCell>
-                            <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
+                            {!collectCustomer ?
+                                <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
+                                :
+                                <StyledTableCell style={{ width: '1%' }}></StyledTableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {/* Kiểm Tra Có Sử Dụng Trường Tìm Kiếm */}
-                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer && chosenCustomers.length !== 0 ?
+                        {searchInput !== "" || chosenDistrict !== 0 || chosenWard !== 0 || chosenCustomerTypes.length !== 0 || !disableCustomer || chosenCustomers.length !== 0 ?
                             showCustomer(chosenCustomers)
                             :
                             showCustomer(customers)

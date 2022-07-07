@@ -154,7 +154,7 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
         const current = new Date();
         const date = getFormattedDate(current);
 
-        let thongbao = "Hãy thêm thông tin cho :";
+        let thongbao = "Hãy thêm thông tin đúng dạng cho :";
         let validName = false;
         let validCCCD = false;
         let validNumberCCCD = false;
@@ -165,7 +165,10 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
         let validChosenWard = false;
         let validChosenCustomerType = false;
 
-        if (Name === "") {
+
+       
+
+        if (Name === "" || Name.search(/[0-9]/) >= 0) {
             thongbao = thongbao + "\nHọ và Tên"
         } else validName = true
 
