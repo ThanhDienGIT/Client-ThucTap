@@ -149,7 +149,7 @@ function CustomerStatistical() {
     Nam: 0,
     NgayTao: "",
     NgayThu: "",
-    TenKyThu: "2",
+    TenKyThu: "",
     TenQuanHuyen: "",
     TenTuyenThu: "",
     TenXaPhuong: "",
@@ -432,10 +432,48 @@ function CustomerStatistical() {
 
   }, [valuesearch])
 
- 
+
+  var ArrayExcel = [];
+
+  rows.map(element => {
+
+    var trangthai = '';
+    var ngaythu = '';
+    const getdate = new Date(element.NgayTao)
+    const NgayTao = getFormattedDate(getdate)
+    if(element.NgayThu === null) {
+      ngaythu = 'Chưa thu'
+    }else {
+      ngaythu = element.NgayThu
+    }
+    if(element.TrangThai === 1) {
+      trangthai = 'Đang sử dụng'
+    }else {
+      trangthai = 'Tạm dừng sử dụng'
+    }
+
+    let chosenExportCustomer = {
+      "Mã Khách Hàng" : element.MaKhachHang,
+      "Họ tên Khách hàng" : element.HoTenKH,
+      "Quận huyện" : element.TenQuanHuyen,
+      "Xã phường" : element.TenXaPhuong,
+      "Địa chỉ" : element.DiaChi,
+      "Tên Tuyến thu" : element.TenTuyenThu,
+      "Tên Kỳ Thu" : element.TenKyThu,
+      "Ngày thu" : ngaythu,
+      "Ngày tạo" : NgayTao,
+      "Trạng Thái" : trangthai,
+    
+    }
+    ArrayExcel.push(chosenExportCustomer);
+  })
+  
+  
+
+
   const ExportExcel = () => {
     var wb = XLSX.utils.book_new(),
-    ws = XLSX.utils.json_to_sheet(rows);
+    ws = XLSX.utils.json_to_sheet(ArrayExcel);
     XLSX.utils.book_append_sheet(wb,ws, "Thống kê tất cả khách hàng");
     XLSX.writeFile(wb,"Myexcel.xlsx")
   }
@@ -632,7 +670,7 @@ function CustomerStatistical() {
             </Box>
             <Box height={"100%"} width={350} display={'flex'} justifyContent='space-around' alignItems={'center'}>
 
-              <Button variant="outlined" color='success' endIcon={<SearchIcon />} sx={{ height: '100%', marginLeft: 2 }}
+              <Button variant="outlined" color='success' endIcon={<SearchIcon />} sx={{ height: '80%', marginLeft: 2 }}
                 onClick={Search}
               >
                 Tìm kiếm

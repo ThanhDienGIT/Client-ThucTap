@@ -22,7 +22,8 @@ import { Box, Button, ButtonGroup, FormControl, InputLabel, MenuItem, Select, Ta
 import axios from 'axios'
 import SearchIcon from '@mui/icons-material/Search';
 import ReplayIcon from '@mui/icons-material/Replay';
-
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 function TurnoverStatistical() {
   
     useEffect(()=> {
@@ -137,6 +138,7 @@ function TurnoverStatistical() {
       MaNhanVien: "",
       MaTuyenThu: "",
       NgayTao : "",
+      NgayThu : "",
       TenQuanHuyen: "",
       TenTuyenThu: "",
       TenXaPhuong: "",
@@ -196,9 +198,84 @@ function TurnoverStatistical() {
       })
     }
     
-    console.log(datatemporary)
-    console.log(renderarray)
-    console.log(rows)
+   
+
+    useEffect(()=> {
+      
+      if(searchNamestaff.length !== 0) {
+        TongTien = 0
+        if(numberrender === true ) {
+          datatemporary.map(element => {
+            if(element.IDLoaiKhachHang === 1 ) {
+              const money = 50000;
+              TongTien+= money
+            }
+            if(element.IDLoaiKhachHang === 2) {
+              const money = 100000;
+              TongTien+=money
+            }
+          })
+        }else{
+            renderarray.map(element => {           
+                if(element.IDLoaiKhachHang === 1 ) {
+                  const money = 50000;
+                  TongTien+= money
+                }
+                if(element.IDLoaiKhachHang === 2) {
+                  const money = 100000;
+                  TongTien+=money
+                }
+              
+            })
+        }       
+      }
+    },[searchNamestaff])
+
+    var ArrayExcel = []
+  
+    rows.map(element => {
+
+        const getdate = new Date(element.NgayThu)
+        const ngaythu = getFormattedDate(getdate);
+        let sotien = ''
+        if(element.IDLoaiKhachHang === 1) {
+          sotien = '50.000đ'
+        }
+        if(element.IDLoaiKhachHang === 2 ) {
+         
+          sotien = '100.000đ'
+        }
+  
+      let chosenExportCustomer = {
+        "Mã tuyến Thu" : element.MaTuyenThu,
+        "Họ tên tuyến thu" : element.TenTuyenThu,
+        "Quận huyện" : element.TenQuanHuyen,
+        "Xã phường" : element.TenXaPhuong,
+        "Ngày thu" : ngaythu,
+        "Giá tiền" : sotien,
+      }
+      ArrayExcel.push(chosenExportCustomer);
+    })
+      ArrayExcel.push({
+        "Tổng doanh thu" : (TongTien).toLocaleString('vi-VI', {
+          style: 'currency',
+          currency: 'VND',
+        })
+      })
+      
+    const ExportExcel = () => {
+      var wb = XLSX.utils.book_new(),
+      ws = XLSX.utils.json_to_sheet(ArrayExcel);
+      XLSX.utils.book_append_sheet(wb,ws, "Thống kê tất cả khách hàng");
+      XLSX.writeFile(wb,"Myexcel.xlsx")
+    }
+   
+
+
+
+
+
+
 
     useEffect(() => {
       if (datasearch.QuanHuyenNumber !== 'noquanhuyen') {
@@ -329,40 +406,12 @@ function TurnoverStatistical() {
 
 
 
-    useEffect(()=> {
-      
-      if(searchNamestaff.length !== 0) {
-        TongTien = 0
-        if(numberrender === true ) {
-          datatemporary.map(element => {
-            if(element.IDLoaiKhachHang === 1 ) {
-              const money = 50000;
-              TongTien+= money
-            }
-            if(element.IDLoaiKhachHang === 2) {
-              const money = 100000;
-              TongTien+=money
-            }
-          })
-        }else{
-            renderarray.map(element => {           
-                if(element.IDLoaiKhachHang === 1 ) {
-                  const money = 50000;
-                  TongTien+= money
-                }
-                if(element.IDLoaiKhachHang === 2) {
-                  const money = 100000;
-                  TongTien+=money
-                }
-              
-            })
-        }
-          
-          
-      }
-    },[searchNamestaff])
+    
+
+   
 
 
+   
 
 
 
@@ -414,8 +463,7 @@ function TurnoverStatistical() {
     }
   })
  
-      
-   
+ 
 
   return (
     <div>
@@ -561,7 +609,9 @@ function TurnoverStatistical() {
                       >
                         Tìm kiếm
                       </Button>
-                      <Button variant='outlined' color='success'> Xuất file excel </Button>
+                      <Button variant='outlined' color='success'
+                      onClick={ExportExcel}
+                      > Xuất file excel </Button>
                       </Box>
 
                   </Box>

@@ -69,8 +69,9 @@ export default function CustomerFormDelete({ customer, handleResetPage }) {
                     // Anything else
                 }
             });
-        handleClose();
         handleResetPage();
+        handleClose();
+        
     };
 
     return (
