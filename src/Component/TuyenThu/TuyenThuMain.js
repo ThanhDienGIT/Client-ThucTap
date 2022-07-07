@@ -166,18 +166,23 @@ export default function TuyenThuMain() {
 
     const handleChangeTrangThai = (trangThai) => {
         setSearchTrangThai(trangThai)
+        setPage(0)
+        if(trangThai === -1) setSearchNhanVien(-1)
     }
 
     const handleChangeNhanVien = (nhanVien) => {
         setSearchNhanVien(nhanVien)
+        setPage(0)
     }
 
     const handleChangeQuanHuyen = (quanHuyen) => {
         setSearchQuanHuyen(quanHuyen)
+        setPage(0)
     }
 
     const handleChangeXaPhuong = (xaPhuong) => {
         setSearchXaPhuong(xaPhuong)
+        setPage(0)
     }
 
     React.useEffect(() => {

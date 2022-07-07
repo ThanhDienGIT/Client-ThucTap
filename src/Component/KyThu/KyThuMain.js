@@ -158,11 +158,13 @@ export default function KyThuMain() {
     }
 
     const handleChangeMonth = (month) => {
-        setSearchMonth(month);
+        setSearchMonth(month)
+        setPage(0)
     };
 
     const handleChangeYear = (year) => {
-        setSearchYear(year);
+        setSearchYear(year)
+        setPage(0)
     };
 
     React.useEffect(() => {
