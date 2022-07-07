@@ -7,7 +7,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptDetailModal from './ReceiptDetailModal';
 import ReceiptAddModal from './ReceiptAddModal';
 import '../../CSS/App.css';
@@ -21,7 +20,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { GetCookie, cookie } from '../Cookie/CookieFunc';
 import Stack from '@mui/material/Stack';
-import ExportReceiptList from './ExportReceiptList';
 import ExportReceiptReport from './ExportReceiptReport';
 function ReceiptList() {
   //style
@@ -50,7 +48,7 @@ function ReceiptList() {
   //state
   const [rows, setRows] = React.useState([]);//state PhieuThu
   const [updateState, setUpdateState] = React.useState(true); //state reRender
-  const [quanhuyen, setQuanHuyen] = React.useState([]);
+  // const [quanhuyen, setQuanHuyen] = React.useState([]);
   const [xaphuong, setXaPhuong] = React.useState([]);
   const [tuyenthu, setTuyenThu] = React.useState([]);
   const [loaikhachhang, setLoaiKhachHang] = React.useState([]);
@@ -83,24 +81,12 @@ function ReceiptList() {
     fetch("http://localhost:5199/api/PhieuThu/nhanvien/" + cookie)
       .then(response => response.json())
       .then(function (PhieuThu) {
-        const Rows = PhieuThu;
-        setRows(Rows);
+        setRows(PhieuThu);
       },
         (error) => {
           alert('Failed');
         })
   }, [updateState]);
-  //get QuanHuyen
-    React.useEffect(() => {
-    fetch("http://localhost:5199/api/PhieuThu/quanhuyen")
-      .then(response => response.json())
-      .then(function (quanhuyen) {
-        setQuanHuyen(quanhuyen);
-      },
-        (error) => {
-          alert('Failed');
-        })
-    }, [updateState]);
   //get XaPhuong
     React.useEffect(() => {
     fetch("http://localhost:5199/api/PhieuThu/getbyidemp/" + cookie)
@@ -327,9 +313,15 @@ const handleDelete = (id) => {
                 {
                   hiddenButtonStatus(row.NgayThu) === "Xác nhận" ?
                     <Button
-                      sx={{ fontSize: 11, display: "flex", justifyContent: "flex-end" }}
+                      sx={{
+                        width: 25 , height: 40, fontSize: 11, display: "flex", justifyContent: "flex-end",
+                        color: "var(--color1)", backgroundColor: "var(--color3)",
+                            ':hover': {
+                                backgroundColor: 'var(--color1)',
+                                color: 'var(--color3)',
+                            }
+                      }}
                       variant="outline"
-                      color="primary"
                       onClick={() => XacNhan(row.IDKhachHang, row.IDPhieu ,row.NgayTao, row.MauSoPhieu, cookie)}
                       disabled={row.NgayThu}
                     >
@@ -345,8 +337,7 @@ const handleDelete = (id) => {
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'> 
                 <ButtonGroup variant="" aria-label="button group"> 
-                  <ReceiptDetailModal receipt={row} />
-                  <Button disabled={row.NgayThu} onClick={() => handleDelete(row.IDPhieu)} sx={{ display: "flex", justifyContent: "flex-end",marginRight: 0,color: "var(--color9)"}} startIcon={<DeleteIcon sx={{ fontSize: "80px" }} />} ></Button>
+                  <ReceiptDetailModal receipt={row}/>
                 </ButtonGroup>  
               </StyledTableCell>
               <StyledTableCell align="left" padding='none'>
@@ -427,31 +418,6 @@ const handleDelete = (id) => {
     setChangeShow(f);
   }
   //show filter DiaChi
-  function showfilterQuanHuyen() {
-    if (searchField === 1) {
-      return (
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-        <Select
-          labelId="demo-simple-select-standard-label"
-          id="select-district1"
-          value={chosenQuanHuyen}
-          onChange={handleQuanHuyen}
-        > 
-            <MenuItem value={0} key={0}>
-             Chọn Quận Huyện
-            </MenuItem>
-              {quanhuyen
-                .map((quanhuyen) => (
-                    <MenuItem value={quanhuyen.IDQuanHuyen} key={quanhuyen.IDQuanHuyen}>
-                      {quanhuyen.TenQuanHuyen}
-                    </MenuItem>
-            ) 
-            )}      
-        </Select>
-      </FormControl>
-      )
-    }
-  }
   function showfilterXaPhuong() {
     if (searchField === 1) {
       return (
@@ -592,7 +558,7 @@ const handleDelete = (id) => {
           </Select>
       </FormControl>
       {/* QuanHuyen */}
-        {showfilterQuanHuyen()}
+        {/* {showfilterQuanHuyen()} */}
       {/* Xa Phuong */}
         {showfilterXaPhuong()}
       {/* Tuyen Thu */}
@@ -631,16 +597,6 @@ const handleDelete = (id) => {
           }
         </TableBody>
       </Table>
-        <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
-           {
-            chosenQuanHuyen !== 0 || chosenXaPhuong !== 0 || chosenLoaiKhachHang !== 0 || chosenTuyenThu !== 0 || chosenTrangThai !==0 ||chosenTenKhachHang !== ''? 
-            <ExportReceiptList phieuthu={changeshow} />
-              :
-            <ExportReceiptList phieuthu={rows} />
-          }
-      </Stack>
-
-      
     </div>
   )
 }

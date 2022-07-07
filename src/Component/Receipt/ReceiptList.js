@@ -427,8 +427,6 @@ const handleDelete = (id) => {
       </FormControl>
       )
     }
-
-    
   }
   //show filter TuyenThu
   function showfilterTuyenThu() {
@@ -585,7 +583,13 @@ const handleDelete = (id) => {
       {/* Ten Nhan Vien */}
       {showfilterTenNhanVien()}
       {/* Loai Khach Hang */}
-        {showfilterLoaiKhachHang()}
+      {showfilterLoaiKhachHang()}
+          {
+            chosenQuanHuyen !== 0 || chosenXaPhuong !== 0 || chosenLoaiKhachHang !== 0 || chosenTuyenThu !== 0 || chosenTrangThai !==0 ||chosenTenKhachHang !== ''? 
+              <ExportReceiptList phieuthu={changeshow} />
+                  :
+              <ExportReceiptList phieuthu={rows} />
+          }
       <ReceiptAddModal />
       <br></br>
       <hr></hr>
@@ -614,14 +618,6 @@ const handleDelete = (id) => {
           }
         </TableBody>
       </Table>
-        <Stack direction="row" spacing={2} alignItems="flex-end" marginBottom={2} marginTop={2}>
-           {
-            chosenQuanHuyen !== 0 || chosenXaPhuong !== 0 || chosenLoaiKhachHang !== 0 || chosenTuyenThu !== 0 || chosenTrangThai !==0 ||chosenTenKhachHang !== ''? 
-            <ExportReceiptList phieuthu={changeshow} />
-              :
-            <ExportReceiptList phieuthu={rows} />
-            }
-        </Stack>
     </div>
   )
 }

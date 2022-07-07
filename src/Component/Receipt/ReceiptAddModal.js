@@ -104,8 +104,8 @@ export default function PhieuThuAddModal() {
 
   return (
     <div>
-      <Stack direction="column" spacing={2} alignItems="flex-end">
-        <Button variant="contained" color="success" onClick={handleOpen}> Thêm Phiếu thu</Button>
+      <Stack direction="column" spacing={10} alignItems="flex-end" >
+        <Button variant="contained" sx={{ backgroundColor: 'var(--color7)' }} onClick={handleOpen}> Thêm Phiếu thu</Button>
       </Stack>
       <Modal
         open={open}

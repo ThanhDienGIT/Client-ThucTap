@@ -54,13 +54,13 @@ const style = {
         top: '45%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 800,
+        width: 900,
         bgcolor: 'background.paper',
         borderRadius: 2,
         boxShadow: 24,
         p: 1,
-        overflow:'scroll',
-        height:'85%',
+        // overflow:'scroll',
+        height:'95%',
         display:'block',
         marginTop: 5,
         marginBottom: 5,
@@ -107,10 +107,10 @@ const style = {
                             <Typography variant="h6" style={{ width: 800, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Tên KH: </b>{receipt.HoTenKH} <b>({receipt.MaKhachHang})</b>
                             </Typography>
-                            <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{ width: 800, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Loại hộ: </b>{receipt.TenLoai}
                             </Typography>
-                             <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                             <Typography variant="h6" style={{ width: 800, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Địa chỉ: </b> Phường {receipt.TenXaPhuong},{receipt.TenQuanHuyen}
                             </Typography>
                             <Typography variant="h6" style={{width: 900,paddingBottom: 0, paddingRight: 40 }}>
