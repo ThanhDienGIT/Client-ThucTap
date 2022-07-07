@@ -45,6 +45,10 @@ export default function PhieuThuAddModal() {
   const handleKyThuChange = (event) => {
     setIDKyThu(event.target.value);
   };
+  const handleChangeInformation = (information) => {
+    setDiaChiKH(information.Diachi)
+    setIDTuyenThu(information.IDTuyenThu)
+  };
 
 //submit  
   const handleSubmit = () => {
@@ -95,8 +99,7 @@ export default function PhieuThuAddModal() {
         .then(response => response.json())
         .then(function (informations) {
           informations.map((information) => (
-            setDiaChiKH(information.Diachi),
-            setIDTuyenThu(information.IDTuyenThu)
+            handleChangeInformation(information)
           ))
         });
     }

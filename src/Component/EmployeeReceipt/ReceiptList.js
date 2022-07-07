@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptDetailModal from './ReceiptDetailModal';
-import ReceiptAddModal from './ReceiptAddModal';
 import '../../CSS/App.css';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
@@ -603,7 +602,6 @@ const handleDelete = (id) => {
         {showfilterTenKhachHang()}
       {/* Loai Khach Hang */}
         {showfilterLoaiKhachHang()}
-      <ReceiptAddModal />
       <br></br>
       <hr></hr>
       <br></br>
