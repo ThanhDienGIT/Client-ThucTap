@@ -31,7 +31,7 @@ export default function KyThuFilter({ month, year, years, changeMonth, changeYea
                         <MenuItem value={10}>10</MenuItem>
                         <MenuItem value={11}>11</MenuItem>
                         <MenuItem value={12}>12</MenuItem>
-                        <MenuItem key="allMonths" value={-1}>All</MenuItem>
+                        <MenuItem key="allMonths" value={-1}>Tất cả</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl style={{ width: 200 }}>
@@ -47,7 +47,7 @@ export default function KyThuFilter({ month, year, years, changeMonth, changeYea
                                 <MenuItem key={year.Nam} value={year.Nam}> {year.Nam} </MenuItem>
                             ))
                         }
-                        <MenuItem key="allYears" value={-1}>All</MenuItem>
+                        <MenuItem key="allYears" value={-1}>Tất cả</MenuItem>
                     </Select>
                 </FormControl>
             </Stack>
