@@ -98,17 +98,17 @@ function Home() {
 
 
     const [infostaff,setInfostaff] = useState([{
-      CCCD: "092300003871",
-      DiaChi: "Xuân Khánh ,Ninh Kiều, Cần Thơ",
-      Email: "vanba1992@gmail.com",
-      GioiTinh: "Nam",
-      HoTen: "Nguyễn Văn Ba",
-      IDNhanVien: 1,
-      MaNhanVien: "NV0001",
-      MatKhau: "123456",
-      NgaySinh: "1992-04-24T00:00:00",
-      SoDienThoai: "0917562368",
-      TaiKhoan: "nvba0001",
+      CCCD: "",
+      DiaChi: "",
+      Email: "",
+      GioiTinh: "",
+      HoTen: "",
+      IDNhanVien: 0,
+      MaNhanVien: "",
+      MatKhau: "",
+      NgaySinh: "",
+      SoDienThoai: "",
+      TaiKhoan: "",
     }])
 
     const [mastership , setMastership] = useState([{
@@ -195,10 +195,9 @@ function Home() {
        <div style={{display:'flex'}}>
 
          
-          
-          {/* Avatar nhân viên */}
-      <Avatar alt="Remy Sharp" src="https://hinhnen123.com/wp-content/uploads/2021/06/avatar.jpg" 
-       /> 
+
+
+       <Avatar alt="Remy Sharp" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRagbYnTTxSnZDFEKCTsewsoiGdPymC_P-PYqElA1b57xMOEvGiI2rOghDqh7vQ_DNVZkE&usqp=CAU" />
         {/* Tên nhân viên */}
         
         <Typography variant="h6" noWrap component="div" 

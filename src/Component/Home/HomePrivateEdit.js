@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Experimental_CssVarsProvider, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
+import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
 import { LoginContext } from '../LoginContext/LoginContext';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -80,8 +80,6 @@ function HomePrivateEdit(props) {
 
     const DATE = new Date();
     
-    
-
     var Year = DATE.getFullYear() - 18
     var Month = DATE.getMonth()+1
     var Day = DATE.getDate()
@@ -99,8 +97,7 @@ function HomePrivateEdit(props) {
         CheckDATE = Year+'-'+Month+'-0'+ Day
     }
     
-    // console.log(infostaff);
-    console.log(IsInvalidEmail(infostaff.Email));
+
     const CheckForm = () => {
         var HoTen = false;
         var Email = false; 
@@ -164,8 +161,13 @@ function HomePrivateEdit(props) {
         axios.put('http://localhost:5199/api/Login',infostaff)
             .then(res => res.data)
             .then(res => {
-                if(res === 'Updated Successfully'){
+              
+                if(res.severity === 'success') {
+                    alert('Cập nhật thành công')
                     globaltext.updateInfoPrivateStaff()
+                }
+                if(res.severity === 'warning'){
+                    alert('Cập nhật thất bại ')
                 }
 
             })

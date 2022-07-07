@@ -156,7 +156,7 @@ function Client() {
                     width : "50%"
                   }}
                   
-                  onChange={(e)=> {setLogin({...login,Password: e.target.value})}}
+                  onChange={(e)=> {setLogin({...login,Password: md5(e.target.value)})}}
                   
                   />
                 </Box>

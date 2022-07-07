@@ -33,7 +33,7 @@ function Turnover() {
   }]);
   
 
-
+  
 
 
   // Ky nay
@@ -106,7 +106,7 @@ function Turnover() {
     phantramSophieuthu = -99999999
   }
 
-    
+
   const handleChange = (event) => {
     setNumberKythu(event.target.value);
   };
@@ -123,6 +123,8 @@ function Turnover() {
       setDoanhthu(res)
     })
   },[])
+
+  
 
   const [mountchart, setMountchart] = useState(0);
   return (
