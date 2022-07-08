@@ -85,7 +85,9 @@ export default function ExportReceiptList({phieuthu}) {
 
     return (
         <div>
-            <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: 'var(--color7)' }}>Xuất File Excel</Button>
+            <Stack direction="column" spacing={10} alignItems="flex-end" >
+                <Button variant="contained" onClick={handleOpen} sx={{marginBottom:2, backgroundColor: 'var(--color7)' }}>Xuất File Excel</Button>
+            </Stack>
             <Modal
                 open={open}
                 onClose={handleClose}

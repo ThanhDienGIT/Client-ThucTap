@@ -50,21 +50,23 @@ export default function ExportReceiptReport( {receipt} ) {
     });
 const style = {
 
-        position: 'absolute',
-        top: '45%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 800,
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 24,
-        p: 1,
-        overflow:'scroll',
-        height:'85%',
-        display:'block',
-        marginTop: 5,
-        marginBottom: 5,
-        
+ 
+    position: 'absolute',
+    top: '45%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 800,
+    bgcolor: 'background.paper',
+    borderRadius: 2,
+    boxShadow: 24,
+    p: 1,
+    // overflow:'scroll',
+    height:'95%',
+    display:'block',
+    marginTop: 4,
+    marginBottom: 5,
+    textAlign: 'left' 
+            
     };
 
         const Info__style = {
@@ -98,35 +100,36 @@ const style = {
                             <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                     <b>ID Hóa Đơn: </b>{receipt.MaSoPhieu}
                             </Typography>
-                            <Typography variant="h6" style={{width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                 <Typography variant="h6">{receipt.TenKyThu}</Typography>
                             </Typography>
-                            <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                 <Typography variant="h6">Từ ngày: {ngaytao} đến {ngaythu} </Typography>
                             </Typography>
-                            <Typography variant="h6" style={{ width: 800, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Tên KH: </b>{receipt.HoTenKH} <b>({receipt.MaKhachHang})</b>
                             </Typography>
-                            <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Loại hộ: </b>{receipt.TenLoai}
-                            </Typography>
-                             <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Địa chỉ: </b> Phường {receipt.TenXaPhuong},{receipt.TenQuanHuyen}
                             </Typography>
                             <Typography variant="h6" style={{width: 900,paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Tuyến thu: </b>{receipt.TenTuyenThu} <b>({receipt.MaTuyenThu})</b>
                             </Typography>
-                            <Typography variant="h6" style={{width:400,paddingBottom: 0, paddingRight: 40 }}>
+                             <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Địa chỉ: </b>{receipt.DiaChi}, Phường {receipt.TenXaPhuong}, {receipt.TenQuanHuyen}
+                            </Typography>
+                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Nhân viên thu: </b> {receipt.HoTen} (<b>{receipt.MaNhanVien}</b>)
                             </Typography>
-                            <Typography variant="h6" style={{ width:400, paddingBottom: 0, paddingRight: 40 }}>
+                            <Typography variant="h6" style={{ width:900, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Mẫu số phiếu: </b> {receipt.MauSoPhieu}
                             </Typography>
                             <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
                                 <b>Trạng Thái: </b> {change(receipt.NgayThu)}
                             </Typography>
                             <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Tổng tiền: </b> <Typography variant="h6">{receipt.Gia} VND</Typography>
+                                <b>Tổng tiền: </b>
+                                    {receipt.Gia.toLocaleString('vi-VI', { style: 'currency', currency: 'VND' })}
                             </Typography>
                         </Box>
                     </Box>

@@ -17,8 +17,6 @@ function Receipt() {
                 Quản lý phiếu thu
             </Typography>
       <br></br>
-      {/* <ReceiptAddModal /> */}
-      {/* <ReceiptList /> */}
       <ReceiptList />
     </div>
   )
