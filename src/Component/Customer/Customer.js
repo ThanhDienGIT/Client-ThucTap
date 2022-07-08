@@ -350,7 +350,7 @@ function Customer({ collectCustomer }) {
                                 if (chosenWard !== 0) {
                                     return (
                                         customer.IDQuanHuyen === chosenDistrict,
-                                        customer.IDXaPhuong === chosenWard``
+                                        customer.IDXaPhuong === chosenWard
                                     )
                                 } else {
                                     return (
@@ -484,6 +484,18 @@ function Customer({ collectCustomer }) {
         }
     }
 
+    const showStatusCustomer = function(customer){
+        if (customer.TrangThai === 1) {
+            return(
+            <StyledTableCell sx={{ color: "var(--color2)" }}>Đang Sử Dụng</StyledTableCell>
+            )
+        } else {
+            return(
+                <StyledTableCell style={{ color: "var(--color9)" }}>Tạm Dừng Sử Dụng</StyledTableCell>
+            )
+        }
+    }
+
     //Hàm Hiển Thị Khách Hàng
     const showCustomer = function (Customers) {
         var CustomersPerPage
@@ -510,10 +522,10 @@ function Customer({ collectCustomer }) {
                                 <StyledTableCell>{customer.TenLoai}</StyledTableCell>
                                 <StyledTableCell>{customer.CCCD}</StyledTableCell>
                                 <StyledTableCell>{customer.DiaChi}, {customer.TenXaPhuong}, {customer.TenQuanHuyen}</StyledTableCell>
-                                {customer.TrangThai === 1 ?
-                                    <StyledTableCell sx={{ color: "var(--color2)" }}>Đang Sử Dụng</StyledTableCell>
+                                {!collectCustomer ?
+                                    showStatusCustomer(customer)
                                     :
-                                    <StyledTableCell style={{ color: "var(--color9)" }}>Tạm Dừng Sử Dụng</StyledTableCell>
+                                    <StyledTableCell style={{ width: '1%' }}></StyledTableCell>
                                 }
                                 <StyledTableCell align='center'>
                                     <ButtonGroup variant="text" aria-label="outlined button group">
@@ -695,7 +707,11 @@ function Customer({ collectCustomer }) {
                             <StyledTableCell style={{ width: '12%' }}>Loại Khách Hàng</StyledTableCell>
                             <StyledTableCell style={{ width: '11%' }}>CCCD</StyledTableCell>
                             <StyledTableCell style={{ width: '30%' }}>Địa Chỉ</StyledTableCell>
-                            <StyledTableCell style={{ width: '15%' }}>Trạng Thái</StyledTableCell>
+                            {!collectCustomer ?
+                                <StyledTableCell style={{ width: '15%' }}>Trạng Thái</StyledTableCell>
+                                :
+                                <StyledTableCell style={{ width: '1%' }}></StyledTableCell>
+                            }
                             {!collectCustomer ?
                                 <StyledTableCell align='center' style={{ width: '5%' }}>Thao Tác</StyledTableCell>
                                 :

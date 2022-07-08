@@ -51,7 +51,7 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
 
     const [CCCD, setCCCD] = React.useState('');
 
-    const [DayGrant, setDayGrant] = React.useState('2022-01-01');
+    const [DayGrant, setDayGrant] = React.useState('2020-01-01');
 
     const [Address, setAddress] = React.useState('');
 
