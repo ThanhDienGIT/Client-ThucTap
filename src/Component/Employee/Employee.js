@@ -176,6 +176,7 @@ export default function Employee() {
     const handleSelectionDisabledEmployee = () => {
         setDisabledEmployee(!disabledEmployee)
         handleResetPage()
+        setPage(0);
     }
 
     

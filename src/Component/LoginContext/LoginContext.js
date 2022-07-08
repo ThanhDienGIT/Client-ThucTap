@@ -1,18 +1,22 @@
 import axios from "axios";
 import { useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BreakCookie, cookie, GetCookie } from "../Cookie/CookieFunc";
+import { BreakCookie, cookie, CreateCookie, GetCookie , resetCookie } from "../Cookie/CookieFunc";
+import { useLocation  } from "react-router-dom";
 
 const LoginContext = createContext();
 
 function LoginProvider ({children}) {
-   
-   
+  
+
     const Checklogin  = useNavigate();
 
     
     GetCookie(document.cookie)
     const [login,setLogin] = useState(cookie);
+
+
+
     const [infostaff ,setInfostaff] = useState([{
         CCCD: "092300003871",
         DiaChi: "Xuân Khánh ,Ninh Kiều, Cần Thơ",

@@ -13,19 +13,19 @@ import EmployeeReceipt from './Component/EmployeeReceipt/EmployeeReceipt';
 import HomePrivateStaff from './Component/Home/HomePrivateStaff';
 import Statiscical from './Component/Statistical/Statiscical';
 import Customer from './Component/Customer/Customer';
+
 function App() {
 
+  
   return (
     <div className="App">
       <React.Fragment>
         <Routes>
-          <Route path='/' element={<Client />} />
-
-          <Route   path='/home' element={<Home />}>    
+            <Route path='/' element={<Client />} />
+            <Route path='/home' element={<Home />}>    
             <Route path='turnover' element={<Turnover />} />
             <Route path='customer' element={<Customer />} />
             <Route path='privatestaff' element={<HomePrivateStaff />} />
-
             <Route path='customer' element={<Customer collectCustomer={false} />} />
             <Route path='districtandward' element={<DistrictAndWard />} />
             <Route path='statistical' element={<Statiscical/>}/>            

@@ -9,12 +9,6 @@ import { useNavigate } from 'react-router-dom'
 
 function Client() {
   const navigate = useNavigate();
-  if(document.cookie !== undefined){
-    GetCookie(document.cookie);
-  }else{
-    cookie = null
-  }
-  
   
   const [login,setLogin] = useState({
     Username : '',
@@ -74,9 +68,14 @@ function Client() {
         .then(res=>res.data)
         .then(res=>
           {
+          
             if(document.cookie.length === 0){
-              CreateCookie(res)
-              navigate('home')
+              if(res !== '') {
+
+                CreateCookie(res)
+                navigate('home')
+              }
+             
             }
           })
     }

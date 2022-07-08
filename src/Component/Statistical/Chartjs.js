@@ -282,12 +282,12 @@ function Chartjs(props) {
       },
       title: {
         display: true,
-        text: 'Biểu đồ doanh thu của mỗi kỳ thu trong năm ' + getnumber,
+        text: 'Biểu đồ doanh thu theo tháng trong năm ' + getnumber,
       },
     },
   };
 
-  const KyThuTrongMotNam = ['Kỳ 1', 'Kỳ 2', 'Kỳ 3', 'Kỳ 4', 'Kỳ 5', 'Kỳ 6', 'Kỳ 7', 'Kỳ 8', 'Kỳ 9', 'Kỳ 10', 'Kỳ 11', 'Kỳ 12'];
+  const KyThuTrongMotNam = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
   const labels = KyThuTrongMotNam
 
   const data = {

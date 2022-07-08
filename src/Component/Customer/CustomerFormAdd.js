@@ -5,11 +5,14 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { FormControl, InputLabel, TextField } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
+import { FlareSharp } from '@mui/icons-material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import SnackBarContext from '../SnackBar/SnackBarContext';
 import { setMessage, setOpenSnackBar, setSeverity } from '../SnackBar/SnackBarAction';
 
@@ -130,6 +133,23 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
         return year + '-' + month + '-' + day;
     }
 
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const [openAlert, setOpenAlert] = React.useState(false);
+
+    const handleClickAlert = () => {
+        setOpenAlert(true);
+    };
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenAlert(false);
+    };
     const handleSubmit = () => {
         const current = new Date();
         const date = getFormattedDate(current);
@@ -145,7 +165,7 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
         let validChosenWard = false;
         let validChosenCustomerType = false;
 
-        if (Name === "" || Name.search(/[0-9]/) >= 0) {
+        if (Name === "") {
             thongbao = thongbao + "\nHọ và Tên"
         } else validName = true
 
@@ -181,11 +201,48 @@ export default function CustomerFormAdd({ customer, handleResetPage, importdistr
             thongbao = thongbao + "\nNgày Cấp Phải Trước Ngày Hiện tại"
         } else validNumberDayGrant = true
 
+        console.log("DayGrant" + DayGrant)
+        console.log("date" + date)
         if (validName && validCCCD && validNumberCCCD && validDayGrant && validAddress && validChosenDistrict && validChosenWard && validChosenCustomerType && validNumberDayGrant) {
             addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
         } else {
             alert(thongbao);
         }
+        // if (Name === "") {
+        //     alert('Hãy Điền Họ và Tên')
+        // } else {
+        //     if (CCCD === "") {
+        //         alert('Hãy Điền Căn Cước Công Dân')
+        //     } else {
+        //         if (CCCD.length != 12) {
+        //             alert('Hãy Điền Căn Cước Công Dân Đủ 12 ký tự')
+        //         } else {
+        //             if (DayGrant === "") {
+        //                 alert('Hãy Điền Ngày Cấp CCCD')
+        //             } else {
+        //                 if (Address === "") {
+        //                     alert('Hãy Điền Địa Chỉ')
+        //                 } else {
+        //                     if (chosenDistrict === 0) {
+        //                         alert('Hãy Điền Quận Huyện')
+        //                     } else {
+        //                         if (chosenWard === 0) {
+        //                             alert('Hãy Điền Xã Phường')
+        //                         } else {
+        //                             if (chosenCustomerType === 0) {
+        //                                 alert('Hãy Điền Loại Khách Hàng')
+        //                             } else {
+        //                                 const current = new Date();
+        //                                 const date = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
+        //                                 addPosts(Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date);
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     };
     const addPosts = (Name, Address, CCCD, DayGrant, chosenWard, chosenCustomerType, date) => {
         client

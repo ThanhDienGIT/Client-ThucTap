@@ -20,17 +20,46 @@ import ListItemText from '@mui/material/ListItemText';
 import '../../CSS/home.css'
 import { QuyenChung } from './HomeMenuData'
 import logo from '../../image/Logo.jpg';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import HomeHeader from './HomeHeader';
-import { GetCookie , cookie , BreakCookie} from '../Cookie/CookieFunc';
+import { GetCookie , cookie , BreakCookie , resetCookie} from '../Cookie/CookieFunc';
 import { LoginContext } from '../LoginContext/LoginContext';
 import axios from 'axios';
 function Home() {
  
+  var location = useLocation()
 
-  const globaltext = React.useContext(LoginContext)
   
+  const globaltext = React.useContext(LoginContext)
+  const Checklogin  = useNavigate();
+  GetCookie(document.cookie)
+  console.log(document.cookie)
+  console.log(cookie)
+  React.useEffect(()=> {
+    
+    if(document.cookie === null) {
+        Checklogin('')
+    }else {
+        const today = new Date();
+        console.log(today)
+        var hour ;
+        var minutes ;
+        var lonhon60 = today.getMinutes() + 15
+        if(lonhon60 > 60) {
+          hour = today.getHours() + 1
+          minutes = ( today.getMinutes() + 15) - 60
+        }else{
+            hour = today.getHours()
+           minutes = today.getMinutes() + 15
+        }
+        if(cookie !== '') {
+          resetCookie(cookie,today)
+        }
+    }
+    
+    },[location])
+
   
   
   // Chiều dài của menu
@@ -117,7 +146,7 @@ function Home() {
     }])
     // Xử lý logic
 
-    GetCookie(document.cookie);
+    
     const ArrayMasterShip = [];
     const ArrayMapMasterShip = [];
     mastership.map(element => {
@@ -312,6 +341,7 @@ function Home() {
 
       <Main open={open} >
         <DrawerHeader />
+
         <Outlet />
       </Main>
     </Box>

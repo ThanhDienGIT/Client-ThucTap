@@ -229,9 +229,10 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
             var newMaNhanVien = parseInt(lastMaNhanVien.substring(2));
             newMaNhanVien = newMaNhanVien+1;
             newMaNhanVien = newMaNhanVien.toString().padStart(4, '0');
+            var taikhoan = email.substring(0, email.lastIndexOf('@')) + newMaNhanVien;
             newMaNhanVien = 'NV' + newMaNhanVien;
             //create taikhoan
-            var taikhoan = email.substring(0, email.lastIndexOf('@'));
+            
             //hash default Matkhau
             var md5 = require('md5');
             var matkhau = md5('shizen123');
@@ -316,6 +317,12 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                         body: jsonRoles
                     }).then(data => console.log(data))
                 }).then(() => {
+                    setEmail('');
+                    setTenNhanVien('');
+                    setSdt('');
+                    setDiaChi('');
+                    setCCCD('');
+                    setGioiTinh('Nam');
                     setNgaySinh(null);
                     setAddEmpRoles([]);
                     handleResetPage();
@@ -347,6 +354,12 @@ export default function EmployeeFormAdd({employees, handleResetPage}) {
                     MatKhau: matkhau
                 }).then(data => console.log(data))
                 .then(() => {
+                    setEmail('');
+                    setTenNhanVien('');
+                    setSdt('');
+                    setDiaChi('');
+                    setCCCD('');
+                    setGioiTinh('Nam');
                     setNgaySinh(null);
                     setAddEmpRoles([]);
                     handleResetPage();
