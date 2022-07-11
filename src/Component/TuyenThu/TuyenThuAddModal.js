@@ -67,15 +67,15 @@ export default function TuyenThuAddModal({ reRenderKyThuMain }) {
         })
             .then(res => res.json())
             .then((result) => {
-                dispatch(setOpenSnackBar());
-                dispatch(setMessage(result.message));
-                dispatch(setSeverity(result.severity));
-                handleClose();
+                reRenderKyThuMain()
+                dispatch(setOpenSnackBar())
+                dispatch(setMessage(result.message))
+                dispatch(setSeverity(result.severity))
+                handleClose()
             },
                 (error) => {
                     alert('Failed');
                 });
-        reRenderKyThuMain();
     }
 
     React.useEffect(() => {

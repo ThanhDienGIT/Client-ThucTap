@@ -156,11 +156,11 @@ export default function TuyenThuMain() {
             })
                 .then(res => res.json())
                 .then((result) => {
-                    dispatch(setOpenSnackBar());
-                    dispatch(setMessage(result.message));
-                    dispatch(setSeverity(result.severity));
+                    reRender();
+                    dispatch(setOpenSnackBar())
+                    dispatch(setMessage(result.message))
+                    dispatch(setSeverity(result.severity))
                 })
-            reRender();
         }
     }
 

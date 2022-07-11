@@ -69,6 +69,7 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
         })
             .then(res => res.json())
             .then((result) => {
+                reRenderKyThuMain();
                 dispatch(setOpenSnackBar());
                 dispatch(setMessage(result.message));
                 dispatch(setSeverity(result.severity));
@@ -79,8 +80,6 @@ export default function KyThuEditModal({ idKyThu, thang, nam, reRenderKyThuMain 
                     dispatch(setMessage("Failed"));
                     dispatch(setSeverity("error"));
                 });
-
-        reRenderKyThuMain();
     }
 
     return (

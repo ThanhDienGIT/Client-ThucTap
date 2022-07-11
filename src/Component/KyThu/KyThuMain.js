@@ -149,11 +149,12 @@ export default function KyThuMain() {
             })
                 .then(res => res.json())
                 .then((result) => {
-                    dispatch(setOpenSnackBar());
-                    dispatch(setMessage(result.message));
-                    dispatch(setSeverity(result.severity));
+                    reRender()
+                    dispatch(setOpenSnackBar())
+                    dispatch(setMessage(result.message))
+                    dispatch(setSeverity(result.severity))
                 });
-            reRender();
+            
         }
     }
 
