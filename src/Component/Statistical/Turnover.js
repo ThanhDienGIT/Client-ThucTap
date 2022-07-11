@@ -149,7 +149,7 @@ function Turnover() {
             value={NumberKythu}
             label= "2022"
             onChange={handleChange}
-            sx={{width:200}}
+            sx={{width:250}}
           >  
 
           {kythu.map(element=> {

@@ -53,6 +53,7 @@ function TurnoverStatistical() {
         TenQuanHuyen: "",
         TenTuyenThu: "",
         TenXaPhuong: "",
+        HoTenKH : "",
     }])
   
     const minday = new Date(datatemporary[0].NgayTao)
@@ -108,6 +109,7 @@ function TurnoverStatistical() {
       [
         'Nhập tên nhân viên cần tìm ...',
         'Nhập tên tuyến thu cần tìm ...',
+        'Nhập tên khách hàng cần tìm ...'
       ]
     const [chooseTypeSearch, setChooseTypeSearch] = useState(0);
     Labelname = listlabelname[chooseTypeSearch];
@@ -130,10 +132,11 @@ function TurnoverStatistical() {
     }]);
     var rows = []
     var TongTien  = 0;
-    
+    var TongTienLoc = 0;
     const [numberrender , setNumberrender] = useState(true)
     const [renderarray , setRenderarray] = useState([{
       HoTen: "",
+      HoTenKH : "",
       IDLoaiKhachHang: 0,
       MaNhanVien: "",
       MaTuyenThu: "",
@@ -151,6 +154,7 @@ function TurnoverStatistical() {
        
         const chuoinhanvien = removeAccents(element.HoTen)
         const chuoituyenthu = removeAccents(element.TenTuyenThu)
+        const chuoikhachhang = removeAccents(element.HoTenKH)
         if(element.IDLoaiKhachHang === 1 ) {
           const money = 50000;
           TongTien+= money
@@ -166,7 +170,9 @@ function TurnoverStatistical() {
         if(searchNamestaff.length !== 0 && chooseTypeSearch ===1 &&  chuoituyenthu.toLocaleLowerCase().includes(searchNamestaff)){
           rows.push(element);
         }
-        
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===2 &&  chuoikhachhang.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
         if(searchNamestaff.length === 0) {
           rows.push(element);
         }
@@ -177,19 +183,21 @@ function TurnoverStatistical() {
       renderarray.map(element => {
         const chuoinhanvien = removeAccents(element.HoTen)
         const chuoituyenthu = removeAccents(element.TenTuyenThu)
-        if(element.IDLoaiKhachHang === 1 ) {
-          const money = 50000;
-          TongTien+= money
+        const chuoikhachhang = removeAccents(element.HoTenKH)
+        if(element.IDLoaiKhachHang === 1 ) {   
+          TongTien+= 50000
         }
         if(element.IDLoaiKhachHang === 2) {
-          const money = 100000;
-          TongTien+=money
+          TongTien+=100000
         }
         
         if(searchNamestaff.length !== 0 && chooseTypeSearch ===0 &&  chuoinhanvien.toLocaleLowerCase().includes(searchNamestaff)){
           rows.push(element);
         }
         if(searchNamestaff.length !== 0 && chooseTypeSearch ===1 &&  chuoituyenthu.toLocaleLowerCase().includes(searchNamestaff)){
+          rows.push(element);
+        }
+        if(searchNamestaff.length !== 0 && chooseTypeSearch ===2 &&  chuoikhachhang.toLocaleLowerCase().includes(searchNamestaff)){
           rows.push(element);
         }
         if(searchNamestaff.length === 0) {
@@ -207,23 +215,22 @@ function TurnoverStatistical() {
         if(numberrender === true ) {
           datatemporary.map(element => {
             if(element.IDLoaiKhachHang === 1 ) {
-              const money = 50000;
-              TongTien+= money
+              TongTien+= 50000
             }
             if(element.IDLoaiKhachHang === 2) {
-              const money = 100000;
-              TongTien+=money
+              TongTien+=100000
             }
           })
         }else{
+          TongTien = 0
             renderarray.map(element => {           
                 if(element.IDLoaiKhachHang === 1 ) {
-                  const money = 50000;
-                  TongTien+= money
+                
+                  TongTien+= 50000
                 }
                 if(element.IDLoaiKhachHang === 2) {
-                  const money = 100000;
-                  TongTien+=money
+                
+                  TongTien+=100000 
                 }
               
             })
@@ -232,23 +239,27 @@ function TurnoverStatistical() {
     },[searchNamestaff])
 
     var ArrayExcel = []
-  
+    var Money = 0;
     rows.map(element => {
-
+        
         const getdate = new Date(element.NgayThu)
         const ngaythu = getFormattedDate(getdate);
         let sotien = ''
+        let tien = 0
         if(element.IDLoaiKhachHang === 1) {
-          sotien = '50.000đ'
+          tien = 50000
+          sotien = 50000
         }
         if(element.IDLoaiKhachHang === 2 ) {
-         
-          sotien = '100.000đ'
+          tien = 100000
+          sotien = 100000
         }
-  
+        Money+= tien;
       let chosenExportCustomer = {
         "Mã tuyến Thu" : element.MaTuyenThu,
         "Họ tên tuyến thu" : element.TenTuyenThu,
+        "Họ tên nhân viên" : element.HoTen,
+        "Họ tên khách hàng" : element.HoTenKH,
         "Quận huyện" : element.TenQuanHuyen,
         "Xã phường" : element.TenXaPhuong,
         "Ngày thu" : ngaythu,
@@ -256,12 +267,7 @@ function TurnoverStatistical() {
       }
       ArrayExcel.push(chosenExportCustomer);
     })
-      ArrayExcel.push({
-        "Tổng doanh thu" : (TongTien).toLocaleString('vi-VI', {
-          style: 'currency',
-          currency: 'VND',
-        })
-      })
+     
       
     const ExportExcel = () => {
       var wb = XLSX.utils.book_new(),
@@ -484,6 +490,7 @@ function TurnoverStatistical() {
                 >
                   <MenuItem value={0}>Tên nhân viên</MenuItem>
                   <MenuItem value={1}>Tên tuyến thu</MenuItem>
+                  <MenuItem value={2}>Tên khách hàng</MenuItem>
                 </Select>
               </FormControl>
               {/* search text */}
@@ -642,6 +649,7 @@ function TurnoverStatistical() {
                 <StyledTableCell >Tên tuyến thu</StyledTableCell>
                 <StyledTableCell >Mã số NV </StyledTableCell>
                 <StyledTableCell >Tên nhân viên</StyledTableCell>
+                <StyledTableCell >Tên khách hàng</StyledTableCell>  
                 <StyledTableCell >Quận Huyện</StyledTableCell>
                 <StyledTableCell >Xã phường</StyledTableCell>
                 <StyledTableCell >Doanh Thu</StyledTableCell>
@@ -661,12 +669,14 @@ function TurnoverStatistical() {
                   <TableCell  >
                   {row.TenTuyenThu}
                   </TableCell>
-                  <TableCell  >
+                  <TableCell  > 
                   {row.MaNhanVien}
                   </TableCell>
                   <TableCell  >
                   {row.HoTen}
-
+                  </TableCell>
+                  <TableCell  >
+                  {row.HoTenKH}
                   </TableCell>
                   <TableCell component="th" scope="row" >
                   {row.TenQuanHuyen}
@@ -683,20 +693,7 @@ function TurnoverStatistical() {
 
                 </TableRow>
               ))}
-                <TableRow >
-                <TableCell colSpan={5}>
-                </TableCell>
-                
-                <TableCell sx={{ color:'var(--color7)'}}>
-                TỔNG DOANH THU :
-                </TableCell>
-                <TableCell sx={{ color: 'var(--color7)' }}  colSpan={6} >
-                  {(TongTien).toLocaleString('vi-VI', {
-                  style: 'currency',
-                  currency: 'VND',
-                })}
-                </TableCell>
-                </TableRow>
+               
 
 
               {emptyRows > 0 && (

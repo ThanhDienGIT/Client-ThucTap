@@ -180,7 +180,7 @@ function DistrictAndWard() {
     React.useEffect(() => {
         handleChosenWards(wards)
         handleChosenDistricts(districts)
-    })
+    },[searchInput,chosenDistrict])
 
     const handleChangeChosenField = (event, newField) => {
         if (newField !== null) {
