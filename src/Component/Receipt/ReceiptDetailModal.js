@@ -7,6 +7,12 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 export default function ReceiptDetailModal({receipt,ref}) {
     const [open, setOpen] = React.useState(false);
     const [ngaythu,setNgayThu] = React.useState('');
@@ -46,18 +52,16 @@ export default function ReceiptDetailModal({receipt,ref}) {
             top: '45%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 800,
+            width: 850,
             bgcolor: 'background.paper',
             borderRadius: 2,
             boxShadow: 24,
             p: 1,
-            // overflow:'scroll',
             height:'95%',
             display:'block',
             marginTop: 4,
             marginBottom: 5,
-            textAlign: 'left' 
-            
+            textAlign: 'left',
         };
 
         const Info__style = {
@@ -86,44 +90,63 @@ export default function ReceiptDetailModal({receipt,ref}) {
                         <IconButton variant="contained" onClick={handleClose}><CloseIcon /></IconButton>
                     </Stack>
                     <Box>
-                        <Typography variant="h5" style={{paddingBottom: 20,textAlign:"center",marginTop: 20 }}>
-                            <b>Công Ty Môi Trường SHIZEN</b>
+                        <Typography variant="h6" style={{display: 'inline-block', textAlign: "left"}}>
+                                <img src="/static/media/Logo.d35d7c77ea0ad085e30c.jpg" alt="Logo" style={{width: 70,textAlign: "left", marginLeft: 70 }}></img>
                         </Typography>
-                        <Typography variant="h4" style={{paddingBottom: 20,textAlign:"center" }}>
-                            <b>Hóa đơn</b>
+                        <Typography variant="h6" style={{display: 'inline-block',fontSize:14,textAlign:"right",width:630 }}> 
+                            <b>Mẫu số phiếu: </b> {receipt.MauSoPhieu}
+                        </Typography>
+                        <Typography variant="h5" style={{paddingBottom: 30,textAlign:"center" }}>
+                            <b>Phiếu thu phí môi trường</b>
                         </Typography>
                         <Box sx={Info__style}>
-                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                    <b>ID Hóa Đơn: </b>{receipt.MaSoPhieu}
+                            <Typography variant="h6" style={{fontSize:14, width: 800, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Công Ty Môi Trường SHIZEN</b>
                             </Typography>
-                            <Typography variant="h6" style={{width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <Typography variant="h6">{receipt.TenKyThu}</Typography>
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Mã tuyến Thu:</b> {receipt.MaTuyenThu}
                             </Typography>
-                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <Typography variant="h6">Từ ngày: {ngaytao} đến {ngaythu} </Typography>
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Mã Nhân Viên: </b>{receipt.MaNhanVien}
                             </Typography>
-                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Tên KH: </b>{receipt.HoTenKH} <b>({receipt.MaKhachHang})</b>
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Mã KH: </b> {receipt.MaKhachHang}
                             </Typography>
-                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Loại hộ: </b>{receipt.TenLoai}
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Nhân viên thu: </b> {receipt.HoTen}
                             </Typography>
-                            <Typography variant="h6" style={{width: 900,paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Tuyến thu: </b>{receipt.TenTuyenThu} <b>({receipt.MaTuyenThu})</b>
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Tên KH: </b>{receipt.HoTenKH}
                             </Typography>
-                             <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Địa chỉ: </b>{receipt.DiaChi}, Phường {receipt.TenXaPhuong}, {receipt.TenQuanHuyen}
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>SĐT Nhân Viên:</b> {receipt.SoDienThoai}
                             </Typography>
-                            <Typography variant="h6" style={{ width: 900, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Nhân viên thu: </b> {receipt.HoTen} (<b>{receipt.MaNhanVien}</b>)
+                            <Typography variant="h6" style={{fontSize:14, width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                                <b>Địa chỉ KH: </b>{receipt.DiaChi}, Phường {receipt.TenXaPhuong}, {receipt.TenQuanHuyen}
                             </Typography>
-                            <Typography variant="h6" style={{ width:900, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Mẫu số phiếu: </b> {receipt.MauSoPhieu}
-                            </Typography>
-                            <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
-                                <b>Trạng Thái: </b> {change(receipt.NgayThu)}
-                            </Typography>
-                            <Typography variant="h6" style={{ width: 400, paddingBottom: 0, paddingRight: 40 }}>
+                             <TableContainer sx={{width: 700, border:'solid black 1px',marginTop:2}}>
+                            <Table sx={{ width: 698}} aria-label="caption table">
+                                <TableHead>
+                                <TableRow>
+                                    <TableCell align="left" sx={{fontSize:14, fontWeight: 'bold',borderRight:'solid black 1px',borderBottom:'solid black 1px'}} >Mã hóa đơn</TableCell>
+                                    <TableCell align="left" sx={{fontSize:14, fontWeight: 'bold',borderRight:'solid black 1px',borderBottom:'solid black 1px'}}>Kỳ Thu</TableCell>
+                                    <TableCell align="left" sx={{fontSize:14, fontWeight: 'bold',borderRight:'solid black 1px',borderBottom:'solid black 1px'}}>Loại hộ</TableCell>
+                                    <TableCell align="left" sx={{fontSize:14, fontWeight: 'bold',borderRight:'solid black 1px',borderBottom:'solid black 1px'}}>Tuyến thu</TableCell>
+                                    <TableCell align="left" sx={{fontSize:14, fontWeight: 'bold',borderBottom:'solid black 1px'}}>Trạng thái</TableCell>     
+                                </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow>  
+                                            <TableCell align="left" sx={{fontSize:14,borderRight:'solid black 1px'}}>{receipt.MaSoPhieu}</TableCell>
+                                            <TableCell align="left"  sx={{fontSize:14,borderRight:'solid black 1px'}}>{receipt.TenKyThu}</TableCell>
+                                            <TableCell align="left"  sx={{fontSize:14,borderRight:'solid black 1px'}}>{receipt.TenLoai}</TableCell>
+                                            <TableCell align="left"  sx={{fontSize:14,borderRight:'solid black 1px'}}>{receipt.TenTuyenThu}</TableCell>
+                                            <TableCell align="left">{change(receipt.NgayThu)}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                            </TableContainer>
+                            <Typography variant="h6" style={{fontSize:16, width: 700,paddingTop: 30, paddingBottom: 0, paddingRight: 40,textAlign:"right" }}>
                                 <b>Tổng tiền: </b>
                                     {receipt.Gia.toLocaleString('vi-VI', { style: 'currency', currency: 'VND' })}
                             </Typography>
