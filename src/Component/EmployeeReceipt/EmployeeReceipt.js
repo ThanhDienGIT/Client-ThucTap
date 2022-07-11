@@ -14,7 +14,7 @@ function EmployeeReceipt() {
                     }
                 }
             >
-                Quản lý phiếu thu
+                Danh sách phiếu thu
             </Typography>
       <br></br>
       <ReceiptList />
